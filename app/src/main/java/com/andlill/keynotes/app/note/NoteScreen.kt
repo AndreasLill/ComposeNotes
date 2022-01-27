@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -137,6 +138,9 @@ fun NoteScreen(navigation: NavController, viewModel: NoteViewModel = viewModel()
                         disabledIndicatorColor = Color.Transparent,
                         errorIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent
+                    ),
+                    keyboardOptions = KeyboardOptions(
+                        capitalization = KeyboardCapitalization.Sentences
                     ),
                     placeholder = { Text("Body") },
                     value = viewModel.body,

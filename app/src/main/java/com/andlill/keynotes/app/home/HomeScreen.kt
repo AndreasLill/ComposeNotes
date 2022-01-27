@@ -19,6 +19,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -156,38 +157,12 @@ fun NoteItem(note: Note, callback: () -> Unit) {
                 .padding(16.dp)
         ) {
             if (note.title.isNotEmpty())
-                Text(text = note.title, style = MaterialTheme.typography.h3)
+                Text(text = note.title, style = MaterialTheme.typography.h3, maxLines = 1, overflow = TextOverflow.Ellipsis)
             if (note.title.isNotEmpty() && note.body.isNotEmpty())
                 Spacer(modifier = Modifier.fillMaxWidth().height(16.dp))
             if (note.body.isNotEmpty()) {
-                Text(text = note.body, style = MaterialTheme.typography.body2)
+                Text(text = note.body, style = MaterialTheme.typography.body2, maxLines = 6,overflow = TextOverflow.Ellipsis)
             }
         }
     }
-    /*
-    Surface(
-        color = Color(note.color),
-        modifier = Modifier
-        .border(
-            width = 1.dp,
-            color = Color.LightGray,
-            shape = RoundedCornerShape(8.dp)
-        ),
-        shape = RoundedCornerShape(8.dp)
-    ) {
-        Column(modifier = Modifier
-            .fillMaxSize()
-            .clickable { onClick() }
-            .padding(16.dp)
-        ) {
-            if (note.title.isNotEmpty())
-                Text(text = note.title, style = MaterialTheme.typography.h3)
-            if (note.title.isNotEmpty() && note.body.isNotEmpty())
-                Spacer(modifier = Modifier.fillMaxWidth().height(16.dp))
-            if (note.body.isNotEmpty()) {
-                Text(text = note.body, style = MaterialTheme.typography.body2)
-            }
-        }
-    }
-    */
 }

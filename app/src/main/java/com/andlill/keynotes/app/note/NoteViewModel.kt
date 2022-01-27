@@ -4,11 +4,11 @@ import android.app.Application
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.andlill.keynotes.data.repository.NoteRepository
 import com.andlill.keynotes.model.Note
+import com.andlill.keynotes.ui.theme.LightNoteColors
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.*
@@ -54,8 +54,8 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
 
         val note = Note(
             id = id,
-            title = title,
-            body = body,
+            title = title.trim(),
+            body = body.trim(),
             // Set created timestamp if this is a new note.
             created = if (created == 0L) Calendar.getInstance().timeInMillis else created,
             // Set modified timestamp.
@@ -66,7 +66,6 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun randomColor() {
-        val colors = listOf(0xFFEF9A9A, 0xFFF48FB1, 0xFFCE93D8, 0xFFB39DDB, 0xFF9FA8DA, 0xFF90CAF9, 0xFF81D4FA, 0xFF80DEEA, 0xFF80CBC4, 0xFFA5D6A7, 0xFFC5E1A5, 0xFFE6EE9C, 0xFFFFF59D, 0xFFFFE082, 0xFFFFCC80, 0xFFFFAB91)
-        color = colors.random()
+        color = LightNoteColors.random()
     }
 }
