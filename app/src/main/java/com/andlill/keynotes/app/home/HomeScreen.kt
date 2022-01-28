@@ -1,8 +1,6 @@
 package com.andlill.keynotes.app.home
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -13,11 +11,10 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -75,7 +72,7 @@ fun HomeScreen(navigation: NavController, viewModel: HomeViewModel = viewModel()
                         IconButton(onClick = {
                             /*TODO*/
                         }) {
-                            Icon(Icons.Default.Search, null)
+                            Icon(Icons.Default.Search, null, tint = MaterialTheme.colors.onSurface, modifier = Modifier.alpha(0.6f))
                         }
                     }
                 )
@@ -104,8 +101,8 @@ fun HomeScreen(navigation: NavController, viewModel: HomeViewModel = viewModel()
                             launchSingleTop = true
                         }
                     }) {
-                    Icon(Icons.Default.Add, null)
-                    Text(modifier = Modifier.padding(start = 4.dp), text = "NEW NOTE")
+                    Icon(Icons.Default.Add, null, tint = MaterialTheme.colors.onSurface, modifier = Modifier.alpha(0.6f))
+                    Text(text = "NEW NOTE", color = MaterialTheme.colors.onSurface, modifier = Modifier.padding(start = 4.dp).alpha(0.6f))
                 }
                 Spacer(
                     modifier = Modifier

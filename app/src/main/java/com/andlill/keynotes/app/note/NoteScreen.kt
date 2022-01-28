@@ -4,23 +4,27 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.google.accompanist.insets.navigationBarsWithImePadding
@@ -28,9 +32,6 @@ import com.google.accompanist.insets.statusBarsHeight
 
 @Composable
 fun NoteScreen(navigation: NavController, viewModel: NoteViewModel = viewModel(), noteId: Int = -1) {
-
-    val localFocusManager = LocalFocusManager.current
-    val bgColor = animateColorAsState(Color(viewModel.color))
 
     LaunchedEffect(Unit) {
         viewModel.loadNote(noteId)
@@ -42,7 +43,7 @@ fun NoteScreen(navigation: NavController, viewModel: NoteViewModel = viewModel()
     }
 
     Scaffold(
-        backgroundColor = bgColor.value,
+        backgroundColor = animateColorAsState(Color(viewModel.color)).value,
         topBar = {
             Column {
                 Spacer(modifier = Modifier
@@ -53,6 +54,14 @@ fun NoteScreen(navigation: NavController, viewModel: NoteViewModel = viewModel()
                     backgroundColor = Color.Transparent,
                     elevation = 0.dp,
                     title = {
+                        TitleTextField(
+                            placeholder = "Title",
+                            value = viewModel.title,
+                            focusManager = LocalFocusManager.current,
+                            onValueChange = {
+                                viewModel.title = it
+                            }
+                        )
                     },
                     navigationIcon = {
                         IconButton(onClick = {
@@ -60,7 +69,7 @@ fun NoteScreen(navigation: NavController, viewModel: NoteViewModel = viewModel()
                             viewModel.saveNote()
                             navigation.navigateUp()
                         }) {
-                            Icon(Icons.Default.ArrowBack, null)
+                            Icon(Icons.Default.ArrowBack, null, tint = MaterialTheme.colors.onSurface)
                         }
                     },
                     actions = {
@@ -68,14 +77,14 @@ fun NoteScreen(navigation: NavController, viewModel: NoteViewModel = viewModel()
                             // TODO: Add selectable colors for font, background, etc.
                             viewModel.randomColor()
                         }) {
-                            Icon(Icons.Default.Palette, null)
+                            Icon(Icons.Outlined.Palette, null, tint = MaterialTheme.colors.onSurface, modifier = Modifier.alpha(0.6f))
                         }
                         IconButton(onClick = {
                             // TODO: Change delete to move to trash.
                             viewModel.deleteNote()
                             navigation.navigateUp()
                         }) {
-                            Icon(Icons.Default.Delete, null)
+                            Icon(Icons.Outlined.Delete, null, tint = MaterialTheme.colors.onSurface, modifier = Modifier.alpha(0.6f))
                         }
                     }
                 )
@@ -86,36 +95,6 @@ fun NoteScreen(navigation: NavController, viewModel: NoteViewModel = viewModel()
                 .background(Color.Transparent)
                 .navigationBarsWithImePadding()
                 .padding(innerPadding)) {
-                // Note Title
-                TextField(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(Color.Transparent),
-                    shape = RectangleShape,
-                    textStyle = MaterialTheme.typography.h2,
-                    colors = TextFieldDefaults.textFieldColors(
-                        backgroundColor = Color.Transparent,
-                        textColor = MaterialTheme.colors.onSurface,
-                        focusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent,
-                        errorIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent
-                    ),
-                    placeholder = { Text("Title") },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(
-                        imeAction = ImeAction.Next
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onNext = {
-                            localFocusManager.moveFocus(FocusDirection.Down)
-                        }
-                    ),
-                    value = viewModel.title,
-                    onValueChange = {
-                        viewModel.title = it
-                    }
-                )
                 // Note Body
                 TextField(
                     modifier = Modifier
@@ -142,6 +121,41 @@ fun NoteScreen(navigation: NavController, viewModel: NoteViewModel = viewModel()
                     }
                 )
             }
+        }
+    )
+}
+
+@Composable
+fun TitleTextField(placeholder: String, value: String, focusManager: FocusManager, onValueChange: (String) -> Unit) {
+    BasicTextField(
+        modifier = Modifier
+            .padding(PaddingValues(top = 8.dp, bottom = 8.dp))
+            .fillMaxWidth(),
+        value = value,
+        onValueChange = onValueChange,
+        singleLine = true,
+        textStyle = TextStyle(
+            fontSize = 16.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colors.onSurface
+        ),
+        keyboardActions = KeyboardActions(
+            onNext = {
+                focusManager.moveFocus(FocusDirection.Down)
+            }
+        ),
+        decorationBox = { innerTextField ->
+            if (value.isEmpty()) {
+                Text(
+                    modifier = Modifier.alpha(0.6f),
+                    text = placeholder,
+                    style = TextStyle(
+                        fontSize = 16.sp,
+                        color = MaterialTheme.colors.onSurface
+                    )
+                )
+            }
+            innerTextField()
         }
     )
 }
