@@ -10,7 +10,7 @@ import androidx.compose.ui.unit.sp
 val Typography = Typography(
     defaultFontFamily = FontFamily.SansSerif,
     h2 = TextStyle(
-        fontSize = 22.sp,
+        fontSize = 20.sp,
         fontWeight = FontWeight.SemiBold
     ),
     h3 = TextStyle(
@@ -18,7 +18,7 @@ val Typography = Typography(
         fontWeight = FontWeight.SemiBold
     ),
     body1 = TextStyle(
-        fontSize = 18.sp
+        fontSize = 16.sp
     ),
     body2 = TextStyle(
         fontSize = 14.sp

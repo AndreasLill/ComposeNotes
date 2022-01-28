@@ -11,7 +11,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Palette
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
@@ -22,19 +23,17 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.google.accompanist.insets.navigationBarsHeight
+import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.insets.statusBarsHeight
 
 @Composable
 fun NoteScreen(navigation: NavController, viewModel: NoteViewModel = viewModel(), noteId: Int = -1) {
 
-    //val focusRequester = remember { FocusRequester() }
     val localFocusManager = LocalFocusManager.current
     val bgColor = animateColorAsState(Color(viewModel.color))
 
     LaunchedEffect(Unit) {
         viewModel.loadNote(noteId)
-    //focusRequester.requestFocus()
     }
     BackHandler {
         // Save note on back navigation.
@@ -82,17 +81,11 @@ fun NoteScreen(navigation: NavController, viewModel: NoteViewModel = viewModel()
                 )
             }
         },
-        bottomBar = {
-            Spacer(modifier = Modifier
-                .navigationBarsHeight()
-                .fillMaxWidth()
-            )
-        },
         content = { innerPadding ->
             Column(modifier = Modifier
-                .padding(innerPadding)
                 .background(Color.Transparent)
-                .fillMaxSize()) {
+                .navigationBarsWithImePadding()
+                .padding(innerPadding)) {
                 // Note Title
                 TextField(
                     modifier = Modifier
