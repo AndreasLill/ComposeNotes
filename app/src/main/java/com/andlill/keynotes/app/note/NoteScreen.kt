@@ -2,7 +2,9 @@ package com.andlill.keynotes.app.note
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
@@ -139,16 +141,20 @@ fun ThemeDropDown(state: MutableState<Boolean>, onClick: (Long) -> Unit) {
         modifier = Modifier
             .background(MaterialTheme.colors.surface),
         onDismissRequest = { state.value = false }) {
-        Text(
-            text = "Colors",
-            style = MaterialTheme.typography.caption,
-            color = MaterialTheme.colors.onSurface,
-            modifier = Modifier.padding(PaddingValues(start = 8.dp, end = 8.dp)).alpha(0.6f))
-        Spacer(modifier = Modifier.height(8.dp))
-        Row(modifier = Modifier.padding(PaddingValues(start = 8.dp, end = 8.dp)), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            LightNoteColors.subList(0, 8).forEach { value ->
-                ColorSelectButton(color = Color(value)) {
-                    onClick(value)
+        Column(modifier = Modifier.padding(PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp))) {
+            Text(
+                text = "Colors",
+                style = MaterialTheme.typography.caption,
+                color = MaterialTheme.colors.onSurface,
+                modifier = Modifier.alpha(0.6f))
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.horizontalScroll(rememberScrollState())) {
+                LightNoteColors.forEach { value ->
+                    ColorSelectButton(color = Color(value)) {
+                        onClick(value)
+                    }
                 }
             }
         }
