@@ -1,6 +1,5 @@
 package com.andlill.keynotes.ui.theme
 
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -23,5 +22,9 @@ val Typography = Typography(
     ),
     body2 = TextStyle(
         fontSize = 14.sp
+    ),
+    caption = TextStyle(
+        fontSize = 14.sp,
+        fontWeight = FontWeight.SemiBold
     ),
 )

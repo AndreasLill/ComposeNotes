@@ -8,7 +8,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.andlill.keynotes.data.repository.NoteRepository
 import com.andlill.keynotes.model.Note
-import com.andlill.keynotes.ui.theme.LightNoteColors
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.*
@@ -71,9 +70,5 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
             color = color,
         )
         NoteRepository.insertNote(getApplication(), note)
-    }
-
-    fun randomColor() {
-        color = LightNoteColors.random()
     }
 }

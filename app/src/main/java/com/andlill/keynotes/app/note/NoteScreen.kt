@@ -1,9 +1,9 @@
 package com.andlill.keynotes.app.note
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -12,8 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Palette
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.FocusDirection
@@ -32,11 +31,14 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.andlill.keynotes.ui.components.menu.MenuIconButton
 import com.andlill.keynotes.ui.components.util.LifecycleEventHandler
+import com.andlill.keynotes.ui.theme.LightNoteColors
 import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.insets.statusBarsHeight
 
 @Composable
 fun NoteScreen(navigation: NavController, viewModel: NoteViewModel = viewModel(), noteId: Int = -1) {
+
+    val themeMenuState = remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.loadNote(noteId)
@@ -49,7 +51,6 @@ fun NoteScreen(navigation: NavController, viewModel: NoteViewModel = viewModel()
             else -> {}
         }
     }
-
     Scaffold(
         backgroundColor = animateColorAsState(Color(viewModel.color)).value,
         topBar = {
@@ -80,12 +81,17 @@ fun NoteScreen(navigation: NavController, viewModel: NoteViewModel = viewModel()
                     actions = {
                         MenuIconButton(icon = Icons.Outlined.Palette, color = MaterialTheme.colors.onSurface) {
                             // TODO: Add selectable colors for font, background, etc.
-                            viewModel.randomColor()
+                            //viewModel.randomColor()
+                            themeMenuState.value = true
                         }
                         MenuIconButton(icon = Icons.Outlined.Delete, color = MaterialTheme.colors.onSurface) {
                             // TODO: Change delete to move to trash.
                             viewModel.deleteNote()
                             navigation.navigateUp()
+                        }
+                        // Note theme drop down menu.
+                        ThemeDropDown(state = themeMenuState) {
+                            viewModel.color = it
                         }
                     }
                 )
@@ -115,7 +121,7 @@ fun NoteScreen(navigation: NavController, viewModel: NoteViewModel = viewModel()
                     keyboardOptions = KeyboardOptions(
                         capitalization = KeyboardCapitalization.Sentences
                     ),
-                    placeholder = { Text("Empty Body") },
+                    placeholder = { Text("Empty") },
                     value = viewModel.body,
                     onValueChange = {
                         viewModel.body = it
@@ -124,6 +130,50 @@ fun NoteScreen(navigation: NavController, viewModel: NoteViewModel = viewModel()
             }
         }
     )
+}
+
+@Composable
+fun ThemeDropDown(state: MutableState<Boolean>, onClick: (Long) -> Unit) {
+    DropdownMenu(
+        expanded = state.value,
+        modifier = Modifier
+            .background(MaterialTheme.colors.surface),
+        onDismissRequest = { state.value = false }) {
+        Text(
+            text = "Colors",
+            style = MaterialTheme.typography.caption,
+            color = MaterialTheme.colors.onSurface,
+            modifier = Modifier.padding(PaddingValues(start = 8.dp, end = 8.dp)).alpha(0.6f))
+        Spacer(modifier = Modifier.height(8.dp))
+        Row(modifier = Modifier.padding(PaddingValues(start = 8.dp, end = 8.dp)), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            LightNoteColors.subList(0, 8).forEach { value ->
+                ColorSelectButton(color = Color(value)) {
+                    onClick(value)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ColorSelectButton(color: Color, onClick: () -> Unit) {
+    OutlinedButton(
+        modifier = Modifier
+            .width(32.dp)
+            .height(32.dp),
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = color,
+        ),
+        shape = CircleShape,
+        elevation = ButtonDefaults.elevation(
+            defaultElevation = 0.dp,
+            pressedElevation = 0.dp,
+            disabledElevation = 0.dp,
+            focusedElevation = 0.dp,
+            hoveredElevation = 0.dp,
+        ),
+        onClick = { onClick() },
+    ) {}
 }
 
 @Composable
