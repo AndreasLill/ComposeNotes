@@ -8,14 +8,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 val LightNoteColors = listOf(
-    0xFFFFCDD2,
-    0xFFE1BEE7,
-    0xFFC5CAE9,
-    0xFFB3E5FC,
-    0xFFB2DFDB,
-    0xFFDCEDC8,
-    0xFFFFF9C4,
-    0xFFFFE0B2,
+    Color(0xFFFFCDD2),
+    Color(0xFFE1BEE7),
+    Color(0xFFC5CAE9),
+    Color(0xFFB3E5FC),
+    Color(0xFFB2DFDB),
+    Color(0xFFDCEDC8),
+    Color(0xFFFFF9C4),
+    Color(0xFFFFE0B2),
 )
 
 private val LightAppPalette = lightColors(

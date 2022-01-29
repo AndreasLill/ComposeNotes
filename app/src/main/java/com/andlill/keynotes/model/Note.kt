@@ -11,5 +11,5 @@ data class Note(
     val body: String = "",
     val created: Long = 0,
     val modified: Long = 0,
-    val color: Long = 0xFFFFFFFF,
+    val color: Int = 0,
 )

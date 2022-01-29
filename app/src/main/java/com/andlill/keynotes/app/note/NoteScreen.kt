@@ -21,6 +21,7 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -135,7 +136,7 @@ fun NoteScreen(navigation: NavController, viewModel: NoteViewModel = viewModel()
 }
 
 @Composable
-fun ThemeDropDown(state: MutableState<Boolean>, onClick: (Long) -> Unit) {
+fun ThemeDropDown(state: MutableState<Boolean>, onClick: (Int) -> Unit) {
     DropdownMenu(
         expanded = state.value,
         modifier = Modifier
@@ -152,8 +153,8 @@ fun ThemeDropDown(state: MutableState<Boolean>, onClick: (Long) -> Unit) {
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.horizontalScroll(rememberScrollState())) {
                 LightNoteColors.forEach { value ->
-                    ColorSelectButton(color = Color(value)) {
-                        onClick(value)
+                    ColorSelectButton(color = value) {
+                        onClick(value.toArgb())
                     }
                 }
             }

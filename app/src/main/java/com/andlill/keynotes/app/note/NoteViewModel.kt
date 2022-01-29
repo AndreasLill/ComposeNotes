@@ -21,7 +21,7 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
     var body by mutableStateOf("")
     var created by mutableStateOf(0L)
     var modified by mutableStateOf(0L)
-    var color by mutableStateOf(0xFFFFFFFF)
+    var color by mutableStateOf(0)
 
     fun loadNote(noteId: Int) = viewModelScope.launch {
         NoteRepository.getNote(getApplication(), noteId).collectLatest {
