@@ -27,8 +27,11 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.andlill.keynotes.ui.components.menu.MenuIconButton
+import com.andlill.keynotes.ui.components.util.LifecycleEventHandler
 import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.insets.statusBarsHeight
 
@@ -38,10 +41,13 @@ fun NoteScreen(navigation: NavController, viewModel: NoteViewModel = viewModel()
     LaunchedEffect(Unit) {
         viewModel.loadNote(noteId)
     }
-    BackHandler {
-        // Save note on back navigation.
-        viewModel.saveNote()
-        navigation.navigateUp()
+    // Handle lifecycle events.
+    LifecycleEventHandler { event ->
+        when (event) {
+            // Save note on stop event.
+            Lifecycle.Event.ON_STOP -> viewModel.saveNote()
+            else -> {}
+        }
     }
 
     Scaffold(
@@ -56,8 +62,8 @@ fun NoteScreen(navigation: NavController, viewModel: NoteViewModel = viewModel()
                     backgroundColor = Color.Transparent,
                     elevation = 0.dp,
                     title = {
-                        TitleTextField(
-                            placeholder = "Title",
+                        MenuTitleTextField(
+                            placeholder = "No Title",
                             value = viewModel.title,
                             focusManager = LocalFocusManager.current,
                             onValueChange = {
@@ -66,27 +72,20 @@ fun NoteScreen(navigation: NavController, viewModel: NoteViewModel = viewModel()
                         )
                     },
                     navigationIcon = {
-                        IconButton(onClick = {
+                        MenuIconButton(icon = Icons.Filled.ArrowBack, color = MaterialTheme.colors.onSurface) {
                             // Save note on back navigation.
-                            viewModel.saveNote()
                             navigation.navigateUp()
-                        }) {
-                            Icon(Icons.Default.ArrowBack, null, tint = MaterialTheme.colors.onSurface)
                         }
                     },
                     actions = {
-                        IconButton(onClick = {
+                        MenuIconButton(icon = Icons.Outlined.Palette, color = MaterialTheme.colors.onSurface) {
                             // TODO: Add selectable colors for font, background, etc.
                             viewModel.randomColor()
-                        }) {
-                            Icon(Icons.Outlined.Palette, null, tint = MaterialTheme.colors.onSurface, modifier = Modifier.alpha(0.6f))
                         }
-                        IconButton(onClick = {
+                        MenuIconButton(icon = Icons.Outlined.Delete, color = MaterialTheme.colors.onSurface) {
                             // TODO: Change delete to move to trash.
                             viewModel.deleteNote()
                             navigation.navigateUp()
-                        }) {
-                            Icon(Icons.Outlined.Delete, null, tint = MaterialTheme.colors.onSurface, modifier = Modifier.alpha(0.6f))
                         }
                     }
                 )
@@ -116,7 +115,7 @@ fun NoteScreen(navigation: NavController, viewModel: NoteViewModel = viewModel()
                     keyboardOptions = KeyboardOptions(
                         capitalization = KeyboardCapitalization.Sentences
                     ),
-                    placeholder = { Text("Body") },
+                    placeholder = { Text("Empty Body") },
                     value = viewModel.body,
                     onValueChange = {
                         viewModel.body = it
@@ -128,7 +127,7 @@ fun NoteScreen(navigation: NavController, viewModel: NoteViewModel = viewModel()
 }
 
 @Composable
-fun TitleTextField(placeholder: String, value: String, focusManager: FocusManager, onValueChange: (String) -> Unit) {
+fun MenuTitleTextField(placeholder: String, value: String, focusManager: FocusManager, onValueChange: (String) -> Unit) {
     BasicTextField(
         modifier = Modifier
             .padding(PaddingValues(top = 8.dp, bottom = 8.dp))

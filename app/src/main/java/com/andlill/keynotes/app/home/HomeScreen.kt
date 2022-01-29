@@ -9,7 +9,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
@@ -22,6 +22,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.andlill.keynotes.app.Screen
 import com.andlill.keynotes.model.Note
+import com.andlill.keynotes.ui.components.menu.MenuIconButton
 import com.google.accompanist.insets.navigationBarsHeight
 import com.google.accompanist.insets.statusBarsHeight
 import kotlinx.coroutines.launch
@@ -60,19 +61,15 @@ fun HomeScreen(navigation: NavController, viewModel: HomeViewModel = viewModel()
                         Text(text = "Notes", style = MaterialTheme.typography.h3)
                     },
                     navigationIcon = {
-                         IconButton(onClick = {
+                        MenuIconButton(icon = Icons.Filled.Menu, color = MaterialTheme.colors.onSurface) {
                             scope.launch {
                                 state.drawerState.open()
                             }
-                         }) {
-                             Icon(Icons.Default.Menu, null)
-                         }
+                        }
                     },
                     actions = {
-                        IconButton(onClick = {
-                            /*TODO*/
-                        }) {
-                            Icon(Icons.Default.Search, null, tint = MaterialTheme.colors.onSurface, modifier = Modifier.alpha(0.6f))
+                        MenuIconButton(icon = Icons.Outlined.Search, color = MaterialTheme.colors.onSurface) {
+                            // TODO: Search notes.
                         }
                     }
                 )
@@ -102,7 +99,9 @@ fun HomeScreen(navigation: NavController, viewModel: HomeViewModel = viewModel()
                         }
                     }) {
                     Icon(Icons.Default.Add, null, tint = MaterialTheme.colors.onSurface, modifier = Modifier.alpha(0.6f))
-                    Text(text = "NEW NOTE", color = MaterialTheme.colors.onSurface, modifier = Modifier.padding(start = 4.dp).alpha(0.6f))
+                    Text(text = "NEW NOTE", color = MaterialTheme.colors.onSurface, modifier = Modifier
+                        .padding(start = 4.dp)
+                        .alpha(0.6f))
                 }
                 Spacer(
                     modifier = Modifier
@@ -156,7 +155,9 @@ fun NoteItem(note: Note, callback: () -> Unit) {
             if (note.title.isNotEmpty())
                 Text(text = note.title, style = MaterialTheme.typography.h3, maxLines = 1, overflow = TextOverflow.Ellipsis)
             if (note.title.isNotEmpty() && note.body.isNotEmpty())
-                Spacer(modifier = Modifier.fillMaxWidth().height(16.dp))
+                Spacer(modifier = Modifier
+                    .fillMaxWidth()
+                    .height(16.dp))
             if (note.body.isNotEmpty()) {
                 Text(text = note.body, style = MaterialTheme.typography.body2, maxLines = 6,overflow = TextOverflow.Ellipsis)
             }

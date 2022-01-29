@@ -15,6 +15,8 @@ import java.util.*
 
 class NoteViewModel(application: Application) : AndroidViewModel(application) {
 
+    private var deleted = false
+
     var id by mutableStateOf(0)
     var title by mutableStateOf("")
     var body by mutableStateOf("")
@@ -36,6 +38,9 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun deleteNote() = viewModelScope.launch {
+        // Set deleted to avoid saving.
+        deleted = true
+
         val note = Note(
             id = id,
             title = title,
@@ -48,6 +53,9 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun saveNote() = viewModelScope.launch {
+        // Don't save deleted note.
+        if (deleted)
+            return@launch
         // Don't save if a new note with no content.
         if (title.isEmpty() && body.isEmpty() && created == 0L)
             return@launch
