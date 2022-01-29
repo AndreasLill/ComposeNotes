@@ -18,11 +18,22 @@ val LightNoteColors = listOf(
     Color(0xFFFFE0B2),
 )
 
+val DarkNoteColors = listOf(
+    Color(0xFF613B3B),
+    Color(0xFF413352),
+    Color(0xFF3A3E5F),
+    Color(0xFF31414E),
+    Color(0xFF2F4D48),
+    Color(0xFF384B30),
+    Color(0xFF554638),
+    Color(0xFF533E34),
+)
+
 private val LightAppPalette = lightColors(
-    primary = Color(0xFFB39DDB),
+    primary = Color(0xFFFF1744),
     onPrimary = Color(0xFF263238),
-    secondary = Color(0xFF5C6BC0),
-    onSecondary = Color(0xFFFFFFFF),
+    secondary = Color(0xFFFFFFFF),
+    onSecondary = Color(0xFF263238),
     background = Color(0xFFECEFF1),
     onBackground = Color(0xFF263238),
     surface = Color(0xFFFFFFFF),
@@ -30,14 +41,14 @@ private val LightAppPalette = lightColors(
 )
 
 private val DarkAppPalette = darkColors(
-    primary = Color.DarkGray,
-    onPrimary = Color.White,
-    secondary = Color.Blue,
-    onSecondary = Color.White,
-    background = Color.DarkGray,
-    onBackground = Color.White,
-    surface = Color.DarkGray,
-    onSurface = Color.White,
+    primary = Color(0xFFFF1744),
+    onPrimary = Color(0xFFFFFFFF),
+    secondary = Color(0xFF263238),
+    onSecondary = Color(0xFFFFFFFF),
+    background = Color(0xFF263238),
+    onBackground = Color(0xFFFFFFFF),
+    surface = Color(0xFF263238),
+    onSurface = Color(0xFFFFFFFF),
 )
 
 @Composable

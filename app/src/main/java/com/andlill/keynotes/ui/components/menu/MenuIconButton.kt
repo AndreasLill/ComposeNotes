@@ -9,7 +9,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 
 @Composable
-fun MenuIconButton(icon: ImageVector, color: Color, description: String? = null, alpha: Float = 0.6f, onClick: () -> Unit) {
+fun MenuIconButton(icon: ImageVector, color: Color, description: String? = null, alpha: Float = 1f, onClick: () -> Unit) {
     IconButton(onClick = { onClick() }) {
         Icon(
             modifier = Modifier.alpha(alpha),

@@ -3,6 +3,7 @@ package com.andlill.keynotes.app.note
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -21,7 +22,7 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -34,6 +35,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.andlill.keynotes.ui.components.menu.MenuIconButton
 import com.andlill.keynotes.ui.components.util.LifecycleEventHandler
+import com.andlill.keynotes.ui.theme.DarkNoteColors
 import com.andlill.keynotes.ui.theme.LightNoteColors
 import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.insets.statusBarsHeight
@@ -43,7 +45,13 @@ fun NoteScreen(navigation: NavController, viewModel: NoteViewModel = viewModel()
 
     val themeMenuState = remember { mutableStateOf(false) }
 
+    val noteColor = when {
+        isSystemInDarkTheme() -> DarkNoteColors[viewModel.color]
+        else -> LightNoteColors[viewModel.color]
+    }
+
     LaunchedEffect(Unit) {
+        // Set default note color to surface.
         viewModel.loadNote(noteId)
     }
     // Handle lifecycle events.
@@ -55,7 +63,7 @@ fun NoteScreen(navigation: NavController, viewModel: NoteViewModel = viewModel()
         }
     }
     Scaffold(
-        backgroundColor = animateColorAsState(Color(viewModel.color)).value,
+        backgroundColor = animateColorAsState(noteColor).value,
         topBar = {
             Column {
                 Spacer(modifier = Modifier
@@ -152,9 +160,10 @@ fun ThemeDropDown(state: MutableState<Boolean>, onClick: (Int) -> Unit) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.horizontalScroll(rememberScrollState())) {
-                LightNoteColors.forEach { value ->
+                val colorList = if (isSystemInDarkTheme()) DarkNoteColors else LightNoteColors
+                colorList.forEachIndexed { index, value ->
                     ColorSelectButton(color = value) {
-                        onClick(value.toArgb())
+                        onClick(index)
                     }
                 }
             }
@@ -192,6 +201,7 @@ fun MenuTitleTextField(placeholder: String, value: String, focusManager: FocusMa
         value = value,
         onValueChange = onValueChange,
         singleLine = true,
+        cursorBrush = SolidColor(MaterialTheme.colors.primary),
         textStyle = TextStyle(
             fontSize = 16.sp,
             fontWeight = FontWeight.SemiBold,

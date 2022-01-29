@@ -1,6 +1,8 @@
 package com.andlill.keynotes.app.home
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -23,6 +25,8 @@ import androidx.navigation.NavController
 import com.andlill.keynotes.app.Screen
 import com.andlill.keynotes.model.Note
 import com.andlill.keynotes.ui.components.menu.MenuIconButton
+import com.andlill.keynotes.ui.theme.DarkNoteColors
+import com.andlill.keynotes.ui.theme.LightNoteColors
 import com.google.accompanist.insets.navigationBarsHeight
 import com.google.accompanist.insets.statusBarsHeight
 import kotlinx.coroutines.launch
@@ -132,11 +136,16 @@ fun HomeScreen(navigation: NavController, viewModel: HomeViewModel = viewModel()
 
 @Composable
 fun NoteItem(note: Note, callback: () -> Unit) {
+    val noteColor = when {
+        isSystemInDarkTheme() -> DarkNoteColors[note.color]
+        else -> LightNoteColors[note.color]
+    }
+
     OutlinedButton(
         contentPadding = PaddingValues(0.dp),
         shape = RoundedCornerShape(8.dp),
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = Color(note.color),
+            backgroundColor = animateColorAsState(noteColor).value,
             contentColor = MaterialTheme.colors.onSurface,
         ),
         elevation = ButtonDefaults.elevation(
@@ -159,7 +168,7 @@ fun NoteItem(note: Note, callback: () -> Unit) {
                     .fillMaxWidth()
                     .height(16.dp))
             if (note.body.isNotEmpty()) {
-                Text(text = note.body, style = MaterialTheme.typography.body2, maxLines = 6,overflow = TextOverflow.Ellipsis)
+                Text(text = note.body, style = MaterialTheme.typography.body2, maxLines = 10,overflow = TextOverflow.Ellipsis)
             }
         }
     }
