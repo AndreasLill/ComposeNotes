@@ -220,6 +220,7 @@ fun NoteTitleTextField(placeholder: String, value: String, onValueChange: (Strin
             color = MaterialTheme.colors.onSurface,
         ),
         keyboardOptions = KeyboardOptions(
+            capitalization = KeyboardCapitalization.Sentences,
             imeAction = ImeAction.Next
         ),
         keyboardActions = KeyboardActions(
