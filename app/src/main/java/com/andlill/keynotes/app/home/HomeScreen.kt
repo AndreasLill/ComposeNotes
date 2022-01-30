@@ -1,40 +1,53 @@
 package com.andlill.keynotes.app.home
 
+import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.outlined.Search
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.andlill.keynotes.app.Screen
 import com.andlill.keynotes.model.Note
-import com.andlill.keynotes.ui.components.menu.MenuIconButton
+import com.andlill.keynotes.ui.components.MenuIconButton
+import com.andlill.keynotes.ui.components.util.clearFocusOnKeyboardDismiss
 import com.andlill.keynotes.ui.theme.DarkNoteColors
 import com.andlill.keynotes.ui.theme.LightNoteColors
 import com.google.accompanist.insets.navigationBarsHeight
 import com.google.accompanist.insets.statusBarsHeight
 import kotlinx.coroutines.launch
 
+@ExperimentalComposeUiApi
 @Composable
 fun HomeScreen(navigation: NavController, viewModel: HomeViewModel = viewModel()) {
 
-    // lazy list state too?
+    val query = remember { mutableStateOf("") }
     val state = rememberScaffoldState()
     val scope = rememberCoroutineScope()
     val notes = viewModel.getNotes().collectAsState(initial = emptyList())
@@ -62,7 +75,10 @@ fun HomeScreen(navigation: NavController, viewModel: HomeViewModel = viewModel()
                     backgroundColor = MaterialTheme.colors.surface,
                     elevation = 0.dp,
                     title = {
-                        Text(text = "Notes", style = MaterialTheme.typography.h3)
+                        SearchBar {
+                            query.value = it
+                            Log.d("App Search: ", it)
+                        }
                     },
                     navigationIcon = {
                         MenuIconButton(icon = Icons.Filled.Menu, color = MaterialTheme.colors.onSurface) {
@@ -72,9 +88,6 @@ fun HomeScreen(navigation: NavController, viewModel: HomeViewModel = viewModel()
                         }
                     },
                     actions = {
-                        MenuIconButton(icon = Icons.Outlined.Search, color = MaterialTheme.colors.onSurface) {
-                            // TODO: Search notes.
-                        }
                     }
                 )
             }
@@ -102,10 +115,14 @@ fun HomeScreen(navigation: NavController, viewModel: HomeViewModel = viewModel()
                             launchSingleTop = true
                         }
                     }) {
-                    Icon(Icons.Default.Add, null, tint = MaterialTheme.colors.onSurface, modifier = Modifier.alpha(0.6f))
-                    Text(text = "NEW NOTE", color = MaterialTheme.colors.onSurface, modifier = Modifier
-                        .padding(start = 4.dp)
-                        .alpha(0.6f))
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = null,
+                        tint = MaterialTheme.colors.onSurface.copy(0.6f))
+                    Text(
+                        text = "NEW NOTE",
+                        color = MaterialTheme.colors.onSurface.copy(0.6f),
+                        modifier = Modifier.padding(start = 4.dp))
                 }
                 Spacer(
                     modifier = Modifier
@@ -121,13 +138,102 @@ fun HomeScreen(navigation: NavController, viewModel: HomeViewModel = viewModel()
                 .fillMaxSize()
                 .padding(8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                items(notes.value) { note ->
+                // Filter list by query if necessary.
+                val list = when {
+                    query.value.isEmpty() -> notes.value
+                    else -> notes.value.filter { it.title.contains(query.value, ignoreCase = true) || it.body.contains(query.value, ignoreCase = true) }
+                }
+                items(list) { note ->
                     NoteItem(note) {
                         navigation.navigate(Screen.NoteScreen.route + "/${note.id}") {
                             // To avoid multiple copies of same destination in backstack.
                             launchSingleTop = true
                         }
                     }
+                }
+            }
+        }
+    )
+}
+
+@Composable
+fun SearchBar(onSearch: (String) -> Unit) {
+    val focusManager = LocalFocusManager.current
+    val query = remember { mutableStateOf("") }
+    BasicTextField(
+        modifier = Modifier
+            .clearFocusOnKeyboardDismiss()
+            .padding(end = 4.dp)
+            .background(
+                color = MaterialTheme.colors.onSurface.copy(0.05f),
+                shape = RoundedCornerShape(8.dp)
+            )
+            .border(
+                width = Dp.Hairline,
+                color = MaterialTheme.colors.onSurface.copy(0.1f),
+                shape = RoundedCornerShape(8.dp)
+            )
+            .padding(8.dp)
+            .fillMaxWidth()
+            .height(24.dp),
+        value = query.value,
+        onValueChange = {
+            query.value = it
+            onSearch(query.value)
+        },
+        singleLine = true,
+        cursorBrush = SolidColor(MaterialTheme.colors.primary),
+        textStyle = TextStyle(
+            fontSize = 16.sp,
+            color = MaterialTheme.colors.onSurface
+        ),
+        keyboardOptions = KeyboardOptions(
+            imeAction = ImeAction.Done
+        ),
+        keyboardActions = KeyboardActions(
+            onDone = {
+                focusManager.clearFocus()
+            }
+        ),
+        decorationBox = { innerTextField ->
+            Box {
+                if (query.value.isEmpty()) {
+                    Text(
+                        modifier = Modifier
+                            .align(Alignment.CenterStart),
+                        text = "Search Notes",
+                        style = TextStyle(
+                            fontSize = 14.sp,
+                            color = MaterialTheme.colors.onSurface.copy(0.6f)
+                        )
+                    )
+                    Icon(
+                        modifier = Modifier
+                            .size(20.dp)
+                            .align(Alignment.CenterEnd),
+                        imageVector = Icons.Filled.Search,
+                        contentDescription = null,
+                        tint = MaterialTheme.colors.onSurface.copy(0.6f)
+                    )
+                }
+                if (query.value.isNotEmpty()) {
+                    IconButton(
+                        modifier = Modifier
+                            .size(20.dp)
+                            .align(Alignment.CenterEnd),
+                        onClick = {
+                            query.value = ""
+                            onSearch("")
+                        }) {
+                        Icon(
+                            imageVector = Icons.Filled.Clear,
+                            contentDescription = null,
+                            tint = MaterialTheme.colors.onSurface
+                        )
+                    }
+                }
+                Column(modifier = Modifier.align(Alignment.CenterStart)) {
+                    innerTextField()
                 }
             }
         }

@@ -33,8 +33,9 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.andlill.keynotes.ui.components.menu.MenuIconButton
+import com.andlill.keynotes.ui.components.MenuIconButton
 import com.andlill.keynotes.ui.components.util.LifecycleEventHandler
+import com.andlill.keynotes.ui.components.util.clearFocusOnKeyboardDismiss
 import com.andlill.keynotes.ui.theme.DarkNoteColors
 import com.andlill.keynotes.ui.theme.LightNoteColors
 import com.google.accompanist.insets.navigationBarsWithImePadding
@@ -116,6 +117,7 @@ fun NoteScreen(navigation: NavController, viewModel: NoteViewModel = viewModel()
                 // Note Body
                 TextField(
                     modifier = Modifier
+                        .clearFocusOnKeyboardDismiss()
                         .fillMaxWidth()
                         .fillMaxHeight()
                         .background(Color.Transparent),
@@ -196,6 +198,7 @@ fun ColorSelectButton(color: Color, onClick: () -> Unit) {
 fun MenuTitleTextField(placeholder: String, value: String, focusManager: FocusManager, onValueChange: (String) -> Unit) {
     BasicTextField(
         modifier = Modifier
+            .clearFocusOnKeyboardDismiss()
             .padding(PaddingValues(top = 8.dp, bottom = 8.dp))
             .fillMaxWidth(),
         value = value,
