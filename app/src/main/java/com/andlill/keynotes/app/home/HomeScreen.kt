@@ -1,6 +1,5 @@
 package com.andlill.keynotes.app.home
 
-import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -19,6 +18,7 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -47,7 +47,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun HomeScreen(navigation: NavController, viewModel: HomeViewModel = viewModel()) {
 
-    val query = remember { mutableStateOf("") }
+    val searchQuery = rememberSaveable { mutableStateOf("") }
     val state = rememberScaffoldState()
     val scope = rememberCoroutineScope()
     val notes = viewModel.getNotes().collectAsState(initial = emptyList())
@@ -75,10 +75,7 @@ fun HomeScreen(navigation: NavController, viewModel: HomeViewModel = viewModel()
                     backgroundColor = MaterialTheme.colors.surface,
                     elevation = 0.dp,
                     title = {
-                        SearchBar {
-                            query.value = it
-                            Log.d("App Search: ", it)
-                        }
+                        SearchBar(searchQuery)
                     },
                     navigationIcon = {
                         MenuIconButton(icon = Icons.Filled.Menu, color = MaterialTheme.colors.onSurface) {
@@ -140,8 +137,8 @@ fun HomeScreen(navigation: NavController, viewModel: HomeViewModel = viewModel()
                 verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 // Filter list by query if necessary.
                 val list = when {
-                    query.value.isEmpty() -> notes.value
-                    else -> notes.value.filter { it.title.contains(query.value, ignoreCase = true) || it.body.contains(query.value, ignoreCase = true) }
+                    searchQuery.value.isEmpty() -> notes.value
+                    else -> notes.value.filter { it.title.contains(searchQuery.value, ignoreCase = true) || it.body.contains(searchQuery.value, ignoreCase = true) }
                 }
                 items(list) { note ->
                     NoteItem(note) {
@@ -157,9 +154,8 @@ fun HomeScreen(navigation: NavController, viewModel: HomeViewModel = viewModel()
 }
 
 @Composable
-fun SearchBar(onSearch: (String) -> Unit) {
+fun SearchBar(query: MutableState<String>) {
     val focusManager = LocalFocusManager.current
-    val query = remember { mutableStateOf("") }
     BasicTextField(
         modifier = Modifier
             .clearFocusOnKeyboardDismiss()
@@ -179,7 +175,6 @@ fun SearchBar(onSearch: (String) -> Unit) {
         value = query.value,
         onValueChange = {
             query.value = it
-            onSearch(query.value)
         },
         singleLine = true,
         cursorBrush = SolidColor(MaterialTheme.colors.primary),
@@ -223,7 +218,7 @@ fun SearchBar(onSearch: (String) -> Unit) {
                             .align(Alignment.CenterEnd),
                         onClick = {
                             query.value = ""
-                            onSearch("")
+                            focusManager.clearFocus()
                         }) {
                         Icon(
                             imageVector = Icons.Filled.Clear,
