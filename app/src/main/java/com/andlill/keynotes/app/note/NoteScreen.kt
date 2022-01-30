@@ -19,9 +19,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
@@ -75,10 +73,9 @@ fun NoteScreen(navigation: NavController, viewModel: NoteViewModel = viewModel()
                     backgroundColor = Color.Transparent,
                     elevation = 0.dp,
                     title = {
-                        MenuTitleTextField(
+                        NoteTitleTextField(
                             placeholder = "No Title",
                             value = viewModel.title,
-                            focusManager = LocalFocusManager.current,
                             onValueChange = {
                                 viewModel.title = it
                             }
@@ -86,14 +83,11 @@ fun NoteScreen(navigation: NavController, viewModel: NoteViewModel = viewModel()
                     },
                     navigationIcon = {
                         MenuIconButton(icon = Icons.Filled.ArrowBack, color = MaterialTheme.colors.onSurface) {
-                            // Save note on back navigation.
                             navigation.navigateUp()
                         }
                     },
                     actions = {
                         MenuIconButton(icon = Icons.Outlined.Palette, color = MaterialTheme.colors.onSurface) {
-                            // TODO: Add selectable colors for font, background, etc.
-                            //viewModel.randomColor()
                             themeMenuState.value = true
                         }
                         MenuIconButton(icon = Icons.Outlined.Delete, color = MaterialTheme.colors.onSurface) {
@@ -114,27 +108,8 @@ fun NoteScreen(navigation: NavController, viewModel: NoteViewModel = viewModel()
                 .background(Color.Transparent)
                 .navigationBarsWithImePadding()
                 .padding(innerPadding)) {
-                // Note Body
-                TextField(
-                    modifier = Modifier
-                        .clearFocusOnKeyboardDismiss()
-                        .fillMaxWidth()
-                        .fillMaxHeight()
-                        .background(Color.Transparent),
-                    shape = RectangleShape,
-                    textStyle = MaterialTheme.typography.body1,
-                    colors = TextFieldDefaults.textFieldColors(
-                        backgroundColor = Color.Transparent,
-                        textColor = MaterialTheme.colors.onSurface,
-                        focusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent,
-                        errorIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent
-                    ),
-                    keyboardOptions = KeyboardOptions(
-                        capitalization = KeyboardCapitalization.Sentences
-                    ),
-                    placeholder = { Text("Empty") },
+                NoteBodyTextField(
+                    placeholder = "Empty",
                     value = viewModel.body,
                     onValueChange = {
                         viewModel.body = it
@@ -195,11 +170,45 @@ fun ColorSelectButton(color: Color, onClick: () -> Unit) {
 }
 
 @Composable
-fun MenuTitleTextField(placeholder: String, value: String, focusManager: FocusManager, onValueChange: (String) -> Unit) {
+fun NoteBodyTextField(placeholder: String, value: String, onValueChange: (String) -> Unit) {
     BasicTextField(
         modifier = Modifier
             .clearFocusOnKeyboardDismiss()
-            .padding(PaddingValues(top = 8.dp, bottom = 8.dp))
+            .padding(20.dp)
+            .fillMaxWidth()
+            .fillMaxHeight(),
+        value = value,
+        onValueChange = onValueChange,
+        cursorBrush = SolidColor(MaterialTheme.colors.primary),
+        textStyle = TextStyle(
+            fontSize = 16.sp,
+            color = MaterialTheme.colors.onSurface,
+        ),
+        keyboardOptions = KeyboardOptions(
+            capitalization = KeyboardCapitalization.Sentences
+        ),
+        decorationBox = { innerTextField ->
+            if (value.isEmpty()) {
+                Text(
+                    text = placeholder,
+                    style = TextStyle(
+                        fontSize = 16.sp,
+                        color = MaterialTheme.colors.onSurface.copy(0.6f)
+                    )
+                )
+            }
+            innerTextField()
+        }
+    )
+}
+
+@Composable
+fun NoteTitleTextField(placeholder: String, value: String, onValueChange: (String) -> Unit) {
+    val focusManager = LocalFocusManager.current
+    BasicTextField(
+        modifier = Modifier
+            .clearFocusOnKeyboardDismiss()
+            .padding(top = 8.dp, bottom = 8.dp)
             .fillMaxWidth(),
         value = value,
         onValueChange = onValueChange,
@@ -221,11 +230,10 @@ fun MenuTitleTextField(placeholder: String, value: String, focusManager: FocusMa
         decorationBox = { innerTextField ->
             if (value.isEmpty()) {
                 Text(
-                    modifier = Modifier.alpha(0.6f),
                     text = placeholder,
                     style = TextStyle(
                         fontSize = 16.sp,
-                        color = MaterialTheme.colors.onSurface
+                        color = MaterialTheme.colors.onSurface.copy(0.6f)
                     )
                 )
             }
