@@ -34,8 +34,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.andlill.keynotes.app.Screen
 import com.andlill.keynotes.model.Note
-import com.andlill.keynotes.ui.components.MenuIconButton
-import com.andlill.keynotes.ui.components.util.clearFocusOnKeyboardDismiss
+import com.andlill.keynotes.app.shared.MenuIconButton
+import com.andlill.keynotes.app.shared.clearFocusOnKeyboardDismiss
 import com.andlill.keynotes.ui.theme.DarkNoteColors
 import com.andlill.keynotes.ui.theme.LightNoteColors
 import com.google.accompanist.insets.navigationBarsHeight

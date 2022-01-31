@@ -1,4 +1,4 @@
-package com.andlill.keynotes.ui.components.util
+package com.andlill.keynotes.app.shared
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
