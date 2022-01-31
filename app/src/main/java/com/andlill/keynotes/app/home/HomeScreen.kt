@@ -115,7 +115,7 @@ fun HomeScreen(navigation: NavController, viewModel: HomeViewModel = viewModel()
                         contentDescription = null,
                         tint = MaterialTheme.colors.onSurface.copy(0.6f))
                     Text(
-                        text = "NEW NOTE",
+                        text = "New Note",
                         color = MaterialTheme.colors.onSurface.copy(0.6f),
                         modifier = Modifier.padding(start = 4.dp))
                 }

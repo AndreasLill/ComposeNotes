@@ -1,5 +1,6 @@
 package com.andlill.keynotes.app.note
 
+import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
@@ -13,13 +14,18 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.NotificationAdd
 import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
@@ -28,6 +34,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -38,12 +45,18 @@ import com.andlill.keynotes.ui.theme.DarkNoteColors
 import com.andlill.keynotes.ui.theme.LightNoteColors
 import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.insets.statusBarsHeight
+import java.util.*
 
 @Composable
 fun NoteScreen(navigation: NavController, viewModel: NoteViewModel = viewModel(), noteId: Int = -1) {
 
     val themeMenuState = remember { mutableStateOf(false) }
+    val reminderDialogState = remember { mutableStateOf(false) }
 
+    val reminderIcon = when {
+        viewModel.isReminderActive() -> Icons.Filled.NotificationsActive
+        else -> Icons.Outlined.NotificationAdd
+    }
     val noteColor = when {
         isSystemInDarkTheme() -> DarkNoteColors[viewModel.color]
         else -> LightNoteColors[viewModel.color]
@@ -87,6 +100,9 @@ fun NoteScreen(navigation: NavController, viewModel: NoteViewModel = viewModel()
                         }
                     },
                     actions = {
+                        MenuIconButton(icon = reminderIcon, color = MaterialTheme.colors.onSurface) {
+                            reminderDialogState.value = true
+                        }
                         MenuIconButton(icon = Icons.Outlined.Palette, color = MaterialTheme.colors.onSurface) {
                             themeMenuState.value = true
                         }
@@ -98,6 +114,14 @@ fun NoteScreen(navigation: NavController, viewModel: NoteViewModel = viewModel()
                         // Note theme drop down menu.
                         ThemeDropDown(state = themeMenuState) {
                             viewModel.color = it
+                        }
+                        ReminderDialog(active = viewModel.isReminderActive(), state = reminderDialogState) {
+                            if (it == null) {
+                                viewModel.cancelReminder()
+                            }
+                            else {
+                                viewModel.setReminder(it)
+                            }
                         }
                     }
                 )
@@ -118,6 +142,89 @@ fun NoteScreen(navigation: NavController, viewModel: NoteViewModel = viewModel()
             }
         }
     )
+}
+
+@Composable
+fun ReminderDialog(active: Boolean, state: MutableState<Boolean>, onClick: (Calendar?) -> Unit) {
+    val time = listOf("Morning (9:00)", "Noon (12:00)", "Afternoon (15:00)", "Evening (18:00)", "Night (21:00)")
+    val date = listOf("Tomorrow")
+    val dateDropDownState = remember { mutableStateOf(false) }
+    val timeDropDownState = remember { mutableStateOf(false) }
+    val selectedTime = remember { mutableStateOf(time[0]) }
+    val selectedDate = remember { mutableStateOf(date[0]) }
+    if (state.value) {
+        Dialog(
+            onDismissRequest = { state.value = false }) {
+            Column(modifier = Modifier
+                .background(MaterialTheme.colors.surface)
+                .padding(16.dp)) {
+                Text("Title", fontWeight = FontWeight.SemiBold)
+                Spacer(modifier = Modifier.height(16.dp))
+                TextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = !active,
+                    readOnly = true,
+                    singleLine = true,
+                    shape = RectangleShape,
+                    textStyle = TextStyle(fontSize = 14.sp),
+                    trailingIcon = { Icon(Icons.Filled.ArrowDropDown, null) },
+                    value = selectedTime.value,
+                    onValueChange = {
+                        selectedTime.value = time[time.indexOf(it)]
+                    }
+                )
+                TextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = !active,
+                    readOnly = true,
+                    singleLine = true,
+                    shape = RectangleShape,
+                    textStyle = TextStyle(fontSize = 14.sp),
+                    trailingIcon = { Icon(Icons.Filled.ArrowDropDown, null) },
+                    value = selectedDate.value,
+                    onValueChange = {
+                        selectedDate.value = date[date.indexOf(it)]
+                    }
+                )
+                Box(modifier = Modifier.fillMaxWidth()) {
+                    if (active) {
+                        OutlinedButton(
+                            modifier = Modifier.align(Alignment.CenterStart),
+                            onClick = {
+                                onClick(null)
+                                Log.d("ReminderDialog", "Reminder cancelled.")
+                            }) {
+                            Text("Cancel")
+                        }
+                    }
+                    else {
+                        OutlinedButton(
+                            modifier = Modifier.align(Alignment.CenterStart),
+                            onClick = {
+                                val calendar = Calendar.getInstance()
+                                calendar.add(Calendar.DATE, 1)
+                                when (selectedTime.value) {
+                                    time[0] -> calendar.set(Calendar.HOUR_OF_DAY, 9)
+                                    time[1] -> calendar.set(Calendar.HOUR_OF_DAY, 12)
+                                    time[2] -> calendar.set(Calendar.HOUR_OF_DAY, 15)
+                                    time[3] -> calendar.set(Calendar.HOUR_OF_DAY, 18)
+                                    time[4] -> calendar.set(Calendar.HOUR_OF_DAY, 21)
+                                }
+                                Log.d("ReminderDialog", "Reminder Set: ${selectedDate.value}, ${selectedTime.value}.")
+                                onClick(calendar)
+                            }) {
+                            Text("Start")
+                        }
+                    }
+                    OutlinedButton(
+                        modifier = Modifier.align(Alignment.CenterEnd),
+                        onClick = { state.value = false }) {
+                        Text("Close")
+                    }
+                }
+            }
+        }
+    }
 }
 
 @Composable

@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">KeyNotes</string>
+    <string name="channel_name">AppNotifications</string>
+    <string name="channel_description">AppNotifications</string>
 </resources>

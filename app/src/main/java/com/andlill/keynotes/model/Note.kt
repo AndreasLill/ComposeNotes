@@ -12,4 +12,5 @@ data class Note(
     val created: Long = 0,
     val modified: Long = 0,
     val color: Int = 0,
+    val reminder: Long = 0,
 )

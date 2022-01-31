@@ -22,9 +22,10 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
     var created by mutableStateOf(0L)
     var modified by mutableStateOf(0L)
     var color by mutableStateOf(0)
+    var reminder by mutableStateOf(0L)
 
     fun loadNote(noteId: Int) = viewModelScope.launch {
-        NoteRepository.getNote(getApplication(), noteId).collectLatest {
+        NoteRepository.getNoteAsFlow(getApplication(), noteId).collectLatest {
             it?.let { note ->
                 id = note.id
                 title = note.title
@@ -32,6 +33,7 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
                 created = note.created
                 modified = note.modified
                 color = note.color
+                reminder = note.reminder
             }
         }
     }
@@ -47,6 +49,7 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
             created = created,
             modified = modified,
             color = color,
+            reminder = reminder
         )
         NoteRepository.deleteNote(getApplication(), note)
     }
@@ -68,7 +71,22 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
             // Set modified timestamp.
             modified = Calendar.getInstance().timeInMillis,
             color = color,
+            reminder = reminder,
         )
         NoteRepository.insertNote(getApplication(), note)
+    }
+
+    fun isReminderActive(): Boolean {
+        return reminder > 0
+    }
+
+    fun setReminder(calendar: Calendar) {
+        reminder = calendar.timeInMillis
+        NoteBroadcaster.setAlarm(getApplication(), calendar, id, title + System.lineSeparator() + body)
+    }
+
+    fun cancelReminder() {
+        reminder = 0
+        NoteBroadcaster.cancelAlarm(getApplication(), id)
     }
 }
