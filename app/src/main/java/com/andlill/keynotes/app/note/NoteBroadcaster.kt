@@ -11,7 +11,6 @@ import java.util.*
 @SuppressLint("UnspecifiedImmutableFlag")
 object NoteBroadcaster {
 
-    // Set alarm using note ID as pending intent id.
     fun setAlarm(context: Context, calendar: Calendar, id: Int, text: String) {
         val alarm = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent("com.andlill.keynotes.MainReceiver").apply {
@@ -24,7 +23,6 @@ object NoteBroadcaster {
         Log.d("NoteBroadcaster", "Broadcast '$id' Sent")
     }
 
-    // Cancel alarm using note ID as pending intent id.
     fun cancelAlarm(context: Context, id: Int) {
         val alarm = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent("com.andlill.keynotes.MainReceiver").apply {
@@ -35,13 +33,5 @@ object NoteBroadcaster {
         alarm.cancel(intentPending)
         intentPending.cancel()
         Log.d("NoteBroadcaster", "Broadcast '$id' Cancelled")
-    }
-
-    // Check if an alarm with the ID is active.
-    fun isAlarmActive(context: Context, id: Int): Boolean {
-        val intent = Intent("com.andlill.keynotes.MainReceiver").apply {
-            setPackage("com.andlill.keynotes")
-        }
-        return PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_NO_CREATE) != null
     }
 }
