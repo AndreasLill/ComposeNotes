@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="transparent">#00000000</color>
+
+    <color name="light_primary">#303F9F</color>
+    <color name="light_primary_content">#FFFFFF</color>
+    <color name="light_content">#263238</color>
+    <color name="light_surface">#FFFFFF</color>
+
+    <color name="dark_primary">#C51162</color>
+    <color name="dark_primary_content">#FFFFFF</color>
+    <color name="dark_content">#FFFFFF</color>
+    <color name="dark_surface">#13191C</color>
 </resources>

@@ -159,12 +159,12 @@ fun SearchBar(query: MutableState<String>) {
             .clearFocusOnKeyboardDismiss()
             .padding(end = 4.dp)
             .background(
-                color = MaterialTheme.colors.onSurface.copy(0.05f),
+                color = MaterialTheme.colors.surface,
                 shape = RoundedCornerShape(8.dp)
             )
             .border(
                 width = Dp.Hairline,
-                color = MaterialTheme.colors.onSurface.copy(0.1f),
+                color = MaterialTheme.colors.onSurface.copy(0.4f),
                 shape = RoundedCornerShape(8.dp)
             )
             .padding(8.dp)

@@ -52,7 +52,7 @@ fun NoteScreen(navigation: NavController, viewModel: NoteViewModel = viewModel()
     val reminderDialogState = remember { mutableStateOf(false) }
 
     val reminderIcon = when {
-        viewModel.isReminderActive() -> Icons.Filled.NotificationsActive
+        (viewModel.reminder > 0) -> Icons.Filled.NotificationsActive
         else -> Icons.Outlined.NotificationAdd
     }
     val noteColor = when {
@@ -109,11 +109,10 @@ fun NoteScreen(navigation: NavController, viewModel: NoteViewModel = viewModel()
                             viewModel.deleteNote()
                             navigation.navigateUp()
                         }
-                        // Note theme drop down menu.
                         ThemeDropDown(state = themeMenuState) {
                             viewModel.color = it
                         }
-                        ReminderDialog(active = viewModel.isReminderActive(), state = reminderDialogState) {
+                        ReminderDialog(reminderTime = viewModel.reminder, state = reminderDialogState) {
                             if (it == null) {
                                 viewModel.cancelReminder()
                             }

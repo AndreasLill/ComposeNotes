@@ -6,6 +6,8 @@ import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
+import com.andlill.keynotes.R
 
 val LightNoteColors = listOf(
     Color(0xFFFFCDD2),
@@ -29,32 +31,33 @@ val DarkNoteColors = listOf(
     Color(0xFF533E34),
 )
 
-private val LightAppPalette = lightColors(
-    primary = Color(0xFFFF1744),
-    onPrimary = Color(0xFF263238),
-    secondary = Color(0xFFFFFFFF),
-    onSecondary = Color(0xFF263238),
-    background = Color(0xFFECEFF1),
-    onBackground = Color(0xFF263238),
-    surface = Color(0xFFFFFFFF),
-    onSurface = Color(0xFF263238),
-)
-
-private val DarkAppPalette = darkColors(
-    primary = Color(0xFFFF1744),
-    onPrimary = Color(0xFFFFFFFF),
-    secondary = Color(0xFF263238),
-    onSecondary = Color(0xFFFFFFFF),
-    background = Color(0xFF263238),
-    onBackground = Color(0xFFFFFFFF),
-    surface = Color(0xFF263238),
-    onSurface = Color(0xFFFFFFFF),
-)
-
 @Composable
 fun AppTheme(content: @Composable () -> Unit) {
+
+    val light = lightColors(
+        primary = colorResource(R.color.light_primary),
+        onPrimary = colorResource(R.color.light_content),
+        secondary = colorResource(R.color.light_primary),
+        onSecondary = colorResource(R.color.light_content),
+        background = colorResource(R.color.light_surface),
+        onBackground = colorResource(R.color.light_content),
+        surface = colorResource(R.color.light_surface),
+        onSurface = colorResource(R.color.light_content),
+    )
+
+    val dark = darkColors(
+        primary = colorResource(R.color.dark_primary),
+        onPrimary = colorResource(R.color.dark_content),
+        secondary = colorResource(R.color.dark_primary),
+        onSecondary = colorResource(R.color.dark_content),
+        background = colorResource(R.color.dark_surface),
+        onBackground = colorResource(R.color.dark_content),
+        surface = colorResource(R.color.dark_surface),
+        onSurface = colorResource(R.color.dark_content),
+    )
+
     MaterialTheme(
-        colors = if (isSystemInDarkTheme()) DarkAppPalette else LightAppPalette,
+        colors = if (isSystemInDarkTheme()) dark else light,
         typography = Typography,
         shapes = Shapes,
         content = content
