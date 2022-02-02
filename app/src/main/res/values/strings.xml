@@ -2,4 +2,11 @@
     <string name="app_name">KeyNotes</string>
     <string name="channel_name">AppNotifications</string>
     <string name="channel_description">AppNotifications</string>
+
+    <string name="home_Screen_button_add_note">Add Note</string>
+    <string name="home_screen_search_bar_placeholder">Search Notes</string>
+    <string name="note_screen_theme_dropdown_title">Colors</string>
+    <string name="note_screen_reminder_dialog_title">Reminder</string>
+    <string name="note_screen_reminder_dialog_button_add">Add Reminder</string>
+    <string name="note_screen_reminder_dialog_button_cancel">Cancel Reminder</string>
 </resources>

@@ -1,10 +1,8 @@
 package com.andlill.keynotes.app.note.composables
 
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
+import android.text.format.DateFormat.is24HourFormat
 import android.util.Log
-import android.widget.DatePicker
-import android.widget.TimePicker
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -18,21 +16,25 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.andlill.keynotes.R
+import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.android.material.timepicker.MaterialTimePicker
+import com.google.android.material.timepicker.TimeFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
 fun ReminderDialog(reminderTime: Long, state: MutableState<Boolean>, onClick: (Calendar?) -> Unit) {
     if (state.value) {
+        val context = LocalContext.current
 
         // Load calendar with active reminder time if exists.
         val calendar = Calendar.getInstance()
@@ -40,28 +42,35 @@ fun ReminderDialog(reminderTime: Long, state: MutableState<Boolean>, onClick: (C
             calendar.timeInMillis = reminderTime
         }
 
-        val time = listOf("Morning (9:00)", "Noon (12:00)", "Afternoon (15:00)", "Evening (18:00)", "Night (21:00)", "Midnight (00:00)")
-
         // Current date and time as default value.
         val selectedDate = remember { mutableStateOf(SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(calendar.time)) }
         val selectedTime = remember { mutableStateOf(SimpleDateFormat("HH:mm", Locale.getDefault()).format(calendar.time)) }
 
-        val context = LocalContext.current
-        val datePickerDialog = DatePickerDialog(
-            context, R.style.AppDatePicker,
-            { _: DatePicker, year: Int, month: Int, dayOfMonth: Int ->
-                calendar.set(year, month, dayOfMonth)
-                selectedDate.value = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(calendar.time)
-            }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)
-        )
-        val timePickerDialog = TimePickerDialog(
-            context, R.style.AppTimePicker,
-            { _: TimePicker, hour: Int, minute: Int ->
-                calendar.set(Calendar.HOUR_OF_DAY, hour)
-                calendar.set(Calendar.MINUTE, minute)
-                selectedTime.value = SimpleDateFormat("HH:mm", Locale.getDefault()).format(calendar.time)
-            }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true
-        )
+        // Create time picker dialog.
+        val timeFormat = if (is24HourFormat(context)) TimeFormat.CLOCK_24H else TimeFormat.CLOCK_12H
+        val timePickerDialog = MaterialTimePicker.Builder()
+            .setTimeFormat(timeFormat)
+            .setHour(calendar.get(Calendar.HOUR_OF_DAY))
+            .setMinute(calendar.get(Calendar.MINUTE))
+            .build()
+        timePickerDialog.addOnPositiveButtonClickListener {
+            calendar.set(Calendar.HOUR_OF_DAY, timePickerDialog.hour)
+            calendar.set(Calendar.MINUTE, timePickerDialog.minute)
+            selectedTime.value = SimpleDateFormat("HH:mm", Locale.getDefault()).format(calendar.time)
+        }
+
+        // Create date picker dialog.
+        val datePickerDialog = MaterialDatePicker.Builder.datePicker()
+            .setSelection(calendar.timeInMillis)
+            .build()
+        datePickerDialog.addOnPositiveButtonClickListener {
+            val resultCalendar = Calendar.getInstance()
+            resultCalendar.timeInMillis = it
+            calendar.set(Calendar.YEAR, resultCalendar.get(Calendar.YEAR))
+            calendar.set(Calendar.MONTH, resultCalendar.get(Calendar.MONTH))
+            calendar.set(Calendar.DAY_OF_MONTH, resultCalendar.get(Calendar.DAY_OF_MONTH))
+            selectedDate.value = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(resultCalendar.time)
+        }
 
         Dialog(
             onDismissRequest = { state.value = false }) {
@@ -69,25 +78,27 @@ fun ReminderDialog(reminderTime: Long, state: MutableState<Boolean>, onClick: (C
                 .background(MaterialTheme.colors.surface)
                 .padding(16.dp)) {
                 Text(
-                    text = "Reminder",
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.SemiBold,
+                    text = stringResource(R.string.note_screen_reminder_dialog_title).uppercase(),
+                    letterSpacing = 1.sp,
+                    fontSize = 10.sp,
                     color = MaterialTheme.colors.onSurface)
                 Spacer(modifier = Modifier.height(16.dp))
                 TextField(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { datePickerDialog.show() },
+                        .clickable {
+                            (context as AppCompatActivity).let {
+                                datePickerDialog.show(it.supportFragmentManager, "DatePickerDialog")
+                            }
+                        },
                     enabled = false,
                     readOnly = true,
                     singleLine = true,
                     shape = RectangleShape,
                     colors = TextFieldDefaults.outlinedTextFieldColors(
                         backgroundColor = MaterialTheme.colors.surface,
-                        textColor = MaterialTheme.colors.onSurface,
                         disabledTextColor = MaterialTheme.colors.onSurface,
-                        trailingIconColor = MaterialTheme.colors.primary,
-                        disabledTrailingIconColor = MaterialTheme.colors.primary,
+                        disabledTrailingIconColor = MaterialTheme.colors.onSurface,
                     ),
                     textStyle = TextStyle(fontSize = 15.sp),
                     trailingIcon = { Icon(Icons.Filled.ArrowDropDown, null) },
@@ -97,33 +108,33 @@ fun ReminderDialog(reminderTime: Long, state: MutableState<Boolean>, onClick: (C
                 TextField(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { timePickerDialog.show() },
+                        .clickable {
+                            (context as AppCompatActivity).let {
+                                timePickerDialog.show(it.supportFragmentManager, "TimePickerDialog")
+                            }
+                        },
                     enabled = false,
                     readOnly = true,
                     singleLine = true,
                     shape = RectangleShape,
                     colors = TextFieldDefaults.outlinedTextFieldColors(
                         backgroundColor = MaterialTheme.colors.surface,
-                        textColor = MaterialTheme.colors.onSurface,
                         disabledTextColor = MaterialTheme.colors.onSurface,
-                        trailingIconColor = MaterialTheme.colors.primary,
-                        disabledTrailingIconColor = MaterialTheme.colors.primary,
+                        disabledTrailingIconColor = MaterialTheme.colors.onSurface,
                     ),
                     textStyle = TextStyle(fontSize = 15.sp),
                     trailingIcon = { Icon(Icons.Filled.ArrowDropDown, null) },
                     value = selectedTime.value,
-                    onValueChange = {
-                        selectedTime.value = time[time.indexOf(it)]
-                    }
+                    onValueChange = { }
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 if (reminderTime > 0) {
                     OutlinedButton(
+                        modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.outlinedButtonColors(
                             contentColor = MaterialTheme.colors.onSurface
                         ),
                         onClick = {
-                            Log.d("ReminderDialog", "Reminder cancelled.")
                             onClick(null)
                         }) {
                         Icon(
@@ -132,13 +143,14 @@ fun ReminderDialog(reminderTime: Long, state: MutableState<Boolean>, onClick: (C
                             contentDescription = null)
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Cancel",
+                            text = stringResource(R.string.note_screen_reminder_dialog_button_cancel),
                             fontSize = 13.sp,
                             fontWeight = FontWeight.SemiBold)
                     }
                 }
                 else {
                     OutlinedButton(
+                        modifier = Modifier.fillMaxWidth(),
                         colors = ButtonDefaults.outlinedButtonColors(
                             contentColor = MaterialTheme.colors.onSurface
                         ),
@@ -150,9 +162,9 @@ fun ReminderDialog(reminderTime: Long, state: MutableState<Boolean>, onClick: (C
                             modifier = Modifier.size(20.dp),
                             imageVector = Icons.Outlined.Notifications,
                             contentDescription = null)
-                        Spacer(modifier = Modifier.width(8.dp))
+                        Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = "Start",
+                            text = stringResource(R.string.note_screen_reminder_dialog_button_add),
                             fontSize = 13.sp,
                             fontWeight = FontWeight.SemiBold)
                     }

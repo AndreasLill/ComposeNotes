@@ -24,7 +24,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -32,13 +34,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.andlill.keynotes.R
 import com.andlill.keynotes.app.Screen
-import com.andlill.keynotes.model.Note
 import com.andlill.keynotes.app.shared.MenuIconButton
 import com.andlill.keynotes.app.shared.clearFocusOnKeyboardDismiss
+import com.andlill.keynotes.model.Note
 import com.andlill.keynotes.ui.theme.DarkNoteColors
 import com.andlill.keynotes.ui.theme.LightNoteColors
-import com.google.accompanist.insets.navigationBarsHeight
+import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsHeight
 import kotlinx.coroutines.launch
 
@@ -88,42 +91,29 @@ fun HomeScreen(navigation: NavController, viewModel: HomeViewModel = viewModel()
             }
         },
         bottomBar = {
-            Column {
-                OutlinedButton(modifier = Modifier
-                    .background(MaterialTheme.colors.surface)
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = MaterialTheme.colors.surface,
-                        contentColor = MaterialTheme.colors.onSurface,
-                    ),
-                    elevation = ButtonDefaults.elevation(
-                        defaultElevation = 0.dp,
-                        pressedElevation = 0.dp,
-                        hoveredElevation = 0.dp,
-                        focusedElevation = 0.dp,
-                    ),
-                    shape = RoundedCornerShape(8.dp),
-                    onClick = {
-                        navigation.navigate(Screen.NoteScreen.route) {
-                            // To avoid multiple copies of same destination in backstack.
-                            launchSingleTop = true
-                        }
-                    }) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = null,
-                        tint = MaterialTheme.colors.onSurface.copy(0.6f))
-                    Text(
-                        text = "New Note",
-                        color = MaterialTheme.colors.onSurface.copy(0.6f),
-                        modifier = Modifier.padding(start = 4.dp))
-                }
-                Spacer(
-                    modifier = Modifier
-                        .navigationBarsHeight()
-                        .fillMaxWidth()
-                )
+            OutlinedButton(modifier = Modifier
+                .navigationBarsPadding()
+                .padding(8.dp)
+                .fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Color.Transparent,
+                    contentColor = MaterialTheme.colors.onSurface,
+                ),
+                onClick = {
+                    navigation.navigate(Screen.NoteScreen.route) {
+                        // To avoid multiple copies of same destination in backstack.
+                        launchSingleTop = true
+                    }
+                }) {
+                Icon(
+                    modifier = Modifier.size(20.dp),
+                    imageVector = Icons.Default.Add,
+                    contentDescription = null)
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = stringResource(R.string.home_Screen_button_add_note),
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.SemiBold)
             }
         },
         content = { innerPadding ->
@@ -194,7 +184,7 @@ fun SearchBar(query: MutableState<String>) {
                     Text(
                         modifier = Modifier
                             .align(Alignment.CenterStart),
-                        text = "Search Notes",
+                        text = stringResource(R.string.home_screen_search_bar_placeholder),
                         style = TextStyle(
                             fontSize = 14.sp,
                             color = MaterialTheme.colors.onSurface.copy(0.6f)

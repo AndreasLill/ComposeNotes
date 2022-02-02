@@ -36,24 +36,20 @@ fun AppTheme(content: @Composable () -> Unit) {
 
     val light = lightColors(
         primary = colorResource(R.color.light_primary),
-        onPrimary = colorResource(R.color.light_content),
-        secondary = colorResource(R.color.light_primary),
-        onSecondary = colorResource(R.color.light_content),
+        onPrimary = colorResource(R.color.light_on_primary),
         background = colorResource(R.color.light_surface),
-        onBackground = colorResource(R.color.light_content),
+        onBackground = colorResource(R.color.light_on_surface),
         surface = colorResource(R.color.light_surface),
-        onSurface = colorResource(R.color.light_content),
+        onSurface = colorResource(R.color.light_on_surface),
     )
 
     val dark = darkColors(
         primary = colorResource(R.color.dark_primary),
-        onPrimary = colorResource(R.color.dark_content),
-        secondary = colorResource(R.color.dark_primary),
-        onSecondary = colorResource(R.color.dark_content),
+        onPrimary = colorResource(R.color.dark_on_primary),
         background = colorResource(R.color.dark_surface),
-        onBackground = colorResource(R.color.dark_content),
+        onBackground = colorResource(R.color.dark_on_surface),
         surface = colorResource(R.color.dark_surface),
-        onSurface = colorResource(R.color.dark_content),
+        onSurface = colorResource(R.color.dark_on_surface),
     )
 
     MaterialTheme(

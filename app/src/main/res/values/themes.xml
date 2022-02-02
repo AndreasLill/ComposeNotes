@@ -1,29 +1,26 @@
 <resources>
     <!-- Base application theme. -->
-    <style name="Theme.KeyNotes" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="Theme.KeyNotes" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:windowTranslucentNavigation">true</item>
         <item name="android:statusBarColor">@color/transparent</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="elevationOverlayEnabled">false</item>
+        <item name="materialCalendarTheme">@style/AppDatePicker</item>
+        <item name="materialTimePickerTheme">@style/AppTimePicker</item>
     </style>
 
-    <style name="AppDatePicker" parent="ThemeOverlay.MaterialComponents.MaterialCalendar">
+    <style name="AppDatePicker" parent="@style/ThemeOverlay.MaterialComponents.MaterialCalendar">
         <item name="colorPrimary">@color/light_primary</item>
-        <item name="colorAccent">@color/light_primary</item>
+        <item name="colorOnPrimary">@color/light_on_primary</item>
         <item name="colorSurface">@color/light_surface</item>
-        <item name="android:textColorPrimary">@color/light_content</item>
-        <item name="android:textColorSecondary">@color/light_content</item>
-        <item name="android:textColorPrimaryInverse">@color/light_primary_content</item>
-        <item name="android:textColorSecondaryInverse">@color/light_primary_content</item>
+        <item name="colorOnSurface">@color/light_on_surface</item>
     </style>
 
-    <style name="AppTimePicker" parent="ThemeOverlay.MaterialComponents.TimePicker">
-        <item name="materialClockStyle">@style/AppTimePicker.Clock</item>
+    <style name="AppTimePicker" parent="@style/ThemeOverlay.MaterialComponents.TimePicker">
         <item name="colorPrimary">@color/light_primary</item>
-        <item name="colorAccent">@color/light_primary</item>
-    </style>
-    <style name="AppTimePicker.Clock" parent="Widget.MaterialComponents.TimePicker.Clock">
-        <item name="clockFaceBackgroundColor">@color/light_surface</item>
+        <item name="colorOnPrimary">@color/light_on_primary</item>
+        <item name="colorSurface">@color/light_surface</item>
+        <item name="colorOnSurface">@color/light_on_surface</item>
     </style>
 
 </resources>

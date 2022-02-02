@@ -10,9 +10,11 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.andlill.keynotes.R
 import com.andlill.keynotes.ui.theme.DarkNoteColors
 import com.andlill.keynotes.ui.theme.LightNoteColors
 
@@ -25,11 +27,11 @@ fun ThemeDropDown(state: MutableState<Boolean>, onClick: (Int) -> Unit) {
         onDismissRequest = { state.value = false }) {
         Column(modifier = Modifier.padding(PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp))) {
             Text(
-                text = "Colors",
-                style = MaterialTheme.typography.caption,
-                color = MaterialTheme.colors.onSurface,
-                modifier = Modifier.alpha(0.6f))
-            Spacer(modifier = Modifier.height(8.dp))
+                text = stringResource(R.string.note_screen_theme_dropdown_title).uppercase(),
+                letterSpacing = 1.sp,
+                fontSize = 10.sp,
+                color = MaterialTheme.colors.onSurface)
+            Spacer(modifier = Modifier.height(16.dp))
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.horizontalScroll(rememberScrollState())) {

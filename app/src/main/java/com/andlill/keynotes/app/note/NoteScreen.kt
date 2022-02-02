@@ -67,6 +67,7 @@ fun NoteScreen(navigation: NavController, viewModel: NoteViewModel = viewModel()
     // Handle lifecycle events.
     LifecycleEventHandler { event ->
         when (event) {
+            // TODO: Cancel reminder when note is not saved on back press.
             // Save note on stop event.
             Lifecycle.Event.ON_STOP -> viewModel.saveNote()
             else -> {}

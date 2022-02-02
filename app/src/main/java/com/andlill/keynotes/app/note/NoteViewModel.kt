@@ -52,6 +52,7 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
             reminder = reminder
         )
         NoteRepository.deleteNote(getApplication(), note)
+        cancelReminder()
     }
 
     fun saveNote() = viewModelScope.launch {
@@ -78,7 +79,7 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
 
     fun setReminder(calendar: Calendar) {
         reminder = calendar.timeInMillis
-        NoteBroadcaster.setAlarm(getApplication(), calendar, id, title + System.lineSeparator() + body)
+        NoteBroadcaster.setAlarm(getApplication(), calendar, id, title + System.lineSeparator() + body, color)
     }
 
     fun cancelReminder() {
