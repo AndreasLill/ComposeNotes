@@ -38,6 +38,21 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun onClose() = viewModelScope.launch {
+        // Don't save deleted note, cancel any reminder.
+        if (deleted) {
+            cancelReminder()
+            return@launch
+        }
+        // Don't save new note with no content, cancel any reminder.
+        if (title.isEmpty() && body.isEmpty() && created == 0L) {
+            cancelReminder()
+            return@launch
+        }
+
+        saveNote()
+    }
+
     fun deleteNote() = viewModelScope.launch {
         // Set deleted to avoid saving.
         deleted = true
@@ -52,17 +67,9 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
             reminder = reminder
         )
         NoteRepository.deleteNote(getApplication(), note)
-        cancelReminder()
     }
 
-    fun saveNote() = viewModelScope.launch {
-        // Don't save deleted note.
-        if (deleted)
-            return@launch
-        // Don't save if a new note with no content.
-        if (title.isEmpty() && body.isEmpty() && created == 0L)
-            return@launch
-
+    private suspend fun saveNote() {
         val note = Note(
             id = id,
             title = title.trim(),

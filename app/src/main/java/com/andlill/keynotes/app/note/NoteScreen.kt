@@ -26,6 +26,7 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -44,6 +45,7 @@ import com.andlill.keynotes.ui.theme.DarkNoteColors
 import com.andlill.keynotes.ui.theme.LightNoteColors
 import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.insets.statusBarsHeight
+import com.andlill.keynotes.R
 
 @Composable
 fun NoteScreen(navigation: NavController, viewModel: NoteViewModel = viewModel(), noteId: Int = -1) {
@@ -67,9 +69,7 @@ fun NoteScreen(navigation: NavController, viewModel: NoteViewModel = viewModel()
     // Handle lifecycle events.
     LifecycleEventHandler { event ->
         when (event) {
-            // TODO: Cancel reminder when note is not saved on back press.
-            // Save note on stop event.
-            Lifecycle.Event.ON_STOP -> viewModel.saveNote()
+            Lifecycle.Event.ON_STOP -> viewModel.onClose()
             else -> {}
         }
     }
@@ -85,13 +85,6 @@ fun NoteScreen(navigation: NavController, viewModel: NoteViewModel = viewModel()
                     backgroundColor = Color.Transparent,
                     elevation = 0.dp,
                     title = {
-                        NoteTitleTextField(
-                            placeholder = "No Title",
-                            value = viewModel.title,
-                            onValueChange = {
-                                viewModel.title = it
-                            }
-                        )
                     },
                     navigationIcon = {
                         MenuIconButton(icon = Icons.Filled.ArrowBack, color = MaterialTheme.colors.onSurface) {
@@ -130,8 +123,15 @@ fun NoteScreen(navigation: NavController, viewModel: NoteViewModel = viewModel()
                 .background(Color.Transparent)
                 .navigationBarsWithImePadding()
                 .padding(innerPadding)) {
+                NoteTitleTextField(
+                    placeholder = stringResource(R.string.note_screen_title_placeholder),
+                    value = viewModel.title,
+                    onValueChange = {
+                        viewModel.title = it
+                    }
+                )
                 NoteBodyTextField(
-                    placeholder = "Empty",
+                    placeholder = stringResource(R.string.note_screen_body_placeholder),
                     value = viewModel.body,
                     onValueChange = {
                         viewModel.body = it
@@ -147,14 +147,14 @@ fun NoteBodyTextField(placeholder: String, value: String, onValueChange: (String
     BasicTextField(
         modifier = Modifier
             .clearFocusOnKeyboardDismiss()
-            .padding(20.dp)
+            .padding(start = 20.dp, end = 20.dp, top = 16.dp, bottom = 16.dp)
             .fillMaxWidth()
             .fillMaxHeight(),
         value = value,
         onValueChange = onValueChange,
         cursorBrush = SolidColor(MaterialTheme.colors.primary),
         textStyle = TextStyle(
-            fontSize = 16.sp,
+            fontSize = 15.sp,
             color = MaterialTheme.colors.onSurface,
         ),
         keyboardOptions = KeyboardOptions(
@@ -181,7 +181,7 @@ fun NoteTitleTextField(placeholder: String, value: String, onValueChange: (Strin
     BasicTextField(
         modifier = Modifier
             .clearFocusOnKeyboardDismiss()
-            .padding(top = 8.dp, bottom = 8.dp)
+            .padding(start = 20.dp, end = 20.dp, top = 8.dp, bottom = 8.dp)
             .fillMaxWidth(),
         value = value,
         onValueChange = onValueChange,
