@@ -25,7 +25,7 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
     var reminder by mutableStateOf(0L)
 
     fun loadNote(noteId: Int) = viewModelScope.launch {
-        NoteRepository.getNoteAsFlow(getApplication(), noteId).collectLatest {
+        NoteRepository.getNote(getApplication(), noteId).collectLatest {
             it?.let { note ->
                 id = note.id
                 title = note.title

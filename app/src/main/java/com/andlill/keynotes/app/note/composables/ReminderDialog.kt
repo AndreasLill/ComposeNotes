@@ -3,6 +3,7 @@ package com.andlill.keynotes.app.note.composables
 import android.text.format.DateFormat.is24HourFormat
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -131,6 +132,7 @@ fun ReminderDialog(reminderTime: Long, state: MutableState<Boolean>, onClick: (C
                 if (reminderTime > 0) {
                     OutlinedButton(
                         modifier = Modifier.fillMaxWidth(),
+                        border = BorderStroke(1.dp, MaterialTheme.colors.primary),
                         colors = ButtonDefaults.outlinedButtonColors(
                             contentColor = MaterialTheme.colors.onSurface
                         ),

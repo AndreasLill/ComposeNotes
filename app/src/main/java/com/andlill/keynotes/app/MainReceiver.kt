@@ -15,6 +15,7 @@ import com.andlill.keynotes.R
 import com.andlill.keynotes.data.repository.NoteRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 @SuppressLint("UnspecifiedImmutableFlag")
@@ -45,7 +46,7 @@ class MainReceiver : BroadcastReceiver() {
 
         // Reset note to 0 (if not repeating reminder)
         CoroutineScope(Dispatchers.Default).launch {
-            NoteRepository.getNote(context, id)?.let { note ->
+            NoteRepository.getNote(context, id).first()?.let { note ->
                 NoteRepository.insertNote(context, note.copy(reminder = 0))
             }
         }

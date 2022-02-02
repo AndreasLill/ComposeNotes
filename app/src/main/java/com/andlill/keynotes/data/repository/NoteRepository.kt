@@ -15,12 +15,8 @@ object NoteRepository {
         AppDatabase.get(context).noteDao.deleteNote(note)
     }
 
-    suspend fun getNote(context: Context, id: Int): Note? {
+    fun getNote(context: Context, id: Int): Flow<Note?> {
         return AppDatabase.get(context).noteDao.getNote(id)
-    }
-
-    fun getNoteAsFlow(context: Context, id: Int): Flow<Note?> {
-        return AppDatabase.get(context).noteDao.getNoteAsFlow(id)
     }
 
     fun getAllNotes(context: Context): Flow<List<Note>> {
