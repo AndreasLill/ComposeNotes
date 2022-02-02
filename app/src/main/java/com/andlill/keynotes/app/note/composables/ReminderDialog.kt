@@ -136,6 +136,7 @@ fun ReminderDialog(reminderTime: Long, state: MutableState<Boolean>, onClick: (C
                         ),
                         onClick = {
                             onClick(null)
+                            state.value = false
                         }) {
                         Icon(
                             modifier = Modifier.size(20.dp),
@@ -157,6 +158,7 @@ fun ReminderDialog(reminderTime: Long, state: MutableState<Boolean>, onClick: (C
                         onClick = {
                             Log.d("ReminderDialog", "Reminder Set: ${selectedDate.value}, ${selectedTime.value}.")
                             onClick(calendar)
+                            state.value = false
                         }) {
                         Icon(
                             modifier = Modifier.size(20.dp),

@@ -11,12 +11,13 @@ import java.util.*
 @SuppressLint("UnspecifiedImmutableFlag")
 object NoteBroadcaster {
 
-    fun setAlarm(context: Context, calendar: Calendar, id: Int, text: String, color: Int) {
+    fun setAlarm(context: Context, calendar: Calendar, id: Int, title: String, text: String, color: Int) {
         val alarm = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent("com.andlill.keynotes.MainReceiver").apply {
             putExtra("id", id)
             putExtra("color", color)
-            putExtra("contentText", text)
+            putExtra("title", title)
+            putExtra("text", text)
             setPackage("com.andlill.keynotes")
         }
         val intentPending = PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT)

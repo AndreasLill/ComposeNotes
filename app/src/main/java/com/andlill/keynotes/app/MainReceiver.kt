@@ -20,12 +20,14 @@ import kotlinx.coroutines.launch
 @SuppressLint("UnspecifiedImmutableFlag")
 class MainReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-        val contentText = intent.getStringExtra("contentText")
+        val contentTitle = intent.getStringExtra("title")
+        val contentText = intent.getStringExtra("text")
         val id = intent.getIntExtra("id", 0)
         val color = intent.getIntExtra("color", Color.WHITE)
 
         val notification = NotificationCompat.Builder(context, "APP_CHANNEL_ID")
             .setSmallIcon(R.drawable.ic_baseline_notifications_active)
+            .setContentTitle(contentTitle)
             .setContentText(contentText)
             .setStyle(NotificationCompat.BigTextStyle().bigText(contentText))
             .setColor(color)
@@ -42,7 +44,7 @@ class MainReceiver : BroadcastReceiver() {
         intentPending.cancel()
 
         // Reset note to 0 (if not repeating reminder)
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.Default).launch {
             NoteRepository.getNote(context, id)?.let { note ->
                 NoteRepository.insertNote(context, note.copy(reminder = 0))
             }

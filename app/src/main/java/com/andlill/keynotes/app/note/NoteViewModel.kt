@@ -86,7 +86,7 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
 
     fun setReminder(calendar: Calendar) {
         reminder = calendar.timeInMillis
-        NoteBroadcaster.setAlarm(getApplication(), calendar, id, title + System.lineSeparator() + body, color)
+        NoteBroadcaster.setAlarm(getApplication(), calendar, id, title, body, color)
     }
 
     fun cancelReminder() {
