@@ -8,15 +8,17 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.util.Log
-import androidx.compose.material.MaterialTheme
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.app.TaskStackBuilder
+import androidx.core.net.toUri
 import com.andlill.keynotes.R
 import com.andlill.keynotes.data.repository.NoteRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 @SuppressLint("UnspecifiedImmutableFlag")
 class MainReceiver : BroadcastReceiver() {
@@ -26,12 +28,20 @@ class MainReceiver : BroadcastReceiver() {
         val id = intent.getIntExtra("id", 0)
         val color = intent.getIntExtra("color", Color.WHITE)
 
+        // Open app on notification click.
+        val resultIntent = Intent(context, MainActivity::class.java)
+        val resultPendingIntent: PendingIntent? = TaskStackBuilder.create(context).run {
+            addNextIntentWithParentStack(resultIntent)
+            getPendingIntent(Random.nextInt(), PendingIntent.FLAG_UPDATE_CURRENT)
+        }
+
         val notification = NotificationCompat.Builder(context, "APP_CHANNEL_ID")
             .setSmallIcon(R.drawable.ic_baseline_notifications_active)
             .setContentTitle(contentTitle)
             .setContentText(contentText)
             .setStyle(NotificationCompat.BigTextStyle().bigText(contentText))
             .setColor(color)
+            .setContentIntent(resultPendingIntent)
             .setAutoCancel(true)
             .build()
         with(NotificationManagerCompat.from(context)) {
