@@ -33,13 +33,13 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
-fun ReminderDialog(reminderTime: Long, state: MutableState<Boolean>, onClick: (Calendar?) -> Unit) {
+fun ReminderDialog(reminderTime: Long?, state: MutableState<Boolean>, onClick: (Calendar?) -> Unit) {
     if (state.value) {
         val context = LocalContext.current
 
         // Load calendar with active reminder time if exists.
         val calendar = Calendar.getInstance()
-        if (reminderTime > 0) {
+        reminderTime?.let {
             calendar.timeInMillis = reminderTime
         }
 
@@ -129,7 +129,7 @@ fun ReminderDialog(reminderTime: Long, state: MutableState<Boolean>, onClick: (C
                     onValueChange = { }
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                if (reminderTime > 0) {
+                if (reminderTime != null) {
                     OutlinedButton(
                         modifier = Modifier.fillMaxWidth(),
                         border = BorderStroke(1.dp, MaterialTheme.colors.primary),

@@ -15,25 +15,12 @@ import java.util.*
 class NoteViewModel(application: Application) : AndroidViewModel(application) {
 
     private var deleted = false
-
-    var id by mutableStateOf(0)
-    var title by mutableStateOf("")
-    var body by mutableStateOf("")
-    var created by mutableStateOf(0L)
-    var modified by mutableStateOf(0L)
-    var color by mutableStateOf(0)
-    var reminder by mutableStateOf(0L)
+    var note by mutableStateOf(Note())
 
     fun loadNote(noteId: Int) = viewModelScope.launch {
         NoteRepository.getNote(getApplication(), noteId).collectLatest {
-            it?.let { note ->
-                id = note.id
-                title = note.title
-                body = note.body
-                created = note.created
-                modified = note.modified
-                color = note.color
-                reminder = note.reminder
+            it?.let {
+                note = it.copy()
             }
         }
     }
@@ -45,7 +32,7 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
             return@launch
         }
         // Don't save new note with no content, cancel any reminder.
-        if (title.isEmpty() && body.isEmpty() && created == 0L) {
+        if (note.title.isEmpty() && note.body.isEmpty() && note.created == null) {
             cancelReminder()
             return@launch
         }
@@ -54,43 +41,29 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun deleteNote() = viewModelScope.launch {
-        // Set deleted to avoid saving.
+        // Set deleted to avoid saving on close.
         deleted = true
-
-        val note = Note(
-            id = id,
-            title = title,
-            body = body,
-            created = created,
-            modified = modified,
-            color = color,
-            reminder = reminder
-        )
         NoteRepository.deleteNote(getApplication(), note)
     }
 
     private suspend fun saveNote() {
-        val note = Note(
-            id = id,
-            title = title.trim(),
-            body = body.trim(),
+        NoteRepository.insertNote(getApplication(), note.copy(
+            title = note.title.trim(),
+            body = note.body.trim(),
             // Set created timestamp if this is a new note.
-            created = if (created == 0L) Calendar.getInstance().timeInMillis else created,
+            created = note.created ?: Calendar.getInstance().timeInMillis,
             // Set modified timestamp.
             modified = Calendar.getInstance().timeInMillis,
-            color = color,
-            reminder = reminder,
-        )
-        NoteRepository.insertNote(getApplication(), note)
+        ))
     }
 
     fun setReminder(calendar: Calendar) {
-        reminder = calendar.timeInMillis
-        NoteBroadcaster.setAlarm(getApplication(), calendar, id, title, body, color)
+        note = note.copy(reminder = calendar.timeInMillis)
+        NoteBroadcaster.setAlarm(getApplication(), calendar, note)
     }
 
     fun cancelReminder() {
-        reminder = 0
-        NoteBroadcaster.cancelAlarm(getApplication(), id)
+        note = note.copy(reminder = null)
+        NoteBroadcaster.cancelAlarm(getApplication(), note)
     }
 }

@@ -7,10 +7,10 @@ import androidx.room.PrimaryKey
 data class Note(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
+    val color: Int = 0,
     val title: String = "",
     val body: String = "",
-    val created: Long = 0,
-    val modified: Long = 0,
-    val color: Int = 0,
-    val reminder: Long = 0,
+    val created: Long? = null,
+    val modified: Long? = null,
+    val reminder: Long? = null,
 )

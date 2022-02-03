@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.andlill.keynotes.R
 import com.andlill.keynotes.app.note.composables.ReminderDialog
 import com.andlill.keynotes.app.note.composables.ThemeDropDown
 import com.andlill.keynotes.app.shared.LifecycleEventHandler
@@ -45,7 +46,6 @@ import com.andlill.keynotes.ui.theme.DarkNoteColors
 import com.andlill.keynotes.ui.theme.LightNoteColors
 import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.insets.statusBarsHeight
-import com.andlill.keynotes.R
 
 @Composable
 fun NoteScreen(navigation: NavController, viewModel: NoteViewModel = viewModel(), noteId: Int = -1) {
@@ -54,12 +54,12 @@ fun NoteScreen(navigation: NavController, viewModel: NoteViewModel = viewModel()
     val reminderDialogState = remember { mutableStateOf(false) }
 
     val reminderIcon = when {
-        (viewModel.reminder > 0) -> Icons.Filled.NotificationsActive
+        viewModel.note.reminder != null -> Icons.Filled.NotificationsActive
         else -> Icons.Outlined.NotificationAdd
     }
     val noteColor = when {
-        isSystemInDarkTheme() -> DarkNoteColors[viewModel.color]
-        else -> LightNoteColors[viewModel.color]
+        isSystemInDarkTheme() -> DarkNoteColors[viewModel.note.color]
+        else -> LightNoteColors[viewModel.note.color]
     }
 
     LaunchedEffect(Unit) {
@@ -104,9 +104,9 @@ fun NoteScreen(navigation: NavController, viewModel: NoteViewModel = viewModel()
                             navigation.navigateUp()
                         }
                         ThemeDropDown(state = themeMenuState) {
-                            viewModel.color = it
+                            viewModel.note = viewModel.note.copy(color = it)
                         }
-                        ReminderDialog(reminderTime = viewModel.reminder, state = reminderDialogState) {
+                        ReminderDialog(reminderTime = viewModel.note.reminder, state = reminderDialogState) {
                             if (it == null) {
                                 viewModel.cancelReminder()
                             }
@@ -125,16 +125,16 @@ fun NoteScreen(navigation: NavController, viewModel: NoteViewModel = viewModel()
                 .padding(innerPadding)) {
                 NoteTitleTextField(
                     placeholder = stringResource(R.string.note_screen_title_placeholder),
-                    value = viewModel.title,
+                    value = viewModel.note.title,
                     onValueChange = {
-                        viewModel.title = it
+                        viewModel.note = viewModel.note.copy(title = it)
                     }
                 )
                 NoteBodyTextField(
                     placeholder = stringResource(R.string.note_screen_body_placeholder),
-                    value = viewModel.body,
+                    value = viewModel.note.body,
                     onValueChange = {
-                        viewModel.body = it
+                        viewModel.note = viewModel.note.copy(body = it)
                     }
                 )
             }

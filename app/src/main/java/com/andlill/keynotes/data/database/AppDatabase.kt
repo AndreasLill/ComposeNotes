@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.andlill.keynotes.model.Note
 
-@Database(entities = [Note::class], version = 2, exportSchema = false)
+@Database(entities = [Note::class], version = 3, exportSchema = false)
 abstract class AppDatabase : RoomDatabase(){
 
     abstract val noteDao: NoteDao
