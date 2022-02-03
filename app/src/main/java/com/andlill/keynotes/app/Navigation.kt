@@ -1,6 +1,7 @@
 package com.andlill.keynotes.app
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavDeepLink
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -26,16 +27,18 @@ fun Navigation() {
         // Note screen with argument for loading existing note.
         composable(
             route = Screen.NoteScreen.route + "/{noteId}",
-            arguments = listOf(
-                navArgument("noteId") { type = NavType.IntType }
-            )
+            arguments = listOf(navArgument("noteId") { type = NavType.IntType }),
+            deepLinks = listOf(NavDeepLink(uri = String.format(Screen.NoteScreen.uri[0], "{noteId}")))
         ) {
             NoteScreen(navigation = navController, noteId = it.arguments!!.getInt("noteId"))
         }
     }
 }
 
-sealed class Screen(val route: String) {
+sealed class Screen(val route: String, vararg val uri: String) {
+    companion object {
+        private const val baseUri = "https://com.andlill.keynotes"
+    }
     object HomeScreen : Screen("home")
-    object NoteScreen : Screen("note")
+    object NoteScreen : Screen("note", "$baseUri/noteId=%s")
 }

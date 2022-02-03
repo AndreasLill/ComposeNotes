@@ -1,7 +1,6 @@
 package com.andlill.keynotes.app
 
 import android.annotation.SuppressLint
-import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -11,8 +10,8 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.TaskStackBuilder
+import androidx.core.net.toUri
 import com.andlill.keynotes.R
-import com.andlill.keynotes.app.note.NoteBroadcaster
 import com.andlill.keynotes.data.repository.NoteRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -60,7 +59,11 @@ class MainReceiver : BroadcastReceiver() {
         val color = intent.getIntExtra("color", Color.WHITE)
 
         // Open app on notification click.
-        val resultIntent = Intent(context, MainActivity::class.java)
+        val resultIntent = Intent(
+            Intent.ACTION_VIEW,
+            String.format(Screen.NoteScreen.uri[0], id).toUri(),
+            context,
+            MainActivity::class.java)
         val resultPendingIntent: PendingIntent? = TaskStackBuilder.create(context).run {
             addNextIntentWithParentStack(resultIntent)
             getPendingIntent(Random.nextInt(), PendingIntent.FLAG_UPDATE_CURRENT)
