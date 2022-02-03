@@ -59,11 +59,11 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
 
     fun setReminder(calendar: Calendar) {
         note = note.copy(reminder = calendar.timeInMillis)
-        NoteBroadcaster.setAlarm(getApplication(), calendar, note)
+        NoteBroadcaster.setReminder(getApplication(), calendar, note)
     }
 
     fun cancelReminder() {
         note = note.copy(reminder = null)
-        NoteBroadcaster.cancelAlarm(getApplication(), note)
+        NoteBroadcaster.cancelReminder(getApplication(), note)
     }
 }

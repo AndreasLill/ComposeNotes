@@ -30,9 +30,8 @@ class MainActivity : AppCompatActivity() {
             AppTheme {
                 // Register notification channel for API 26+
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    val channel = NotificationChannel("APP_CHANNEL_ID", "NoteReminder", NotificationManager.IMPORTANCE_HIGH).apply {
-                        enableLights(true)
-                        description = "NoteReminder"
+                    val channel = NotificationChannel(MainReceiver.CHANNEL_ID, MainReceiver.CHANNEL_ID, NotificationManager.IMPORTANCE_HIGH).apply {
+                        description = MainReceiver.CHANNEL_ID
                     }
                     val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
                     notificationManager.createNotificationChannel(channel)

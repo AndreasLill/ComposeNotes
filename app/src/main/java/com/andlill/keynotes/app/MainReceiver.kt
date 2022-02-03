@@ -12,6 +12,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.TaskStackBuilder
 import com.andlill.keynotes.R
+import com.andlill.keynotes.app.note.NoteBroadcaster
 import com.andlill.keynotes.data.repository.NoteRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -19,10 +20,40 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
-
 @SuppressLint("UnspecifiedImmutableFlag")
 class MainReceiver : BroadcastReceiver() {
+
+    companion object {
+        const val CHANNEL_ID = "com.andlill.keynotes.ReminderChannel"
+        const val ACTION_REMINDER = "com.andlill.keynotes.Reminder"
+    }
+
     override fun onReceive(context: Context, intent: Intent) {
+        Log.d("MainReceiver", "Broadcast '${intent.action}' Received")
+
+        when (intent.action) {
+            Intent.ACTION_BOOT_COMPLETED -> {
+                // TODO: Restart reminders at boot action.
+            }
+            ACTION_REMINDER -> {
+                reminder(context, intent)
+            }
+        }
+    }
+
+    private fun reminder(context: Context, intent: Intent) {
+        val id = intent.getIntExtra("id", 0)
+        sendNotification(context, intent)
+
+        // Reset note to 0 (if not repeating reminder)
+        CoroutineScope(Dispatchers.Default).launch {
+            NoteRepository.getNote(context, id).first()?.let { note ->
+                NoteRepository.insertNote(context, note.copy(reminder = null))
+            }
+        }
+    }
+
+    private fun sendNotification(context: Context, intent: Intent) {
         val contentTitle = intent.getStringExtra("title")
         val contentText = intent.getStringExtra("text")
         val id = intent.getIntExtra("id", 0)
@@ -35,7 +66,7 @@ class MainReceiver : BroadcastReceiver() {
             getPendingIntent(Random.nextInt(), PendingIntent.FLAG_UPDATE_CURRENT)
         }
 
-        val notification = NotificationCompat.Builder(context, "APP_CHANNEL_ID")
+        val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_baseline_notifications_active)
             .setContentTitle(contentTitle)
             .setContentText(contentText)
@@ -44,23 +75,9 @@ class MainReceiver : BroadcastReceiver() {
             .setContentIntent(resultPendingIntent)
             .setAutoCancel(true)
             .build()
+
         with(NotificationManagerCompat.from(context)) {
             notify(id, notification)
         }
-
-        // Cancel both alarm and intent pending after consuming the intent.
-        val alarm = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intentPending = PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-        alarm.cancel(intentPending)
-        intentPending.cancel()
-
-        // Reset note to 0 (if not repeating reminder)
-        CoroutineScope(Dispatchers.Default).launch {
-            NoteRepository.getNote(context, id).first()?.let { note ->
-                NoteRepository.insertNote(context, note.copy(reminder = null))
-            }
-        }
-
-        Log.d("MainReceiver", "Broadcast '$id' Received")
     }
 }
