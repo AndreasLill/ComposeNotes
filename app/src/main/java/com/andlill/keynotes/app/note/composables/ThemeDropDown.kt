@@ -7,11 +7,16 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.InvertColorsOff
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.andlill.keynotes.R
@@ -26,19 +31,35 @@ fun ThemeDropDown(state: MutableState<Boolean>, onClick: (Int) -> Unit) {
             .background(MaterialTheme.colors.surface),
         onDismissRequest = { state.value = false }) {
         Column(modifier = Modifier.padding(PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp))) {
+            val colorList = if (isSystemInDarkTheme()) DarkNoteColors else LightNoteColors
             Text(
                 text = stringResource(R.string.note_screen_theme_dropdown_title).uppercase(),
                 letterSpacing = 1.sp,
                 fontSize = 10.sp,
-                color = MaterialTheme.colors.onSurface)
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colors.primary)
             Spacer(modifier = Modifier.height(16.dp))
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.horizontalScroll(rememberScrollState())) {
-                val colorList = if (isSystemInDarkTheme()) DarkNoteColors else LightNoteColors
-                colorList.forEachIndexed { index, value ->
-                    ColorSelectButton(color = value) {
-                        onClick(index)
+            Column(modifier = Modifier.horizontalScroll(rememberScrollState())) {
+                // First default color.
+                ColorSelectButton(colorList[0], Icons.Outlined.Close) {
+                    onClick(0)
+                }
+                // First 8 colors
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    colorList.subList(1, 9).forEach { value ->
+                        ColorSelectButton(color = value) {
+                            onClick(colorList.indexOf(value))
+                        }
+                    }
+                }
+                // Remaining 8 colors
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    colorList.subList(9, 17).forEach { value ->
+                        ColorSelectButton(color = value) {
+                            onClick(colorList.indexOf(value))
+                        }
                     }
                 }
             }
@@ -47,22 +68,22 @@ fun ThemeDropDown(state: MutableState<Boolean>, onClick: (Int) -> Unit) {
 }
 
 @Composable
-fun ColorSelectButton(color: Color, onClick: () -> Unit) {
+fun ColorSelectButton(color: Color, icon: ImageVector? = null, onClick: () -> Unit) {
     OutlinedButton(
-        modifier = Modifier
-            .width(32.dp)
-            .height(32.dp),
+        modifier = Modifier.size(32.dp),
+        contentPadding = PaddingValues(0.dp),
         colors = ButtonDefaults.buttonColors(
             backgroundColor = color,
         ),
         shape = CircleShape,
-        elevation = ButtonDefaults.elevation(
-            defaultElevation = 0.dp,
-            pressedElevation = 0.dp,
-            disabledElevation = 0.dp,
-            focusedElevation = 0.dp,
-            hoveredElevation = 0.dp,
-        ),
         onClick = { onClick() },
-    ) {}
+    ) {
+        icon?.let {
+            Icon(
+                modifier = Modifier.size(16.dp),
+                imageVector = icon,
+                contentDescription = null,
+                tint = MaterialTheme.colors.onSurface.copy(0.6f))
+        }
+    }
 }

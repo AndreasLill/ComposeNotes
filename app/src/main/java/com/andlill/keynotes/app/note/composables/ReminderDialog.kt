@@ -82,7 +82,8 @@ fun ReminderDialog(reminderTime: Long?, state: MutableState<Boolean>, onClick: (
                     text = stringResource(R.string.note_screen_reminder_dialog_title).uppercase(),
                     letterSpacing = 1.sp,
                     fontSize = 10.sp,
-                    color = MaterialTheme.colors.onSurface)
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colors.primary)
                 Spacer(modifier = Modifier.height(16.dp))
                 TextField(
                     modifier = Modifier
@@ -132,7 +133,7 @@ fun ReminderDialog(reminderTime: Long?, state: MutableState<Boolean>, onClick: (
                 if (reminderTime != null) {
                     OutlinedButton(
                         modifier = Modifier.fillMaxWidth(),
-                        border = BorderStroke(1.dp, MaterialTheme.colors.primary),
+                        border = BorderStroke(1.dp, MaterialTheme.colors.error),
                         colors = ButtonDefaults.outlinedButtonColors(
                             contentColor = MaterialTheme.colors.onSurface
                         ),
