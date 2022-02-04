@@ -1,6 +1,5 @@
-package com.andlill.keynotes.app
+package com.andlill.keynotes.app.receiver
 
-import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -12,6 +11,8 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.TaskStackBuilder
 import androidx.core.net.toUri
 import com.andlill.keynotes.R
+import com.andlill.keynotes.app.MainActivity
+import com.andlill.keynotes.app.Screen
 import com.andlill.keynotes.data.repository.NoteRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -19,11 +20,10 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
-@SuppressLint("UnspecifiedImmutableFlag")
-class MainReceiver : BroadcastReceiver() {
+class AlarmReceiver : BroadcastReceiver() {
 
     companion object {
-        const val CHANNEL_ID = "com.andlill.keynotes.ReminderChannel"
+        const val CHANNEL_ID = "com.andlill.keynotes.AlarmReceiverChannel"
         const val ACTION_REMINDER = "com.andlill.keynotes.Reminder"
     }
 
@@ -33,11 +33,16 @@ class MainReceiver : BroadcastReceiver() {
         when (intent.action) {
             Intent.ACTION_BOOT_COMPLETED -> {
                 // TODO: Restart reminders at boot action.
+                restartReminders(context, intent)
             }
             ACTION_REMINDER -> {
                 reminder(context, intent)
             }
         }
+    }
+
+    private fun restartReminders(context: Context, intent: Intent) {
+
     }
 
     private fun reminder(context: Context, intent: Intent) {
@@ -58,7 +63,7 @@ class MainReceiver : BroadcastReceiver() {
         val id = intent.getIntExtra("id", 0)
         val color = intent.getIntExtra("color", Color.WHITE)
 
-        // Open app on notification click.
+        // Open note on notification click.
         val resultIntent = Intent(
             Intent.ACTION_VIEW,
             String.format(Screen.NoteScreen.uri[0], id).toUri(),
@@ -66,7 +71,7 @@ class MainReceiver : BroadcastReceiver() {
             MainActivity::class.java)
         val resultPendingIntent: PendingIntent? = TaskStackBuilder.create(context).run {
             addNextIntentWithParentStack(resultIntent)
-            getPendingIntent(Random.nextInt(), PendingIntent.FLAG_UPDATE_CURRENT)
+            getPendingIntent(Random.nextInt(), PendingIntent.FLAG_IMMUTABLE)
         }
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
