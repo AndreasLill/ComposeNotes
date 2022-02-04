@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
         setContent {
             AppTheme {
                 // Provide status bar and navigation bar insets.
-                ProvideWindowInsets(windowInsetsAnimationsEnabled = true) {
+                ProvideWindowInsets {
                     Navigation()
                 }
             }
