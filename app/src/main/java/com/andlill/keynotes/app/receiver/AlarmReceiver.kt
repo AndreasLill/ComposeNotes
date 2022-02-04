@@ -1,5 +1,6 @@
 package com.andlill.keynotes.app.receiver
 
+import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -28,36 +29,44 @@ class AlarmReceiver : BroadcastReceiver() {
     }
 
     override fun onReceive(context: Context, intent: Intent) {
-        Log.d("MainReceiver", "Broadcast '${intent.action}' Received")
-
         when (intent.action) {
             Intent.ACTION_BOOT_COMPLETED -> {
-                // TODO: Restart reminders at boot action.
-                restartReminders(context, intent)
+                restoreReminders(context)
             }
             ACTION_REMINDER -> {
-                reminder(context, intent)
+                sendReminder(context, intent)
             }
         }
     }
 
-    private fun restartReminders(context: Context, intent: Intent) {
+    // Restore any reminders lost by system reboot.
+    private fun restoreReminders(context: Context) {
+        val alarm = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-    }
-
-    private fun reminder(context: Context, intent: Intent) {
-        val id = intent.getIntExtra("id", 0)
-        sendNotification(context, intent)
-
-        // Reset note to 0 (if not repeating reminder)
         CoroutineScope(Dispatchers.Default).launch {
-            NoteRepository.getNote(context, id).first()?.let { note ->
-                NoteRepository.insertNote(context, note.copy(reminder = null))
+            NoteRepository.getAllNotes(context).first().forEach { note ->
+                // Skip notes with no active reminders.
+                if (note.reminder == null)
+                    return@forEach
+
+                // Restore all active reminders.
+                val intent = Intent(context, AlarmReceiver::class.java).let { intent ->
+                    intent.action = ACTION_REMINDER
+                    intent.putExtra("id", note.id)
+                    intent.putExtra("color", note.color)
+                    intent.putExtra("title", note.title)
+                    intent.putExtra("text", note.body)
+                    intent.setPackage("com.andlill.keynotes")
+                    PendingIntent.getBroadcast(context, note.id, intent, PendingIntent.FLAG_IMMUTABLE)
+                }
+                alarm.setAlarmClock(AlarmManager.AlarmClockInfo(note.reminder, intent), intent)
+                Log.d("MainReceiver", "Broadcast '${note.id}' Restored")
             }
         }
     }
 
-    private fun sendNotification(context: Context, intent: Intent) {
+    // Send reminder by notification and remove reminder from note.
+    private fun sendReminder(context: Context, intent: Intent) {
         val contentTitle = intent.getStringExtra("title")
         val contentText = intent.getStringExtra("text")
         val id = intent.getIntExtra("id", 0)
@@ -87,5 +96,14 @@ class AlarmReceiver : BroadcastReceiver() {
         with(NotificationManagerCompat.from(context)) {
             notify(id, notification)
         }
+
+        // Remove reminder from note.
+        CoroutineScope(Dispatchers.Default).launch {
+            NoteRepository.getNote(context, id).first()?.let { note ->
+                NoteRepository.insertNote(context, note.copy(reminder = null))
+            }
+        }
+
+        Log.d("MainReceiver", "Reminder '$id' Notification Sent")
     }
 }

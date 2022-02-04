@@ -137,6 +137,7 @@ fun ReminderDialog(reminderTime: Long?, state: MutableState<Boolean>, onClick: (
                             contentColor = MaterialTheme.colors.onSurface
                         ),
                         onClick = {
+                            Log.d("ReminderDialog", "Reminder Cancelled.")
                             onClick(null)
                             state.value = false
                         }) {
