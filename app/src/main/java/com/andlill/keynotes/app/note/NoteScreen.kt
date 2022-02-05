@@ -15,7 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.NotificationAdd
+import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -55,7 +55,7 @@ fun NoteScreen(navigation: NavController, viewModel: NoteViewModel = viewModel()
 
     val reminderIcon = when {
         viewModel.note.reminder != null -> Icons.Filled.NotificationsActive
-        else -> Icons.Outlined.NotificationAdd
+        else -> Icons.Outlined.Notifications
     }
     val noteColor = when {
         isSystemInDarkTheme() -> DarkNoteColors[viewModel.note.color]
