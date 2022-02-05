@@ -9,7 +9,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
-import androidx.compose.material.icons.outlined.InvertColorsOff
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
@@ -28,7 +27,8 @@ fun ThemeDropDown(state: MutableState<Boolean>, onClick: (Int) -> Unit) {
     DropdownMenu(
         expanded = state.value,
         modifier = Modifier
-            .background(MaterialTheme.colors.surface),
+            .background(MaterialTheme.colors.surface)
+            .fillMaxWidth(),
         onDismissRequest = { state.value = false }) {
         Column(modifier = Modifier.padding(PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp))) {
             val colorList = if (isSystemInDarkTheme()) DarkNoteColors else LightNoteColors
