@@ -3,6 +3,8 @@ package com.andlill.keynotes.app.note
 import android.app.Application
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
@@ -23,6 +25,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalContext
@@ -54,6 +58,9 @@ fun NoteScreen(navigation: NavController, noteId: Int = -1) {
 
     val themeMenuState = remember { mutableStateOf(false) }
     val reminderDialogState = remember { mutableStateOf(false) }
+    val interactionSource = remember { MutableInteractionSource() }
+    val focusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
 
     val reminderIcon = when {
         viewModel.note.reminder != null -> Icons.Filled.NotificationsActive
@@ -67,7 +74,12 @@ fun NoteScreen(navigation: NavController, noteId: Int = -1) {
     // Handle lifecycle events.
     LifecycleEventHandler { event ->
         when (event) {
-            Lifecycle.Event.ON_STOP -> viewModel.onClose()
+            Lifecycle.Event.ON_PAUSE -> {
+                focusManager.clearFocus()
+            }
+            Lifecycle.Event.ON_STOP -> {
+                viewModel.onClose()
+            }
             else -> {}
         }
     }
@@ -120,7 +132,9 @@ fun NoteScreen(navigation: NavController, noteId: Int = -1) {
             Column(modifier = Modifier
                 .background(Color.Transparent)
                 .navigationBarsWithImePadding()
-                .padding(innerPadding)) {
+                .padding(innerPadding)
+                .fillMaxSize()
+                .clickable(interactionSource = interactionSource, indication = null) { focusRequester.requestFocus() }) {
                 NoteTitleTextField(
                     placeholder = stringResource(R.string.note_screen_title_placeholder),
                     value = viewModel.note.title,
@@ -131,6 +145,7 @@ fun NoteScreen(navigation: NavController, noteId: Int = -1) {
                 NoteBodyTextField(
                     placeholder = stringResource(R.string.note_screen_body_placeholder),
                     value = viewModel.note.body,
+                    focusRequester = focusRequester,
                     onValueChange = {
                         viewModel.note = viewModel.note.copy(body = it)
                     }
@@ -141,13 +156,13 @@ fun NoteScreen(navigation: NavController, noteId: Int = -1) {
 }
 
 @Composable
-fun NoteBodyTextField(placeholder: String, value: String, onValueChange: (String) -> Unit) {
+fun NoteBodyTextField(placeholder: String, value: String, focusRequester: FocusRequester, onValueChange: (String) -> Unit) {
     BasicTextField(
         modifier = Modifier
+            .focusRequester(focusRequester)
             .clearFocusOnKeyboardDismiss()
             .padding(start = 20.dp, end = 20.dp, top = 16.dp, bottom = 16.dp)
-            .fillMaxWidth()
-            .fillMaxHeight(),
+            .fillMaxWidth(),
         value = value,
         onValueChange = onValueChange,
         cursorBrush = SolidColor(MaterialTheme.colors.primary),
