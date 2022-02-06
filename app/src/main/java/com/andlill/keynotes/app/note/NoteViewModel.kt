@@ -4,7 +4,8 @@ import android.app.Application
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.andlill.keynotes.data.repository.NoteRepository
 import com.andlill.keynotes.model.Note
@@ -12,15 +13,21 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.*
 
-class NoteViewModel(application: Application) : AndroidViewModel(application) {
+class NoteViewModel(private val application: Application, private val noteId: Int) : ViewModel() {
+    class Factory(private val application: Application, private val noteId: Int) : ViewModelProvider.NewInstanceFactory() {
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel> create(modelClass: Class<T>): T = NoteViewModel(application, noteId) as T
+    }
 
     private var deleted = false
     var note by mutableStateOf(Note())
 
-    fun loadNote(noteId: Int) = viewModelScope.launch {
-        NoteRepository.getNote(getApplication(), noteId).collectLatest {
-            it?.let {
-                note = it.copy()
+    init {
+        viewModelScope.launch {
+            NoteRepository.getNote(application, noteId).collectLatest {
+                it?.let {
+                    note = it.copy()
+                }
             }
         }
     }
@@ -43,11 +50,11 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
     fun deleteNote() = viewModelScope.launch {
         // Set deleted to avoid saving on close.
         deleted = true
-        NoteRepository.deleteNote(getApplication(), note)
+        NoteRepository.deleteNote(application, note)
     }
 
     private suspend fun saveNote() {
-        NoteRepository.insertNote(getApplication(), note.copy(
+        NoteRepository.insertNote(application, note.copy(
             title = note.title.trim(),
             body = note.body.trim(),
             // Set created timestamp if this is a new note.
@@ -59,11 +66,11 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
 
     fun setReminder(calendar: Calendar) {
         note = note.copy(reminder = calendar.timeInMillis)
-        NoteBroadcaster.setReminder(getApplication(), calendar, note)
+        NoteBroadcaster.setReminder(application, calendar, note)
     }
 
     fun cancelReminder() {
         note = note.copy(reminder = null)
-        NoteBroadcaster.cancelReminder(getApplication(), note)
+        NoteBroadcaster.cancelReminder(application, note)
     }
 }

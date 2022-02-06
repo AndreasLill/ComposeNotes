@@ -1,5 +1,6 @@
 package com.andlill.keynotes.app.note
 
+import android.app.Application
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -18,13 +19,13 @@ import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -48,7 +49,8 @@ import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.insets.statusBarsHeight
 
 @Composable
-fun NoteScreen(navigation: NavController, viewModel: NoteViewModel = viewModel(), noteId: Int = -1) {
+fun NoteScreen(navigation: NavController, noteId: Int = -1) {
+    val viewModel: NoteViewModel = viewModel(factory = NoteViewModel.Factory(LocalContext.current.applicationContext as Application, noteId))
 
     val themeMenuState = remember { mutableStateOf(false) }
     val reminderDialogState = remember { mutableStateOf(false) }
@@ -62,10 +64,6 @@ fun NoteScreen(navigation: NavController, viewModel: NoteViewModel = viewModel()
         else -> LightNoteColors[viewModel.note.color]
     }
 
-    LaunchedEffect(Unit) {
-        // Set default note color to surface.
-        viewModel.loadNote(noteId)
-    }
     // Handle lifecycle events.
     LifecycleEventHandler { event ->
         when (event) {
