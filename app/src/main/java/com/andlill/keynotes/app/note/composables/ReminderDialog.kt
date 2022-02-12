@@ -149,8 +149,9 @@ fun ReminderDialog(reminderTime: Long?, state: MutableState<Boolean>, onClick: (
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = stringResource(R.string.note_screen_reminder_dialog_button_cancel),
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.SemiBold)
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Normal,
+                            letterSpacing = 0.sp)
                     }
                 }
                 else {
@@ -168,11 +169,12 @@ fun ReminderDialog(reminderTime: Long?, state: MutableState<Boolean>, onClick: (
                             modifier = Modifier.size(20.dp),
                             imageVector = Icons.Outlined.Notifications,
                             contentDescription = null)
-                        Spacer(modifier = Modifier.width(4.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = stringResource(R.string.note_screen_reminder_dialog_button_add),
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.SemiBold)
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Normal,
+                            letterSpacing = 0.sp)
                     }
                 }
             }

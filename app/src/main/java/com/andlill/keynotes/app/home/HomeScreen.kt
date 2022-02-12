@@ -1,5 +1,7 @@
 package com.andlill.keynotes.app.home
 
+import android.app.Application
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -9,12 +11,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -23,6 +25,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.andlill.keynotes.R
 import com.andlill.keynotes.app.Screen
+import com.andlill.keynotes.app.home.composables.Drawer
 import com.andlill.keynotes.app.home.composables.NoteItem
 import com.andlill.keynotes.app.home.composables.SearchBar
 import com.andlill.keynotes.app.shared.MenuIconButton
@@ -31,29 +34,26 @@ import com.google.accompanist.insets.statusBarsHeight
 import kotlinx.coroutines.launch
 
 @Composable
-fun HomeScreen(navigation: NavController, viewModel: HomeViewModel = viewModel()) {
-
+fun HomeScreen(navigation: NavController) {
+    val viewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory(LocalContext.current.applicationContext as Application))
     val searchQuery = rememberSaveable { mutableStateOf("") }
     val state = rememberScaffoldState()
     val scope = rememberCoroutineScope()
-    val notes = viewModel.getNotes(searchQuery.value).collectAsState(initial = emptyList())
+
+    BackHandler(state.drawerState.isOpen) {
+        scope.launch {
+            state.drawerState.close()
+        }
+    }
 
     Scaffold(
         scaffoldState = state,
         drawerContent = {
-            Spacer(modifier = Modifier
-                .background(Color.Transparent)
-                .statusBarsHeight()
-                .fillMaxWidth()
-            )
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text("DrawerContent")
-            }
+            Drawer(state.drawerState)
         },
         topBar = {
             Column {
                 Spacer(modifier = Modifier
-                    .background(MaterialTheme.colors.surface)
                     .statusBarsHeight()
                     .fillMaxWidth()
                 )
@@ -94,11 +94,12 @@ fun HomeScreen(navigation: NavController, viewModel: HomeViewModel = viewModel()
                     modifier = Modifier.size(20.dp),
                     imageVector = Icons.Default.Add,
                     contentDescription = null)
-                Spacer(modifier = Modifier.width(4.dp))
+                Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = stringResource(R.string.home_Screen_button_add_note),
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.SemiBold)
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Normal,
+                    letterSpacing = 0.sp)
             }
         },
         content = { innerPadding ->
@@ -108,7 +109,7 @@ fun HomeScreen(navigation: NavController, viewModel: HomeViewModel = viewModel()
                 .fillMaxSize()
                 .padding(8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                items(notes.value) { note ->
+                items(viewModel.getNotes(searchQuery.value)) { note ->
                     NoteItem(note) {
                         navigation.navigate(Screen.NoteScreen.route + "/${note.id}") {
                             // To avoid multiple copies of same destination in backstack.
