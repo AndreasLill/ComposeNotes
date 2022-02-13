@@ -109,7 +109,6 @@ fun NoteScreen(navigation: NavController, noteId: Int = -1) {
                             themeMenuState.value = true
                         }
                         MenuIconButton(icon = Icons.Outlined.Delete, color = MaterialTheme.colors.onSurface) {
-                            // TODO: Change delete to move to trash.
                             viewModel.deleteNote()
                             navigation.navigateUp()
                         }

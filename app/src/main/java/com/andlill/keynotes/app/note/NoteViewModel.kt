@@ -19,7 +19,6 @@ class NoteViewModel(private val application: Application, private val noteId: In
         override fun <T : ViewModel> create(modelClass: Class<T>): T = NoteViewModel(application, noteId) as T
     }
 
-    private var deleted = false
     var note by mutableStateOf(Note())
 
     init {
@@ -34,7 +33,7 @@ class NoteViewModel(private val application: Application, private val noteId: In
 
     fun onClose() = viewModelScope.launch {
         // Don't save deleted note, cancel any reminder.
-        if (deleted) {
+        if (note.deleted) {
             cancelReminder()
             return@launch
         }
@@ -44,23 +43,20 @@ class NoteViewModel(private val application: Application, private val noteId: In
             return@launch
         }
 
-        saveNote()
-    }
-
-    fun deleteNote() = viewModelScope.launch {
-        // Set deleted to avoid saving on close.
-        deleted = true
-        NoteRepository.deleteNote(application, note)
-    }
-
-    private suspend fun saveNote() {
+        // Save note on close.
         NoteRepository.insertNote(application, note.copy(
             title = note.title.trim(),
             body = note.body.trim(),
             // Set created timestamp if this is a new note.
             created = note.created ?: Calendar.getInstance().timeInMillis,
-            // Set modified timestamp.
             modified = Calendar.getInstance().timeInMillis,
+        ))
+    }
+
+    fun deleteNote() = viewModelScope.launch {
+        NoteRepository.insertNote(application, note.copy(
+            deleted = true,
+            modified = Calendar.getInstance().timeInMillis
         ))
     }
 
