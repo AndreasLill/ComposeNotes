@@ -109,18 +109,18 @@ fun NoteScreen(navigation: NavController, noteId: Int = -1) {
                             themeMenuState.value = true
                         }
                         MenuIconButton(icon = Icons.Outlined.Delete, color = MaterialTheme.colors.onSurface) {
-                            viewModel.deleteNote()
+                            viewModel.onDeleteNote()
                             navigation.navigateUp()
                         }
                         ThemeDropDown(state = themeMenuState) {
-                            viewModel.note = viewModel.note.copy(color = it)
+                            viewModel.onChangeColor(it)
                         }
                         ReminderDialog(reminderTime = viewModel.note.reminder, state = reminderDialogState) {
                             if (it == null) {
-                                viewModel.cancelReminder()
+                                viewModel.onCancelReminder()
                             }
                             else {
-                                viewModel.setReminder(it)
+                                viewModel.onSetReminder(it)
                             }
                         }
                     }
@@ -138,7 +138,7 @@ fun NoteScreen(navigation: NavController, noteId: Int = -1) {
                     placeholder = stringResource(R.string.note_screen_title_placeholder),
                     value = viewModel.note.title,
                     onValueChange = {
-                        viewModel.note = viewModel.note.copy(title = it)
+                        viewModel.onChangeTitle(it)
                     }
                 )
                 NoteBodyTextField(
@@ -146,7 +146,7 @@ fun NoteScreen(navigation: NavController, noteId: Int = -1) {
                     value = viewModel.note.body,
                     focusRequester = focusRequester,
                     onValueChange = {
-                        viewModel.note = viewModel.note.copy(body = it)
+                        viewModel.onChangeBody(it)
                     }
                 )
             }

@@ -11,9 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -36,7 +34,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun HomeScreen(navigation: NavController) {
     val viewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory(LocalContext.current.applicationContext as Application))
-    val searchQuery = rememberSaveable { mutableStateOf("") }
     val state = rememberScaffoldState()
     val scope = rememberCoroutineScope()
 
@@ -49,7 +46,9 @@ fun HomeScreen(navigation: NavController) {
     Scaffold(
         scaffoldState = state,
         drawerContent = {
-            Drawer(state.drawerState)
+            Drawer(state.drawerState, onFilterDeleted = {
+                viewModel.onFilterDeleted(it)
+            })
         },
         topBar = {
             Column {
@@ -61,7 +60,9 @@ fun HomeScreen(navigation: NavController) {
                     backgroundColor = MaterialTheme.colors.surface,
                     elevation = 0.dp,
                     title = {
-                        SearchBar(searchQuery)
+                        SearchBar(viewModel.filter.query, onValueChange = {
+                            viewModel.onFilterQuery(it)
+                        })
                     },
                     navigationIcon = {
                         MenuIconButton(icon = Icons.Filled.Menu, color = MaterialTheme.colors.onSurface) {
@@ -76,30 +77,34 @@ fun HomeScreen(navigation: NavController) {
             }
         },
         bottomBar = {
-            OutlinedButton(modifier = Modifier
-                .navigationBarsPadding()
-                .padding(8.dp)
-                .fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = Color.Transparent,
-                    contentColor = MaterialTheme.colors.onSurface,
-                ),
-                onClick = {
-                    navigation.navigate(Screen.NoteScreen.route) {
-                        // To avoid multiple copies of same destination in backstack.
-                        launchSingleTop = true
-                    }
-                }) {
-                Icon(
-                    modifier = Modifier.size(20.dp),
-                    imageVector = Icons.Default.Add,
-                    contentDescription = null)
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = stringResource(R.string.home_Screen_button_add_note),
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Normal,
-                    letterSpacing = 0.sp)
+            if (!viewModel.filter.deleted) {
+                OutlinedButton(modifier = Modifier
+                    .navigationBarsPadding()
+                    .padding(8.dp)
+                    .fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = Color.Transparent,
+                        contentColor = MaterialTheme.colors.onSurface,
+                    ),
+                    onClick = {
+                        navigation.navigate(Screen.NoteScreen.route) {
+                            // To avoid multiple copies of same destination in backstack.
+                            launchSingleTop = true
+                        }
+                    }) {
+                    Icon(
+                        modifier = Modifier.size(20.dp),
+                        imageVector = Icons.Default.Add,
+                        contentDescription = null
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = stringResource(R.string.home_Screen_button_add_note),
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Normal,
+                        letterSpacing = 0.sp
+                    )
+                }
             }
         },
         content = { innerPadding ->
@@ -109,7 +114,7 @@ fun HomeScreen(navigation: NavController) {
                 .fillMaxSize()
                 .padding(8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                items(viewModel.getNotes(searchQuery.value)) { note ->
+                items(viewModel.notes) { note ->
                     NoteItem(note) {
                         navigation.navigate(Screen.NoteScreen.route + "/${note.id}") {
                             // To avoid multiple copies of same destination in backstack.

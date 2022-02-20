@@ -15,7 +15,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
@@ -30,7 +29,7 @@ import com.andlill.keynotes.R
 import com.andlill.keynotes.app.shared.clearFocusOnKeyboardDismiss
 
 @Composable
-fun SearchBar(query: MutableState<String>) {
+fun SearchBar(query: String, onValueChange: (String) -> Unit) {
     val focusManager = LocalFocusManager.current
     BasicTextField(
         modifier = Modifier
@@ -48,10 +47,8 @@ fun SearchBar(query: MutableState<String>) {
             .padding(8.dp)
             .fillMaxWidth()
             .height(24.dp),
-        value = query.value,
-        onValueChange = {
-            query.value = it
-        },
+        value = query,
+        onValueChange = onValueChange,
         maxLines = 1,
         singleLine = true,
         cursorBrush = SolidColor(MaterialTheme.colors.primary),
@@ -69,7 +66,7 @@ fun SearchBar(query: MutableState<String>) {
         ),
         decorationBox = { innerTextField ->
             Box {
-                if (query.value.isEmpty()) {
+                if (query.isEmpty()) {
                     Text(
                         modifier = Modifier
                             .align(Alignment.CenterStart),
@@ -88,13 +85,13 @@ fun SearchBar(query: MutableState<String>) {
                         tint = MaterialTheme.colors.onSurface.copy(0.6f)
                     )
                 }
-                if (query.value.isNotEmpty()) {
+                if (query.isNotEmpty()) {
                     IconButton(
                         modifier = Modifier
                             .size(20.dp)
                             .align(Alignment.CenterEnd),
                         onClick = {
-                            query.value = ""
+                            onValueChange("")
                             focusManager.clearFocus()
                         }) {
                         Icon(

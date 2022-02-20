@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.andlill.keynotes.data.repository.NoteRepository
 import com.andlill.keynotes.model.Note
+import com.andlill.keynotes.model.NoteFilter
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -18,27 +19,48 @@ class HomeViewModel(private val application: Application) : ViewModel() {
         override fun <T : ViewModel> create(modelClass: Class<T>): T = HomeViewModel(application) as T
     }
 
-    private var notes by mutableStateOf<List<Note>>(emptyList())
+    // Contains all notes unfiltered.
+    private var _notes: List<Note> = emptyList()
+    // Contains filtered notes.
+    var notes by mutableStateOf<List<Note>>(emptyList())
+        private set
+    var filter by mutableStateOf(NoteFilter())
+        private set
 
     init {
         viewModelScope.launch {
             NoteRepository.getAllNotes(application).collectLatest {
-                notes = it
+                _notes = it
+                filterNotes()
             }
         }
     }
 
-    // Get all notes and filter by query.
-    fun getNotes(query: String): List<Note> {
-        return when {
-            query.isEmpty() -> {
-                notes
-            }
-            else -> {
-                notes.filter { note ->
-                    note.title.contains(query, ignoreCase = true) || note.body.contains(query, ignoreCase = true)
-                }
-            }
+    private fun filterNotes() {
+        var filterList = _notes.filter { note -> note.deleted == filter.deleted }
+
+        if (filter.label.isNotEmpty()) {
+            filterList = filterList.filter { note -> note.labels.contains(filter.label) }
         }
+
+        if (filter.query.isNotEmpty()) {
+            filterList = filterList.filter { note -> note.title.contains(filter.query, ignoreCase = true) || note.body.contains(filter.query, ignoreCase = true) }
+        }
+
+        notes = filterList
+    }
+
+    fun onFilterQuery(value: String) {
+        filter = filter.copy(
+            query = value
+        )
+        filterNotes()
+    }
+
+    fun onFilterDeleted(value: Boolean) {
+        filter = filter.copy(
+            deleted = value
+        )
+        filterNotes()
     }
 }

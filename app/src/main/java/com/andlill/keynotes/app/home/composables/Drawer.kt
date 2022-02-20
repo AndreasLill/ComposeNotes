@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 
 @Composable
-fun Drawer(state: DrawerState, labels: List<String> = emptyList()) {
+fun Drawer(state: DrawerState, labels: List<String> = emptyList(), onFilterDeleted: (Boolean) -> Unit) {
     val scope = rememberCoroutineScope()
     DrawerHeader()
     Column(modifier = Modifier
@@ -28,11 +28,13 @@ fun Drawer(state: DrawerState, labels: List<String> = emptyList()) {
         Column(modifier = Modifier.padding(top = 16.dp, bottom = 16.dp)) {
             DrawerItem(icon = Icons.Outlined.Home, text = "Notes", onClick = {
                 scope.launch {
+                    onFilterDeleted(false)
                     state.close()
                 }
             })
-            DrawerItem(icon = Icons.Outlined.Delete, text = "Trash", onClick = {
+            DrawerItem(icon = Icons.Outlined.Delete, text = "Deleted", onClick = {
                 scope.launch {
+                    onFilterDeleted(true)
                     state.close()
                 }
             })
