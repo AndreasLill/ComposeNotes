@@ -7,46 +7,36 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Label
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.andlill.keynotes.R
+import com.andlill.keynotes.app.note.composables.NoteBodyTextField
+import com.andlill.keynotes.app.note.composables.NoteTitleTextField
 import com.andlill.keynotes.app.note.composables.ReminderDialog
 import com.andlill.keynotes.app.note.composables.ThemeDropDown
 import com.andlill.keynotes.app.shared.LifecycleEventHandler
 import com.andlill.keynotes.app.shared.MenuIconButton
-import com.andlill.keynotes.app.shared.clearFocusOnKeyboardDismiss
 import com.andlill.keynotes.ui.theme.DarkNoteColors
 import com.andlill.keynotes.ui.theme.LightNoteColors
 import com.google.accompanist.insets.navigationBarsWithImePadding
@@ -97,32 +87,32 @@ fun NoteScreen(navigation: NavController, noteId: Int = -1) {
                     title = {
                     },
                     navigationIcon = {
-                        MenuIconButton(icon = Icons.Filled.ArrowBack, color = MaterialTheme.colors.onSurface) {
+                        MenuIconButton(icon = Icons.Filled.ArrowBack, color = MaterialTheme.colors.onSurface, onClick = {
                             navigation.navigateUp()
-                        }
+                        })
                     },
                     actions = {
-                        MenuIconButton(icon = reminderIcon, color = MaterialTheme.colors.onSurface) {
+                        MenuIconButton(icon = reminderIcon, color = MaterialTheme.colors.onSurface, onClick = {
                             reminderDialogState.value = true
-                        }
-                        MenuIconButton(icon = Icons.Outlined.Palette, color = MaterialTheme.colors.onSurface) {
+                        })
+                        MenuIconButton(icon = Icons.Outlined.Palette, color = MaterialTheme.colors.onSurface, onClick = {
                             themeMenuState.value = true
-                        }
-                        MenuIconButton(icon = Icons.Outlined.Delete, color = MaterialTheme.colors.onSurface) {
+                        })
+                        MenuIconButton(icon = Icons.Outlined.Delete, color = MaterialTheme.colors.onSurface, onClick = {
                             viewModel.onDeleteNote()
                             navigation.navigateUp()
-                        }
-                        ThemeDropDown(state = themeMenuState) {
+                        })
+                        ThemeDropDown(state = themeMenuState, onClick = {
                             viewModel.onChangeColor(it)
-                        }
-                        ReminderDialog(reminderTime = viewModel.note.reminder, state = reminderDialogState) {
+                        })
+                        ReminderDialog(reminderTime = viewModel.note.reminder, state = reminderDialogState, onClick = {
                             if (it == null) {
                                 viewModel.onCancelReminder()
                             }
                             else {
                                 viewModel.onSetReminder(it)
                             }
-                        }
+                        })
                     }
                 )
             }
@@ -150,80 +140,6 @@ fun NoteScreen(navigation: NavController, noteId: Int = -1) {
                     }
                 )
             }
-        }
-    )
-}
-
-@Composable
-fun NoteBodyTextField(placeholder: String, value: String, focusRequester: FocusRequester, onValueChange: (String) -> Unit) {
-    BasicTextField(
-        modifier = Modifier
-            .focusRequester(focusRequester)
-            .clearFocusOnKeyboardDismiss()
-            .padding(start = 20.dp, end = 20.dp, top = 16.dp, bottom = 16.dp)
-            .fillMaxWidth(),
-        value = value,
-        onValueChange = onValueChange,
-        cursorBrush = SolidColor(MaterialTheme.colors.primary),
-        textStyle = TextStyle(
-            fontSize = 15.sp,
-            color = MaterialTheme.colors.onSurface,
-        ),
-        keyboardOptions = KeyboardOptions(
-            capitalization = KeyboardCapitalization.Sentences
-        ),
-        decorationBox = { innerTextField ->
-            if (value.isEmpty()) {
-                Text(
-                    text = placeholder,
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        color = MaterialTheme.colors.onSurface.copy(0.6f)
-                    )
-                )
-            }
-            innerTextField()
-        }
-    )
-}
-
-@Composable
-fun NoteTitleTextField(placeholder: String, value: String, onValueChange: (String) -> Unit) {
-    val focusManager = LocalFocusManager.current
-    BasicTextField(
-        modifier = Modifier
-            .clearFocusOnKeyboardDismiss()
-            .padding(start = 20.dp, end = 20.dp, top = 8.dp, bottom = 8.dp)
-            .fillMaxWidth(),
-        value = value,
-        onValueChange = onValueChange,
-        singleLine = true,
-        cursorBrush = SolidColor(MaterialTheme.colors.primary),
-        textStyle = TextStyle(
-            fontSize = 16.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colors.onSurface,
-        ),
-        keyboardOptions = KeyboardOptions(
-            capitalization = KeyboardCapitalization.Sentences,
-            imeAction = ImeAction.Next
-        ),
-        keyboardActions = KeyboardActions(
-            onNext = {
-                focusManager.moveFocus(FocusDirection.Next)
-            }
-        ),
-        decorationBox = { innerTextField ->
-            if (value.isEmpty()) {
-                Text(
-                    text = placeholder,
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        color = MaterialTheme.colors.onSurface.copy(0.6f)
-                    )
-                )
-            }
-            innerTextField()
         }
     )
 }
