@@ -27,7 +27,7 @@ import com.andlill.keynotes.app.home.composables.Drawer
 import com.andlill.keynotes.app.home.composables.NoteItem
 import com.andlill.keynotes.app.home.composables.SearchBar
 import com.andlill.keynotes.app.shared.MenuIconButton
-import com.google.accompanist.insets.navigationBarsPadding
+import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.insets.statusBarsHeight
 import kotlinx.coroutines.launch
 
@@ -46,9 +46,19 @@ fun HomeScreen(navigation: NavController) {
     Scaffold(
         scaffoldState = state,
         drawerContent = {
-            Drawer(state.drawerState, onFilterDeleted = {
-                viewModel.onFilterDeleted(it)
-            })
+            Drawer(
+                state = state.drawerState,
+                labels = viewModel.labels,
+                onFilterDeleted = {
+                    viewModel.onFilterDeleted(it)
+                },
+                onAddLabel = {
+                    viewModel.onAddLabel(it)
+                },
+                onDeleteLabel = {
+                    viewModel.onDeleteLabel(it)
+                }
+            )
         },
         topBar = {
             Column {
@@ -79,8 +89,8 @@ fun HomeScreen(navigation: NavController) {
         bottomBar = {
             if (!viewModel.filter.deleted) {
                 OutlinedButton(modifier = Modifier
-                    .navigationBarsPadding()
-                    .padding(8.dp)
+                    .navigationBarsWithImePadding()
+                    .padding(start = 8.dp, end = 8.dp)
                     .fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(
                         backgroundColor = Color.Transparent,
@@ -112,7 +122,7 @@ fun HomeScreen(navigation: NavController) {
                 .padding(innerPadding)
                 .background(MaterialTheme.colors.surface)
                 .fillMaxSize()
-                .padding(8.dp),
+                .padding(start = 8.dp, end = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 items(viewModel.notes) { note ->
                     NoteItem(note) {
