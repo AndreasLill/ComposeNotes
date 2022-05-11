@@ -27,10 +27,9 @@ import com.andlill.keynotes.app.home.composables.Drawer
 import com.andlill.keynotes.app.home.composables.NoteItem
 import com.andlill.keynotes.app.home.composables.SearchBar
 import com.andlill.keynotes.app.shared.MenuIconButton
-import com.google.accompanist.insets.navigationBarsWithImePadding
-import com.google.accompanist.insets.statusBarsHeight
 import kotlinx.coroutines.launch
 
+@ExperimentalLayoutApi
 @Composable
 fun HomeScreen(navigation: NavController) {
     val viewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory(LocalContext.current.applicationContext as Application))
@@ -63,7 +62,7 @@ fun HomeScreen(navigation: NavController) {
         topBar = {
             Column {
                 Spacer(modifier = Modifier
-                    .statusBarsHeight()
+                    .statusBarsPadding()
                     .fillMaxWidth()
                 )
                 TopAppBar(
@@ -89,7 +88,8 @@ fun HomeScreen(navigation: NavController) {
         bottomBar = {
             if (!viewModel.filter.deleted) {
                 OutlinedButton(modifier = Modifier
-                    .navigationBarsWithImePadding()
+                    .navigationBarsPadding()
+                    .imePadding()
                     .padding(start = 8.dp, end = 8.dp)
                     .fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(

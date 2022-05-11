@@ -7,11 +7,12 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.core.view.WindowCompat
 import com.andlill.keynotes.app.receiver.AlarmReceiver
 import com.andlill.keynotes.ui.theme.AppTheme
-import com.google.accompanist.insets.ProvideWindowInsets
 
+@ExperimentalLayoutApi
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,9 +33,7 @@ class MainActivity : AppCompatActivity() {
         setContent {
             AppTheme {
                 // Provide status bar and navigation bar insets.
-                ProvideWindowInsets {
-                    Navigation()
-                }
+                Navigation()
             }
         }
     }

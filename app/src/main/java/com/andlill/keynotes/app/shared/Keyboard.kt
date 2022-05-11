@@ -1,17 +1,20 @@
 package com.andlill.keynotes.app.shared
 
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.platform.LocalFocusManager
-import com.google.accompanist.insets.LocalWindowInsets
 
+@ExperimentalLayoutApi
 fun Modifier.clearFocusOnKeyboardDismiss(): Modifier = composed {
     var isFocused by remember { mutableStateOf(false) }
     var keyboardAppearedSinceLastFocused by remember { mutableStateOf(false) }
     if (isFocused) {
-        val imeIsVisible = LocalWindowInsets.current.ime.isVisible
+        val imeIsVisible = WindowInsets.Companion.isImeVisible
         val focusManager = LocalFocusManager.current
         LaunchedEffect(imeIsVisible) {
             if (imeIsVisible) {

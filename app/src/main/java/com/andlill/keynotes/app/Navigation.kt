@@ -1,5 +1,6 @@
 package com.andlill.keynotes.app
 
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavDeepLink
 import androidx.navigation.NavType
@@ -10,6 +11,7 @@ import androidx.navigation.navArgument
 import com.andlill.keynotes.app.home.HomeScreen
 import com.andlill.keynotes.app.note.NoteScreen
 
+@ExperimentalLayoutApi
 @Composable
 fun Navigation() {
     val navController = rememberNavController()

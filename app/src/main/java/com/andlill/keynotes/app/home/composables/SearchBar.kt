@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import com.andlill.keynotes.R
 import com.andlill.keynotes.app.shared.clearFocusOnKeyboardDismiss
 
+@ExperimentalLayoutApi
 @Composable
 fun SearchBar(query: String, onValueChange: (String) -> Unit) {
     val focusManager = LocalFocusManager.current

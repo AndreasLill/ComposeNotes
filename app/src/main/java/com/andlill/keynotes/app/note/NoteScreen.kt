@@ -14,7 +14,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.Label
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.runtime.Composable
@@ -39,9 +38,8 @@ import com.andlill.keynotes.app.shared.LifecycleEventHandler
 import com.andlill.keynotes.app.shared.MenuIconButton
 import com.andlill.keynotes.ui.theme.DarkNoteColors
 import com.andlill.keynotes.ui.theme.LightNoteColors
-import com.google.accompanist.insets.navigationBarsWithImePadding
-import com.google.accompanist.insets.statusBarsHeight
 
+@ExperimentalLayoutApi
 @Composable
 fun NoteScreen(navigation: NavController, noteId: Int = -1) {
     val viewModel: NoteViewModel = viewModel(factory = NoteViewModel.Factory(LocalContext.current.applicationContext as Application, noteId))
@@ -78,7 +76,7 @@ fun NoteScreen(navigation: NavController, noteId: Int = -1) {
         topBar = {
             Column {
                 Spacer(modifier = Modifier
-                    .statusBarsHeight()
+                    .statusBarsPadding()
                     .fillMaxWidth()
                 )
                 TopAppBar(
@@ -120,7 +118,8 @@ fun NoteScreen(navigation: NavController, noteId: Int = -1) {
         content = { innerPadding ->
             Column(modifier = Modifier
                 .background(Color.Transparent)
-                .navigationBarsWithImePadding()
+                .navigationBarsPadding()
+                .imePadding()
                 .padding(innerPadding)
                 .fillMaxSize()
                 .clickable(interactionSource = interactionSource, indication = null) { focusRequester.requestFocus() }) {
