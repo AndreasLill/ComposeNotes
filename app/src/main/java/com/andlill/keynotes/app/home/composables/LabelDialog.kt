@@ -38,63 +38,81 @@ fun LabelDialog(initialValue: Label?, state: MutableState<Boolean>, onClick: (La
                 onDismiss()
                 state.value = false
             }) {
-            Column(modifier = Modifier
-                .background(MaterialTheme.colors.surface)
-                .padding(16.dp)) {
-                Text(
-                    text = stringResource(R.string.home_screen_label_dialog_title).uppercase(),
-                    letterSpacing = 1.sp,
-                    fontSize = 10.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colors.primary)
-                Spacer(modifier = Modifier.height(16.dp))
-                TextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    maxLines = 1,
-                    singleLine = true,
-                    placeholder = {
-                        Text(text = stringResource(R.string.home_screen_label_dialog_placeholder), fontSize = 15.sp)
-                    },
-                    keyboardOptions = KeyboardOptions(
-                        capitalization = KeyboardCapitalization.Words,
-                        imeAction = ImeAction.Done,
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            onClick(label)
-                            state.value = false
+            Box(
+                // Important to align dialog above keyboard.
+                modifier = Modifier
+                    .fillMaxSize()
+                    .imePadding()
+            ) {
+                Column(
+                    modifier = Modifier
+                        // Important to align dialog above keyboard.
+                        .align(Alignment.Center)
+                        .background(MaterialTheme.colors.surface)
+                        .padding(16.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.home_screen_label_dialog_title).uppercase(),
+                        letterSpacing = 1.sp,
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colors.primary
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    TextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        maxLines = 1,
+                        singleLine = true,
+                        placeholder = {
+                            Text(
+                                text = stringResource(R.string.home_screen_label_dialog_placeholder),
+                                fontSize = 15.sp
+                            )
+                        },
+                        keyboardOptions = KeyboardOptions(
+                            capitalization = KeyboardCapitalization.Words,
+                            imeAction = ImeAction.Done,
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                onClick(label)
+                                state.value = false
+                            }
+                        ),
+                        value = label.value,
+                        onValueChange = {
+                            label = label.copy(
+                                value = it
+                            )
+                        })
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        initialValue?.let {
+                            // Show delete button if initial value is not empty.
+                            OutlinedButton(
+                                modifier = Modifier.align(Alignment.CenterStart),
+                                border = BorderStroke(
+                                    width = 1.dp,
+                                    color = MaterialTheme.colors.error
+                                ),
+                                onClick = {
+                                    onDeleteClick(label)
+                                    state.value = false
+                                }) {
+                                ButtonText(
+                                    text = stringResource(R.string.home_screen_label_dialog_button_delete),
+                                    color = MaterialTheme.colors.error
+                                )
+                            }
                         }
-                    ),
-                    value = label.value,
-                    onValueChange = {
-                        label = label.copy(
-                            value = it
-                        )
-                    })
-                Spacer(modifier = Modifier.height(16.dp))
-                Box(modifier = Modifier.fillMaxWidth()) {
-                    initialValue?.let {
-                        // Show delete button if initial value is not empty.
                         OutlinedButton(
-                            modifier = Modifier.align(Alignment.CenterStart),
-                            border = BorderStroke(
-                                width = 1.dp,
-                                color = MaterialTheme.colors.error
-                            ),
+                            modifier = Modifier.align(Alignment.CenterEnd),
                             onClick = {
-                                onDeleteClick(label)
+                                onClick(label)
                                 state.value = false
                             }) {
-                            ButtonText(text = stringResource(R.string.home_screen_label_dialog_button_delete), color = MaterialTheme.colors.error)
+                            ButtonText(text = stringResource(R.string.home_screen_label_dialog_button_ok))
                         }
-                    }
-                    OutlinedButton(
-                        modifier = Modifier.align(Alignment.CenterEnd),
-                        onClick = {
-                            onClick(label)
-                            state.value = false
-                        }) {
-                        ButtonText(text = stringResource(R.string.home_screen_label_dialog_button_ok))
                     }
                 }
             }

@@ -29,7 +29,6 @@ import com.andlill.keynotes.app.home.composables.SearchBar
 import com.andlill.keynotes.app.shared.MenuIconButton
 import kotlinx.coroutines.launch
 
-@ExperimentalLayoutApi
 @Composable
 fun HomeScreen(navigation: NavController) {
     val viewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory(LocalContext.current.applicationContext as Application))

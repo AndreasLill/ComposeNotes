@@ -39,7 +39,6 @@ import com.andlill.keynotes.app.shared.MenuIconButton
 import com.andlill.keynotes.ui.theme.DarkNoteColors
 import com.andlill.keynotes.ui.theme.LightNoteColors
 
-@ExperimentalLayoutApi
 @Composable
 fun NoteScreen(navigation: NavController, noteId: Int = -1) {
     val viewModel: NoteViewModel = viewModel(factory = NoteViewModel.Factory(LocalContext.current.applicationContext as Application, noteId))

@@ -7,12 +7,10 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.core.view.WindowCompat
 import com.andlill.keynotes.app.receiver.AlarmReceiver
 import com.andlill.keynotes.ui.theme.AppTheme
 
-@ExperimentalLayoutApi
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

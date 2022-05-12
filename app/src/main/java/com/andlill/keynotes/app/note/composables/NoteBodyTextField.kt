@@ -1,6 +1,5 @@
 package com.andlill.keynotes.app.note.composables
 
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
@@ -18,7 +17,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.andlill.keynotes.app.shared.clearFocusOnKeyboardDismiss
 
-@ExperimentalLayoutApi
 @Composable
 fun NoteBodyTextField(placeholder: String, value: String, focusRequester: FocusRequester, onValueChange: (String) -> Unit) {
     BasicTextField(
