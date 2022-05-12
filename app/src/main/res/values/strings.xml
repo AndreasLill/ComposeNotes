@@ -6,10 +6,14 @@
     <!-- Home Screen -->
     <string name="home_Screen_button_add_note">Add Note</string>
     <string name="home_screen_search_bar_placeholder">Search Notes</string>
-    <string name="home_screen_label_dialog_title">Add Label</string>
+    <string name="home_screen_label_dialog_title">Edit Label</string>
     <string name="home_screen_label_dialog_placeholder">Label</string>
     <string name="home_screen_label_dialog_button_ok">OK</string>
-    <string name="home_screen_label_dialog_button_delete">Delete</string>
+    <string name="home_screen_label_dialog_button_cancel">Cancel</string>
+    <string name="home_screen_create_label_dialog_title">New Label</string>
+    <string name="home_screen_create_label_dialog_placeholder">Label</string>
+    <string name="home_screen_create_label_dialog_button_ok">OK</string>
+    <string name="home_screen_create_label_dialog_button_cancel">Cancel</string>
 
     <!-- Note Screen -->
     <string name="note_screen_title_placeholder">No Title</string>

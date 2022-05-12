@@ -1,14 +1,12 @@
 package com.andlill.keynotes.app.home.composables
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedButton
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,18 +22,17 @@ import com.andlill.keynotes.model.Label
 import com.andlill.keynotes.ui.text.ButtonText
 
 @Composable
-fun LabelDialog(initialValue: Label?, state: MutableState<Boolean>, onClick: (Label) -> Unit, onDeleteClick: (Label) -> Unit, onDismiss: () -> Unit) {
+fun EditLabelDialog(initialValue: Label, state: MutableState<Boolean>, onConfirm: (Label) -> Unit, onDelete: (Label) -> Unit) {
     var label by remember { mutableStateOf(Label()) }
 
     LaunchedEffect(state.value) {
-        // Set label to initial value when called if any.
-        label = initialValue ?: Label()
+        // Set label to initial value when dialog opens.
+        label = initialValue
     }
 
     if (state.value) {
         Dialog(
             onDismissRequest = {
-                onDismiss()
                 state.value = false
             }) {
             Box(
@@ -75,7 +72,7 @@ fun LabelDialog(initialValue: Label?, state: MutableState<Boolean>, onClick: (La
                         ),
                         keyboardActions = KeyboardActions(
                             onDone = {
-                                onClick(label)
+                                onConfirm(label)
                                 state.value = false
                             }
                         ),
@@ -87,31 +84,35 @@ fun LabelDialog(initialValue: Label?, state: MutableState<Boolean>, onClick: (La
                         })
                     Spacer(modifier = Modifier.height(16.dp))
                     Box(modifier = Modifier.fillMaxWidth()) {
-                        initialValue?.let {
-                            // Show delete button if initial value is not empty.
-                            OutlinedButton(
-                                modifier = Modifier.align(Alignment.CenterStart),
-                                border = BorderStroke(
-                                    width = 1.dp,
-                                    color = MaterialTheme.colors.error
-                                ),
-                                onClick = {
-                                    onDeleteClick(label)
-                                    state.value = false
-                                }) {
-                                ButtonText(
-                                    text = stringResource(R.string.home_screen_label_dialog_button_delete),
-                                    color = MaterialTheme.colors.error
+                        IconButton(
+                            modifier = Modifier.align(Alignment.CenterStart),
+                            onClick = {
+                                onDelete(label)
+                                state.value = false
+                            },
+                            content = {
+                                Icon(
+                                    contentDescription = null,
+                                    imageVector = Icons.Outlined.Delete,
+                                    tint = MaterialTheme.colors.error,
                                 )
                             }
-                        }
-                        OutlinedButton(
-                            modifier = Modifier.align(Alignment.CenterEnd),
-                            onClick = {
-                                onClick(label)
-                                state.value = false
-                            }) {
-                            ButtonText(text = stringResource(R.string.home_screen_label_dialog_button_ok))
+                        )
+                        Row(modifier = Modifier.align(Alignment.CenterEnd)) {
+                            OutlinedButton(
+                                onClick = {
+                                    state.value = false
+                                }) {
+                                ButtonText(text = stringResource(R.string.home_screen_label_dialog_button_cancel))
+                            }
+                            Spacer(modifier = Modifier.width(16.dp))
+                            OutlinedButton(
+                                onClick = {
+                                    onConfirm(label)
+                                    state.value = false
+                                }) {
+                                ButtonText(text = stringResource(R.string.home_screen_label_dialog_button_ok))
+                            }
                         }
                     }
                 }

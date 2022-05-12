@@ -48,7 +48,7 @@ fun DrawerItem(icon: ImageVector, text: String, color: Color = MaterialTheme.col
                 Icon(
                     imageVector = Icons.Outlined.Edit,
                     contentDescription = null,
-                    tint = color.copy(0.25f))
+                    tint = color.copy(0.5f))
             }
         }
     }

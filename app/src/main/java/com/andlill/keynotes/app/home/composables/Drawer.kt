@@ -20,12 +20,13 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun Drawer(state: DrawerState, labels: List<Label>, onFilterDeleted: (Boolean) -> Unit, onAddLabel: (Label) -> Unit, onDeleteLabel: (Label) -> Unit) {
-    val selectedLabel = remember { mutableStateOf<Label?>(null) }
-    val labelDialogState = remember { mutableStateOf(false) }
+    val editLabelDialogState = remember { mutableStateOf(false) }
+    val createLabelDialogState = remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
-    DrawerHeader()
+
     Column(modifier = Modifier
         .background(MaterialTheme.colors.surface)
+        .statusBarsPadding()
         .fillMaxSize()) {
         Spacer(modifier = Modifier.height(16.dp))
         Column {
@@ -44,9 +45,15 @@ fun Drawer(state: DrawerState, labels: List<Label>, onFilterDeleted: (Boolean) -
         }
         Divider(modifier = Modifier.padding(top = 16.dp, bottom = 16.dp))
         Column {
-            DrawerItem(icon = Icons.Outlined.Add, text = "Add Label", color = MaterialTheme.colors.onSurface.copy(0.6f), onClick = {
-                labelDialogState.value = true
+            DrawerItem(icon = Icons.Outlined.Add, text = "New Label", color = MaterialTheme.colors.onSurface.copy(0.5f), onClick = {
+                createLabelDialogState.value = true
             })
+            CreateLabelDialog(
+                state = createLabelDialogState,
+                onConfirm = {
+                    onAddLabel(it)
+                },
+            )
         }
         LazyColumn {
             items(labels) { label ->
@@ -57,27 +64,20 @@ fun Drawer(state: DrawerState, labels: List<Label>, onFilterDeleted: (Boolean) -
                         }
                     },
                     onEditClick = {
-                        selectedLabel.value = label
-                        labelDialogState.value = true
+                        editLabelDialogState.value = true
                     }
+                )
+                EditLabelDialog(
+                    initialValue = label,
+                    state = editLabelDialogState,
+                    onConfirm = {
+                        onAddLabel(it)
+                    },
+                    onDelete = {
+                        onDeleteLabel(it)
+                    },
                 )
             }
         }
-        LabelDialog(
-            initialValue = selectedLabel.value,
-            state = labelDialogState,
-            onClick = {
-                onAddLabel(it)
-                selectedLabel.value = null
-            },
-            onDeleteClick = {
-                // Delete the selected label and set back to null.
-                selectedLabel.value?.let(onDeleteLabel)
-                selectedLabel.value = null
-            },
-            onDismiss = {
-                selectedLabel.value = null
-            }
-        )
     }
 }
