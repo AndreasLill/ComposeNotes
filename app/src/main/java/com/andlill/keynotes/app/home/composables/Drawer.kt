@@ -3,7 +3,7 @@ package com.andlill.keynotes.app.home.composables
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Divider
 import androidx.compose.material.DrawerState
 import androidx.compose.material.MaterialTheme
@@ -12,7 +12,10 @@ import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Label
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.andlill.keynotes.model.Label
@@ -22,6 +25,7 @@ import kotlinx.coroutines.launch
 fun Drawer(state: DrawerState, labels: List<Label>, onFilterDeleted: (Boolean) -> Unit, onAddLabel: (Label) -> Unit, onDeleteLabel: (Label) -> Unit) {
     val editLabelDialogState = remember { mutableStateOf(false) }
     val createLabelDialogState = remember { mutableStateOf(false) }
+    val selectedItem = remember { mutableStateOf(0) }
     val scope = rememberCoroutineScope()
 
     Column(modifier = Modifier
@@ -30,14 +34,16 @@ fun Drawer(state: DrawerState, labels: List<Label>, onFilterDeleted: (Boolean) -
         .fillMaxSize()) {
         Spacer(modifier = Modifier.height(16.dp))
         Column {
-            DrawerItem(icon = Icons.Outlined.Home, text = "Notes", onClick = {
+            DrawerItem(selectedItem, id = 0, icon = Icons.Outlined.Home, text = "Notes", onClick = {
                 scope.launch {
+                    selectedItem.value = 0
                     onFilterDeleted(false)
                     state.close()
                 }
             })
-            DrawerItem(icon = Icons.Outlined.Delete, text = "Deleted", onClick = {
+            DrawerItem(selectedItem, id = 1, icon = Icons.Outlined.Delete, text = "Deleted", onClick = {
                 scope.launch {
+                    selectedItem.value = 1
                     onFilterDeleted(true)
                     state.close()
                 }
@@ -45,7 +51,7 @@ fun Drawer(state: DrawerState, labels: List<Label>, onFilterDeleted: (Boolean) -
         }
         Divider(modifier = Modifier.padding(top = 16.dp, bottom = 16.dp))
         Column {
-            DrawerItem(icon = Icons.Outlined.Add, text = "New Label", color = MaterialTheme.colors.onSurface.copy(0.5f), onClick = {
+            DrawerItem(selectedItem, id = 2, icon = Icons.Outlined.Add, alpha = 0.5f, text = "New Label", onClick = {
                 createLabelDialogState.value = true
             })
             CreateLabelDialog(
@@ -56,10 +62,12 @@ fun Drawer(state: DrawerState, labels: List<Label>, onFilterDeleted: (Boolean) -
             )
         }
         LazyColumn {
-            items(labels) { label ->
-                DrawerItem(icon = Icons.Outlined.Label, text = label.value, showEditButton = true,
+            itemsIndexed(labels) { index, label ->
+                // Index minus static drawer items above.
+                DrawerItem(selectedItem, id = index + 3, icon = Icons.Outlined.Label, text = label.value, showEditButton = true,
                     onClick = {
                         scope.launch {
+                            selectedItem.value = index + 3
                             state.close()
                         }
                     },
