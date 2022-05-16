@@ -37,21 +37,21 @@ fun Drawer(state: DrawerState, labels: List<Label>, onFilterDeleted: (Boolean) -
             DrawerItem(selectedItem, id = 0, icon = Icons.Outlined.Home, text = "Notes", onClick = {
                 scope.launch {
                     selectedItem.value = 0
-                    onFilterDeleted(false)
                     state.close()
                 }
+                onFilterDeleted(false)
             })
             DrawerItem(selectedItem, id = 1, icon = Icons.Outlined.Delete, text = "Deleted", onClick = {
                 scope.launch {
                     selectedItem.value = 1
-                    onFilterDeleted(true)
                     state.close()
                 }
+                onFilterDeleted(true)
             })
         }
         Divider(modifier = Modifier.padding(top = 16.dp, bottom = 16.dp))
         Column {
-            DrawerItem(selectedItem, id = 2, icon = Icons.Outlined.Add, alpha = 0.5f, text = "New Label", onClick = {
+            DrawerItem(selectedItem, id = 2, icon = Icons.Outlined.Add, alpha = 0.32f, text = "New Label", onClick = {
                 createLabelDialogState.value = true
             })
             CreateLabelDialog(

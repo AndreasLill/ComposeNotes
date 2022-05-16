@@ -69,14 +69,14 @@ class HomeViewModel(private val application: Application) : ViewModel() {
         LabelRepository.deleteLabel(application, label)
     }
 
-    fun onFilterQuery(value: String) {
+    fun onFilterQuery(value: String) = viewModelScope.launch {
         filter = filter.copy(
             query = value
         )
         filterNotes()
     }
 
-    fun onFilterDeleted(value: Boolean) {
+    fun onFilterDeleted(value: Boolean) = viewModelScope.launch {
         filter = filter.copy(
             deleted = value
         )

@@ -43,6 +43,7 @@ fun HomeScreen(navigation: NavController) {
 
     Scaffold(
         scaffoldState = state,
+        drawerScrimColor = Color.Black.copy(0.32f),
         drawerContent = {
             Drawer(
                 state = state.drawerState,
@@ -60,10 +61,7 @@ fun HomeScreen(navigation: NavController) {
         },
         topBar = {
             Column {
-                Spacer(modifier = Modifier
-                    .statusBarsPadding()
-                    .fillMaxWidth()
-                )
+                Spacer(modifier = Modifier.statusBarsPadding())
                 TopAppBar(
                     backgroundColor = MaterialTheme.colors.surface,
                     elevation = 0.dp,

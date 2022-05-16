@@ -57,7 +57,7 @@ fun DrawerItem(selectedItem: MutableState<Int>, id: Int, icon: ImageVector, alph
                     Icon(
                         imageVector = Icons.Outlined.Edit,
                         contentDescription = null,
-                        tint = MaterialTheme.colors.onSurface.copy(0.3f))
+                        tint = contentColor.copy(0.32f))
                 }
             }
         }
