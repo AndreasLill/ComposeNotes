@@ -1,12 +1,14 @@
 package com.andlill.keynotes.app.home.composables
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.*
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,24 +24,34 @@ import com.andlill.keynotes.model.Label
 import com.andlill.keynotes.ui.text.ButtonText
 
 @Composable
-fun EditLabelDialog(initialValue: Label, state: MutableState<Boolean>, onConfirm: (Label) -> Unit, onDelete: (Label) -> Unit) {
-    var label by remember { mutableStateOf(Label()) }
+fun EditLabelDialog(label: Label, state: MutableState<Boolean>, onConfirm: (Label) -> Unit, onDelete: (Label) -> Unit, onDismiss: () -> Unit) {
+    var text by remember { mutableStateOf("") }
 
     LaunchedEffect(state.value) {
-        // Set label to initial value when dialog opens.
-        label = initialValue
+        // Set text value when dialog opens.
+        text = label.value
     }
 
     if (state.value) {
         Dialog(
             onDismissRequest = {
+                onDismiss()
+                text = ""
                 state.value = false
             }) {
             Box(
-                // Important to align dialog above keyboard.
+                // Important to align dialog above keyboard. Jetpack Compose bug?
                 modifier = Modifier
                     .fillMaxSize()
                     .imePadding()
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) {
+                        onDismiss()
+                        text = ""
+                        state.value = false
+                    }
             ) {
                 Column(
                     modifier = Modifier
@@ -60,47 +72,47 @@ fun EditLabelDialog(initialValue: Label, state: MutableState<Boolean>, onConfirm
                         modifier = Modifier.fillMaxWidth(),
                         maxLines = 1,
                         singleLine = true,
-                        placeholder = {
-                            Text(
-                                text = stringResource(R.string.home_screen_label_dialog_placeholder),
-                                fontSize = 15.sp
-                            )
-                        },
                         keyboardOptions = KeyboardOptions(
                             capitalization = KeyboardCapitalization.Words,
                             imeAction = ImeAction.Done,
                         ),
                         keyboardActions = KeyboardActions(
                             onDone = {
-                                onConfirm(label)
+                                onConfirm(label.copy(value = text))
+                                text = ""
                                 state.value = false
                             }
                         ),
-                        value = label.value,
+                        value = text,
                         onValueChange = {
-                            label = label.copy(
-                                value = it
-                            )
+                            text = it
                         })
                     Spacer(modifier = Modifier.height(16.dp))
                     Box(modifier = Modifier.fillMaxWidth()) {
-                        IconButton(
+                        OutlinedButton(
                             modifier = Modifier.align(Alignment.CenterStart),
                             onClick = {
                                 onDelete(label)
+                                text = ""
                                 state.value = false
-                            },
-                            content = {
-                                Icon(
-                                    contentDescription = null,
-                                    imageVector = Icons.Outlined.Delete,
-                                    tint = MaterialTheme.colors.error,
-                                )
-                            }
-                        )
+                            }) {
+                            Icon(
+                                modifier = Modifier.size(20.dp),
+                                contentDescription = null,
+                                imageVector = Icons.Outlined.Delete,
+                                tint = MaterialTheme.colors.error,
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            ButtonText(
+                                text = stringResource(R.string.home_screen_label_dialog_button_delete),
+                                color = MaterialTheme.colors.error
+                            )
+                        }
                         Row(modifier = Modifier.align(Alignment.CenterEnd)) {
                             OutlinedButton(
                                 onClick = {
+                                    onDismiss()
+                                    text = ""
                                     state.value = false
                                 }) {
                                 ButtonText(text = stringResource(R.string.home_screen_label_dialog_button_cancel))
@@ -108,7 +120,8 @@ fun EditLabelDialog(initialValue: Label, state: MutableState<Boolean>, onConfirm
                             Spacer(modifier = Modifier.width(16.dp))
                             OutlinedButton(
                                 onClick = {
-                                    onConfirm(label)
+                                    onConfirm(label.copy(value = text))
+                                    text = ""
                                     state.value = false
                                 }) {
                                 ButtonText(text = stringResource(R.string.home_screen_label_dialog_button_ok))

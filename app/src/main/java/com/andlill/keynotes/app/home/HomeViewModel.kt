@@ -13,7 +13,6 @@ import com.andlill.keynotes.data.repository.LabelRepository
 import com.andlill.keynotes.data.repository.NoteRepository
 import com.andlill.keynotes.model.Label
 import com.andlill.keynotes.model.Note
-import com.andlill.keynotes.model.NoteFilter
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -30,7 +29,11 @@ class HomeViewModel(private val application: Application) : ViewModel() {
         private set
     var labels by mutableStateOf<List<Label>>(emptyList())
         private set
-    var filter by mutableStateOf(NoteFilter())
+    var filterDeleted by mutableStateOf(false)
+        private set
+    var filterLabel by mutableStateOf<Label?>(null)
+        private set
+    var query by mutableStateOf("")
         private set
 
     init {
@@ -48,14 +51,13 @@ class HomeViewModel(private val application: Application) : ViewModel() {
     }
 
     private fun filterNotes() {
-        var filterList = _notes.filter { note -> note.deleted == filter.deleted }
+        var filterList = _notes.filter { note -> note.deleted == filterDeleted }
 
-        if (filter.label.value.isNotEmpty()) {
-            filterList = filterList.filter { note -> note.labels.contains(filter.label) }
-        }
+        if (filterLabel != null)
+            filterList = filterList.filter { note -> note.labels.contains(filterLabel) }
 
-        if (filter.query.isNotEmpty()) {
-            filterList = filterList.filter { note -> note.title.contains(filter.query, ignoreCase = true) || note.body.contains(filter.query, ignoreCase = true) }
+        if (query.isNotEmpty()) {
+            filterList = filterList.filter { note -> note.title.contains(query, ignoreCase = true) || note.body.contains(query, ignoreCase = true) }
         }
 
         notes = filterList
@@ -69,17 +71,19 @@ class HomeViewModel(private val application: Application) : ViewModel() {
         LabelRepository.deleteLabel(application, label)
     }
 
-    fun onFilterQuery(value: String) = viewModelScope.launch {
-        filter = filter.copy(
-            query = value
-        )
+    fun onQuery(value: String) = viewModelScope.launch {
+        query = value
         filterNotes()
     }
 
     fun onFilterDeleted(value: Boolean) = viewModelScope.launch {
-        filter = filter.copy(
-            deleted = value
-        )
+        filterLabel = null
+        filterDeleted = value
+        filterNotes()
+    }
+
+    fun onFilterLabel(value: Label?) = viewModelScope.launch {
+        filterLabel = value
         filterNotes()
     }
 }

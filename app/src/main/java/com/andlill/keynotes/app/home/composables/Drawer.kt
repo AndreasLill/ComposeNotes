@@ -22,10 +22,11 @@ import com.andlill.keynotes.model.Label
 import kotlinx.coroutines.launch
 
 @Composable
-fun Drawer(state: DrawerState, labels: List<Label>, onFilterDeleted: (Boolean) -> Unit, onAddLabel: (Label) -> Unit, onDeleteLabel: (Label) -> Unit) {
+fun Drawer(state: DrawerState, labels: List<Label>, onFilterDeleted: (Boolean) -> Unit, onFilterLabel: (Label) -> Unit, onAddLabel: (Label) -> Unit, onDeleteLabel: (Label) -> Unit) {
     val editLabelDialogState = remember { mutableStateOf(false) }
     val createLabelDialogState = remember { mutableStateOf(false) }
     val selectedItem = remember { mutableStateOf(0) }
+    val selectedLabel = remember { mutableStateOf(Label()) }
     val scope = rememberCoroutineScope()
 
     Column(modifier = Modifier
@@ -35,17 +36,13 @@ fun Drawer(state: DrawerState, labels: List<Label>, onFilterDeleted: (Boolean) -
         Spacer(modifier = Modifier.height(16.dp))
         Column {
             DrawerItem(selectedItem, id = 0, icon = Icons.Outlined.Home, text = "Notes", onClick = {
-                scope.launch {
-                    selectedItem.value = 0
-                    state.close()
-                }
+                scope.launch { state.close() }
+                selectedItem.value = 0
                 onFilterDeleted(false)
             })
             DrawerItem(selectedItem, id = 1, icon = Icons.Outlined.Delete, text = "Deleted", onClick = {
-                scope.launch {
-                    selectedItem.value = 1
-                    state.close()
-                }
+                scope.launch { state.close() }
+                selectedItem.value = 1
                 onFilterDeleted(true)
             })
         }
@@ -54,38 +51,45 @@ fun Drawer(state: DrawerState, labels: List<Label>, onFilterDeleted: (Boolean) -
             DrawerItem(selectedItem, id = 2, icon = Icons.Outlined.Add, alpha = 0.32f, text = "New Label", onClick = {
                 createLabelDialogState.value = true
             })
-            CreateLabelDialog(
-                state = createLabelDialogState,
-                onConfirm = {
-                    onAddLabel(it)
-                },
-            )
         }
+        CreateLabelDialog(
+            state = createLabelDialogState,
+            onConfirm = {
+                onAddLabel(it)
+            },
+        )
         LazyColumn {
             itemsIndexed(labels) { index, label ->
                 // Index minus static drawer items above.
                 DrawerItem(selectedItem, id = index + 3, icon = Icons.Outlined.Label, text = label.value, showEditButton = true,
                     onClick = {
-                        scope.launch {
-                            selectedItem.value = index + 3
-                            state.close()
-                        }
+                        scope.launch { state.close() }
+                        selectedItem.value = index + 3
+                        onFilterLabel(label)
                     },
                     onEditClick = {
+                        selectedLabel.value = label
                         editLabelDialogState.value = true
                     }
                 )
-                EditLabelDialog(
-                    initialValue = label,
-                    state = editLabelDialogState,
-                    onConfirm = {
-                        onAddLabel(it)
-                    },
-                    onDelete = {
-                        onDeleteLabel(it)
-                    },
-                )
             }
         }
+        EditLabelDialog(
+            label = selectedLabel.value,
+            state = editLabelDialogState,
+            onConfirm = {
+                onAddLabel(it)
+                selectedLabel.value = Label()
+            },
+            onDelete = {
+                onDeleteLabel(it)
+                selectedItem.value = 0
+                onFilterDeleted(false)
+                selectedLabel.value = Label()
+            },
+            onDismiss = {
+                selectedLabel.value = Label()
+            }
+        )
     }
 }

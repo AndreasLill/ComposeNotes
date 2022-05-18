@@ -10,6 +10,7 @@
     <string name="home_screen_label_dialog_placeholder">Label</string>
     <string name="home_screen_label_dialog_button_ok">OK</string>
     <string name="home_screen_label_dialog_button_cancel">Cancel</string>
+    <string name="home_screen_label_dialog_button_delete">Delete</string>
     <string name="home_screen_create_label_dialog_title">New Label</string>
     <string name="home_screen_create_label_dialog_placeholder">Label</string>
     <string name="home_screen_create_label_dialog_button_ok">OK</string>

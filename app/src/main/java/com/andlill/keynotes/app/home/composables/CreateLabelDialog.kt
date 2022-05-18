@@ -1,6 +1,8 @@
 package com.andlill.keynotes.app.home.composables
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -24,18 +26,26 @@ import com.andlill.keynotes.ui.text.ButtonText
 
 @Composable
 fun CreateLabelDialog(state: MutableState<Boolean>, onConfirm: (Label) -> Unit) {
-    var label by remember { mutableStateOf(Label()) }
+    var text by remember { mutableStateOf("") }
 
     if (state.value) {
         Dialog(
             onDismissRequest = {
+                text = ""
                 state.value = false
             }) {
             Box(
-                // Important to align dialog above keyboard.
+                // Important to align dialog above keyboard. Jetpack Compose bug?
                 modifier = Modifier
                     .fillMaxSize()
                     .imePadding()
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) {
+                        text = ""
+                        state.value = false
+                    }
             ) {
                 Column(
                     modifier = Modifier
@@ -68,21 +78,21 @@ fun CreateLabelDialog(state: MutableState<Boolean>, onConfirm: (Label) -> Unit) 
                         ),
                         keyboardActions = KeyboardActions(
                             onDone = {
-                                onConfirm(label)
+                                onConfirm(Label(value = text))
+                                text = ""
                                 state.value = false
                             }
                         ),
-                        value = label.value,
+                        value = text,
                         onValueChange = {
-                            label = label.copy(
-                                value = it
-                            )
+                            text = it
                         })
                     Spacer(modifier = Modifier.height(16.dp))
                     Box(modifier = Modifier.fillMaxWidth()) {
                         Row(modifier = Modifier.align(Alignment.CenterEnd)) {
                             OutlinedButton(
                                 onClick = {
+                                    text = ""
                                     state.value = false
                                 }) {
                                 ButtonText(text = stringResource(R.string.home_screen_create_label_dialog_button_cancel))
@@ -90,7 +100,8 @@ fun CreateLabelDialog(state: MutableState<Boolean>, onConfirm: (Label) -> Unit) 
                             Spacer(modifier = Modifier.width(16.dp))
                             OutlinedButton(
                                 onClick = {
-                                    onConfirm(label)
+                                    onConfirm(Label(value = text))
+                                    text = ""
                                     state.value = false
                                 }) {
                                 ButtonText(text = stringResource(R.string.home_screen_create_label_dialog_button_ok))

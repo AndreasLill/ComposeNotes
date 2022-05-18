@@ -51,6 +51,9 @@ fun HomeScreen(navigation: NavController) {
                 onFilterDeleted = {
                     viewModel.onFilterDeleted(it)
                 },
+                onFilterLabel = {
+                    viewModel.onFilterLabel(it)
+                },
                 onAddLabel = {
                     viewModel.onAddLabel(it)
                 },
@@ -66,8 +69,8 @@ fun HomeScreen(navigation: NavController) {
                     backgroundColor = MaterialTheme.colors.surface,
                     elevation = 0.dp,
                     title = {
-                        SearchBar(viewModel.filter.query, onValueChange = {
-                            viewModel.onFilterQuery(it)
+                        SearchBar(viewModel.query, onValueChange = {
+                            viewModel.onQuery(it)
                         })
                     },
                     navigationIcon = {
@@ -83,7 +86,7 @@ fun HomeScreen(navigation: NavController) {
             }
         },
         bottomBar = {
-            if (!viewModel.filter.deleted) {
+            if (!viewModel.filterDeleted) {
                 OutlinedButton(modifier = Modifier
                     .navigationBarsPadding()
                     .imePadding()
