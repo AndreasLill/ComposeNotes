@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.andlill.keynotes.model.Label
@@ -25,8 +26,8 @@ import kotlinx.coroutines.launch
 fun Drawer(state: DrawerState, labels: List<Label>, onFilterDeleted: (Boolean) -> Unit, onFilterLabel: (Label) -> Unit, onAddLabel: (Label) -> Unit, onDeleteLabel: (Label) -> Unit) {
     val editLabelDialogState = remember { mutableStateOf(false) }
     val createLabelDialogState = remember { mutableStateOf(false) }
-    val selectedItem = remember { mutableStateOf(0) }
-    val selectedLabel = remember { mutableStateOf(Label()) }
+    val selectedItem = rememberSaveable  { mutableStateOf(0) }
+    val selectedLabel = remember  { mutableStateOf(Label()) }
     val scope = rememberCoroutineScope()
 
     Column(modifier = Modifier

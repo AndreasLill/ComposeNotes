@@ -34,7 +34,7 @@ fun DrawerItem(selectedItem: MutableState<Int>, id: Int, icon: ImageVector, alph
             onClick()
         }
     ) {
-        Box(modifier = Modifier.padding(start = 16.dp, end = 16.dp)) {
+        Box(modifier = Modifier.padding(start = 16.dp)) {
             Row(modifier = Modifier.align(CenterStart)) {
                 Icon(
                     modifier = Modifier.align(CenterVertically),
