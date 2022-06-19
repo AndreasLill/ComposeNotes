@@ -13,6 +13,9 @@ import androidx.compose.material.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalTextInputService
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -21,14 +24,26 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.andlill.keynotes.R
+import com.andlill.keynotes.app.shared.clearFocusOnKeyboardDismiss
 import com.andlill.keynotes.model.Label
 import com.andlill.keynotes.ui.text.ButtonText
+import kotlinx.coroutines.delay
 
 @Composable
 fun CreateLabelDialog(state: MutableState<Boolean>, onConfirm: (Label) -> Unit) {
     var text by remember { mutableStateOf("") }
+    val focusRequester = remember { FocusRequester() }
+    val inputService = LocalTextInputService.current
 
     if (state.value) {
+
+        LaunchedEffect(Unit) {
+            // Keyboard doesn't show unless there is a delay. Jetpack Compose bug?
+            delay(50)
+            focusRequester.requestFocus()
+            inputService?.showSoftwareKeyboard()
+        }
+
         Dialog(
             onDismissRequest = {
                 text = ""
@@ -63,7 +78,10 @@ fun CreateLabelDialog(state: MutableState<Boolean>, onConfirm: (Label) -> Unit) 
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     TextField(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clearFocusOnKeyboardDismiss()
+                            .focusRequester(focusRequester),
                         maxLines = 1,
                         singleLine = true,
                         placeholder = {
