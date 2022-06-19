@@ -83,11 +83,7 @@ fun HomeScreen(navigation: NavController) {
             }
         },
         bottomBar = {
-            Box(modifier = Modifier
-                .navigationBarsPadding()
-                .imePadding()
-                .fillMaxWidth()
-            ) {
+            Box(modifier = Modifier.navigationBarsPadding().fillMaxWidth()) {
                 if (!viewModel.filterDeleted) {
                     OutlinedButton(modifier = Modifier
                         .padding(start = 8.dp, end = 8.dp, bottom = 4.dp, top = 4.dp)
