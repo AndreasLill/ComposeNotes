@@ -86,7 +86,7 @@ fun HomeScreen(navigation: NavController) {
             Box(modifier = Modifier.navigationBarsPadding().fillMaxWidth()) {
                 if (!viewModel.filterDeleted) {
                     OutlinedButton(modifier = Modifier
-                        .padding(start = 8.dp, end = 8.dp, bottom = 4.dp, top = 4.dp)
+                        .padding(start = 8.dp, end = 8.dp, bottom = 4.dp)
                         .fillMaxWidth(),
                         colors = ButtonDefaults.buttonColors(
                             backgroundColor = MaterialTheme.colors.onSurface.copy(0.1f),
@@ -113,7 +113,7 @@ fun HomeScreen(navigation: NavController) {
                 .padding(innerPadding)
                 .background(MaterialTheme.colors.surface)
                 .fillMaxSize()
-                .padding(start = 8.dp, end = 8.dp),
+                .padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 items(viewModel.notes) { note ->
                     NoteItem(note) {
