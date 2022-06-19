@@ -36,15 +36,10 @@ fun SearchBar(query: String, onValueChange: (String) -> Unit) {
             .clearFocusOnKeyboardDismiss()
             .padding(end = 4.dp)
             .background(
-                color = MaterialTheme.colors.surface,
-                shape = RoundedCornerShape(8.dp)
+                color = MaterialTheme.colors.onSurface.copy(0.1f),
+                shape = RoundedCornerShape(32.dp)
             )
-            .border(
-                width = Dp.Hairline,
-                color = MaterialTheme.colors.onSurface.copy(0.4f),
-                shape = RoundedCornerShape(8.dp)
-            )
-            .padding(8.dp)
+            .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp)
             .fillMaxWidth()
             .height(24.dp),
         value = query,
