@@ -7,8 +7,8 @@ import kotlinx.coroutines.flow.Flow
 
 object NoteRepository {
 
-    suspend fun insertNote(context: Context, note: Note): Long {
-        return AppDatabase.get(context).noteDao.insertNote(note)
+    suspend fun insertNote(context: Context, note: Note): Int {
+        return AppDatabase.get(context).noteDao.insertNote(note).toInt()
     }
 
     suspend fun deleteNote(context: Context, note: Note) {

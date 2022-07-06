@@ -70,7 +70,7 @@ class HomeViewModel(private val application: Application) : ViewModel() {
         notes = filterList
     }
 
-    fun onCreateNote(callback: (Long) -> Unit) = viewModelScope.launch {
+    fun onCreateNote(callback: (Int) -> Unit) = viewModelScope.launch {
         // Create a new note and callback the note id.
         val noteId = NoteRepository.insertNote(application, Note(
             created = Calendar.getInstance().timeInMillis,
