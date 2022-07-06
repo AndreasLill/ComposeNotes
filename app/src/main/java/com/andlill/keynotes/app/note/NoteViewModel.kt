@@ -33,52 +33,38 @@ class NoteViewModel(private val application: Application, private val noteId: In
     }
 
     fun onClose() = viewModelScope.launch {
-        // Don't save deleted note, cancel any reminder.
-        if (note.deleted) {
-            onCancelReminder()
-            return@launch
-        }
         // Don't save new note with no content, cancel any reminder.
-        if (note.title.isEmpty() && note.body.isEmpty() && note.created == null) {
+        if (note.title.isEmpty() && note.body.isEmpty() && note.modified == null) {
             onCancelReminder()
             return@launch
         }
 
+        // Cancel reminder if note was labeled as deleted.
+        if (note.deleted)
+            onCancelReminder()
+
         // Save note on close.
-        note = note.copy(
+        NoteRepository.insertNote(application, note.copy(
             title = note.title.trim(),
             body = note.body.trim(),
-            // Set created timestamp if this is a new note.
-            created = note.created ?: Calendar.getInstance().timeInMillis,
             modified = Calendar.getInstance().timeInMillis,
-        )
-        NoteRepository.insertNote(application, note)
+        ))
     }
 
     fun onChangeColor(value: Int) {
-        note = note.copy(
-            color = value
-        )
+        note = note.copy(color = value)
     }
 
     fun onChangeTitle(value: String) {
-        note = note.copy(
-            title = value
-        )
+        note = note.copy(title = value)
     }
 
     fun onChangeBody(value: String) {
-        note = note.copy(
-            body = value
-        )
+        note = note.copy(body = value)
     }
 
     fun onDeleteNote() = viewModelScope.launch {
-        note = note.copy(
-            deleted = true,
-            modified = Calendar.getInstance().timeInMillis
-        )
-        NoteRepository.insertNote(application, note)
+        note = note.copy(deleted = true)
     }
 
     fun onSetReminder(calendar: Calendar) {
