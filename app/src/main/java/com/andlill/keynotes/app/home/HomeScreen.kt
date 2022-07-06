@@ -94,9 +94,11 @@ fun HomeScreen(navigation: NavController) {
                         ),
                         shape = RoundedCornerShape(32.dp),
                         onClick = {
-                            navigation.navigate(Screen.NoteScreen.route) {
-                                // To avoid multiple copies of same destination in backstack.
-                                launchSingleTop = true
+                            viewModel.onCreateNote { id ->
+                                navigation.navigate("${Screen.NoteScreen.route}/$id") {
+                                    // To avoid multiple copies of same destination in backstack.
+                                    launchSingleTop = true
+                                }
                             }
                         }) {
                         Icon(
@@ -117,7 +119,7 @@ fun HomeScreen(navigation: NavController) {
                 verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 items(viewModel.notes) { note ->
                     NoteItem(note) {
-                        navigation.navigate(Screen.NoteScreen.route + "/${note.id}") {
+                        navigation.navigate("${Screen.NoteScreen.route}/${note.id}") {
                             // To avoid multiple copies of same destination in backstack.
                             launchSingleTop = true
                         }

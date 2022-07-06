@@ -15,6 +15,7 @@ import com.andlill.keynotes.model.Label
 import com.andlill.keynotes.model.Note
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.util.*
 
 class HomeViewModel(private val application: Application) : ViewModel() {
     class Factory(private val application: Application) : ViewModelProvider.NewInstanceFactory() {
@@ -51,16 +52,30 @@ class HomeViewModel(private val application: Application) : ViewModel() {
     }
 
     private fun filterNotes() {
-        var filterList = _notes.filter { note -> note.deleted == filterDeleted }
+        // Filter notes on modified value. (Modified 'null' notes are temporary created but unsaved notes.)
+        var filterList = _notes.filter { note -> note.modified != null }
 
+        // Filter notes on deleted boolean status.
+        filterList = filterList.filter { note -> note.deleted == filterDeleted }
+
+        // Filter notes on label.
         if (filterLabel != null)
             filterList = filterList.filter { note -> note.labels.contains(filterLabel) }
 
+        // Filter notes on query.
         if (query.isNotEmpty()) {
             filterList = filterList.filter { note -> note.title.contains(query, ignoreCase = true) || note.body.contains(query, ignoreCase = true) }
         }
 
         notes = filterList
+    }
+
+    fun onCreateNote(callback: (Long) -> Unit) = viewModelScope.launch {
+        // Create a new note and callback the note id.
+        val noteId = NoteRepository.insertNote(application, Note(
+            created = Calendar.getInstance().timeInMillis,
+        ))
+        callback(noteId)
     }
 
     fun onAddLabel(label: Label) = viewModelScope.launch {
