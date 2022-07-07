@@ -6,7 +6,6 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment.Companion.CenterEnd
 import androidx.compose.ui.Alignment.Companion.CenterStart
 import androidx.compose.ui.Alignment.Companion.CenterVertically
@@ -18,11 +17,11 @@ import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun DrawerItem(selectedItem: MutableState<Int>, id: Int, icon: ImageVector, alpha: Float = 1f, text: String, showEditButton: Boolean = false, onClick: () -> Unit = {}, onEditClick: () -> Unit = {}) {
+fun DrawerItem(selectedItem: Int, id: Int, icon: ImageVector, alpha: Float = 1f, text: String, showEditButton: Boolean = false, onClick: () -> Unit = {}, onEditClick: () -> Unit = {}) {
 
     // Color depends on if this item is selected or not.
-    val backgroundColor = if (selectedItem.value == id) MaterialTheme.colors.primary.copy(0.1f) else Color.Transparent
-    val contentColor = if (selectedItem.value == id) MaterialTheme.colors.primary.copy(alpha) else MaterialTheme.colors.onSurface.copy(alpha)
+    val backgroundColor = if (selectedItem == id) MaterialTheme.colors.primary.copy(0.1f) else Color.Transparent
+    val contentColor = if (selectedItem == id) MaterialTheme.colors.primary.copy(alpha) else MaterialTheme.colors.onSurface.copy(alpha)
 
     Surface(modifier = Modifier
         .fillMaxWidth()

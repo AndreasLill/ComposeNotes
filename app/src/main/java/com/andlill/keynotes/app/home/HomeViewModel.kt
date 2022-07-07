@@ -37,6 +37,9 @@ class HomeViewModel(private val application: Application) : ViewModel() {
     var query by mutableStateOf("")
         private set
 
+    var drawerSelectedItem by mutableStateOf(0)
+    var drawerSelectedLabel by mutableStateOf(Label())
+
     init {
         viewModelScope.launch {
             NoteRepository.getAllNotes(application).collectLatest {

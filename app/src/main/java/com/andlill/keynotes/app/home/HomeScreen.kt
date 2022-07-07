@@ -44,19 +44,7 @@ fun HomeScreen(navigation: NavController) {
         drawerContent = {
             Drawer(
                 state = state.drawerState,
-                labels = viewModel.labels,
-                onFilterDeleted = {
-                    viewModel.onFilterDeleted(it)
-                },
-                onFilterLabel = {
-                    viewModel.onFilterLabel(it)
-                },
-                onAddLabel = {
-                    viewModel.onAddLabel(it)
-                },
-                onDeleteLabel = {
-                    viewModel.onDeleteLabel(it)
-                }
+                viewModel = viewModel,
             )
         },
         topBar = {
