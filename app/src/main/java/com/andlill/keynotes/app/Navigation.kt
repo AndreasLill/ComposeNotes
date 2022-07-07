@@ -16,15 +16,11 @@ fun Navigation() {
     NavHost(
         navController = navController,
         startDestination = Screen.HomeScreen.route) {
-        // Root "Home" Screen
+        // Root home screen
         composable(Screen.HomeScreen.route) {
             HomeScreen(navController)
         }
-        // Note screen for new note.
-        composable(Screen.NoteScreen.route) {
-            NoteScreen(navController)
-        }
-        // Note screen with argument for loading existing note.
+        // Note screen with argument for note id.
         composable(
             route = Screen.NoteScreen.route + "/{noteId}",
             arguments = listOf(navArgument("noteId") { type = NavType.IntType }),
