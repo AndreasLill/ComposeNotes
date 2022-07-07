@@ -13,9 +13,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.NotificationsActive
-import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.Notifications
-import androidx.compose.material.icons.outlined.Palette
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -89,27 +87,39 @@ fun NoteScreen(navigation: NavController, noteId: Int = -1) {
                         })
                     },
                     actions = {
-                        MenuIconButton(icon = reminderIcon, color = MaterialTheme.colors.onSurface, onClick = {
-                            reminderDialogState.value = true
-                        })
-                        MenuIconButton(icon = Icons.Outlined.Palette, color = MaterialTheme.colors.onSurface, onClick = {
-                            themeMenuState.value = true
-                        })
-                        MenuIconButton(icon = Icons.Outlined.Delete, color = MaterialTheme.colors.onSurface, onClick = {
-                            viewModel.onDeleteNote()
-                            navigation.navigateUp()
-                        })
-                        ThemeDropDown(state = themeMenuState, onClick = {
-                            viewModel.onChangeColor(it)
-                        })
-                        ReminderDialog(reminderTime = viewModel.note.reminder, state = reminderDialogState, onClick = {
-                            if (it == null) {
-                                viewModel.onCancelReminder()
-                            }
-                            else {
-                                viewModel.onSetReminder(it)
-                            }
-                        })
+                        if (!viewModel.note.deleted) {
+                            MenuIconButton(icon = reminderIcon, color = MaterialTheme.colors.onSurface, onClick = {
+                                reminderDialogState.value = true
+                            })
+                            MenuIconButton(icon = Icons.Outlined.Palette, color = MaterialTheme.colors.onSurface, onClick = {
+                                themeMenuState.value = true
+                            })
+                            MenuIconButton(icon = Icons.Outlined.Delete, color = MaterialTheme.colors.onSurface, onClick = {
+                                viewModel.onDeleteNote()
+                                navigation.navigateUp()
+                            })
+                            ThemeDropDown(state = themeMenuState, onClick = {
+                                viewModel.onChangeColor(it)
+                            })
+                            ReminderDialog(reminderTime = viewModel.note.reminder, state = reminderDialogState, onClick = {
+                                if (it == null) {
+                                    viewModel.onCancelReminder()
+                                }
+                                else {
+                                    viewModel.onSetReminder(it)
+                                }
+                            })
+                        }
+                        else {
+                            MenuIconButton(icon = Icons.Outlined.Restore, color = MaterialTheme.colors.onSurface, onClick = {
+                                viewModel.onRestore()
+                                navigation.navigateUp()
+                            })
+                            MenuIconButton(icon = Icons.Outlined.DeleteForever, color = MaterialTheme.colors.onSurface, onClick = {
+                                viewModel.onDeleteForever()
+                                navigation.navigateUp()
+                            })
+                        }
                     }
                 )
             }
@@ -125,6 +135,7 @@ fun NoteScreen(navigation: NavController, noteId: Int = -1) {
                 NoteTitleTextField(
                     placeholder = stringResource(R.string.note_screen_title_placeholder),
                     value = viewModel.note.title,
+                    readOnly = viewModel.note.deleted,
                     onValueChange = {
                         viewModel.onChangeTitle(it)
                     }
@@ -132,6 +143,7 @@ fun NoteScreen(navigation: NavController, noteId: Int = -1) {
                 NoteBodyTextField(
                     placeholder = stringResource(R.string.note_screen_body_placeholder),
                     value = viewModel.note.body,
+                    readOnly = viewModel.note.deleted,
                     focusRequester = focusRequester,
                     onValueChange = {
                         viewModel.onChangeBody(it)

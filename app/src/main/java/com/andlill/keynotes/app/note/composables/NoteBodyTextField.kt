@@ -18,13 +18,14 @@ import androidx.compose.ui.unit.sp
 import com.andlill.keynotes.app.shared.clearFocusOnKeyboardDismiss
 
 @Composable
-fun NoteBodyTextField(placeholder: String, value: String, focusRequester: FocusRequester, onValueChange: (String) -> Unit) {
+fun NoteBodyTextField(placeholder: String, value: String, readOnly: Boolean, focusRequester: FocusRequester, onValueChange: (String) -> Unit) {
     BasicTextField(
         modifier = Modifier
             .focusRequester(focusRequester)
             .clearFocusOnKeyboardDismiss()
             .padding(start = 20.dp, end = 20.dp, top = 16.dp, bottom = 16.dp)
             .fillMaxWidth(),
+        readOnly = readOnly,
         value = value,
         onValueChange = onValueChange,
         cursorBrush = SolidColor(MaterialTheme.colors.primary),

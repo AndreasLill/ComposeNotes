@@ -21,13 +21,14 @@ import androidx.compose.ui.unit.sp
 import com.andlill.keynotes.app.shared.clearFocusOnKeyboardDismiss
 
 @Composable
-fun NoteTitleTextField(placeholder: String, value: String, onValueChange: (String) -> Unit) {
+fun NoteTitleTextField(placeholder: String, value: String, readOnly: Boolean, onValueChange: (String) -> Unit) {
     val focusManager = LocalFocusManager.current
     BasicTextField(
         modifier = Modifier
             .clearFocusOnKeyboardDismiss()
             .padding(start = 20.dp, end = 20.dp, top = 8.dp, bottom = 8.dp)
             .fillMaxWidth(),
+        readOnly = readOnly,
         value = value,
         onValueChange = onValueChange,
         singleLine = true,

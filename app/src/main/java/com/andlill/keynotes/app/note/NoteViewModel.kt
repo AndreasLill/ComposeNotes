@@ -33,6 +33,12 @@ class NoteViewModel(private val application: Application, private val noteId: In
     }
 
     fun onClose() = viewModelScope.launch {
+        // Don't save deleted note with no created date.
+        if (note.created == null) {
+            onCancelReminder()
+            return@launch
+        }
+
         // Don't save new note with no content, cancel any reminder.
         if (note.title.isEmpty() && note.body.isEmpty() && note.modified == null) {
             onCancelReminder()
@@ -64,7 +70,19 @@ class NoteViewModel(private val application: Application, private val noteId: In
     }
 
     fun onDeleteNote() = viewModelScope.launch {
+        // Set the note to deleted status.
         note = note.copy(deleted = true)
+    }
+
+    fun onDeleteForever() = viewModelScope.launch {
+        // Delete the note forever.
+        note = note.copy(created = null)
+        NoteRepository.deleteNote(application, note)
+    }
+
+    fun onRestore() = viewModelScope.launch {
+        // Restore the deleted note.
+        note = note.copy(deleted = false)
     }
 
     fun onSetReminder(calendar: Calendar) {
