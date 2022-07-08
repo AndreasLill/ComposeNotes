@@ -9,6 +9,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -17,13 +18,16 @@ import androidx.compose.material.icons.outlined.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -124,14 +128,31 @@ fun NoteScreen(navigation: NavController, noteId: Int = -1) {
                 )
             }
         },
+        bottomBar = {
+            Box(modifier = Modifier
+                .navigationBarsPadding()
+                .imePadding()
+                .fillMaxWidth()) {
+                Text(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .padding(4.dp),
+                    color = MaterialTheme.colors.onSurface.copy(0.6f),
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    text = String.format("Last Modified: %s", viewModel.modifiedDate)
+                )
+            }
+        },
         content = { innerPadding ->
             Column(modifier = Modifier
                 .background(Color.Transparent)
-                .navigationBarsPadding()
-                .imePadding()
                 .padding(innerPadding)
                 .fillMaxSize()
-                .clickable(interactionSource = interactionSource, indication = null) { focusRequester.requestFocus() }) {
+                .clickable(
+                    interactionSource = interactionSource,
+                    indication = null
+                ) { focusRequester.requestFocus() }) {
                 NoteTitleTextField(
                     placeholder = stringResource(R.string.note_screen_title_placeholder),
                     value = viewModel.note.title,
