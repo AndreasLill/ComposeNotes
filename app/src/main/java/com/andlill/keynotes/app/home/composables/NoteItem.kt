@@ -4,11 +4,11 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedButton
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.PushPin
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -43,8 +43,24 @@ fun NoteItem(note: Note, callback: () -> Unit) {
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            if (note.title.isNotEmpty())
-                Text(text = note.title, style = MaterialTheme.typography.h3, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            if (note.title.isNotEmpty()) {
+                Box(modifier = Modifier.fillMaxWidth()) {
+                    Text(
+                        modifier = Modifier.padding(end = 24.dp),
+                        text = note.title,
+                        style = MaterialTheme.typography.h3,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    if (note.pinned) {
+                        Icon(
+                            modifier = Modifier.size(16.dp).align(Alignment.CenterEnd),
+                            imageVector = Icons.Outlined.PushPin,
+                            contentDescription = "Pinned",
+                        )
+                    }
+                }
+            }
             if (note.title.isNotEmpty() && note.body.isNotEmpty())
                 Spacer(modifier = Modifier
                     .fillMaxWidth()

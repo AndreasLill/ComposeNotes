@@ -44,7 +44,7 @@ class HomeViewModel(private val application: Application) : ViewModel() {
     init {
         viewModelScope.launch {
             NoteRepository.getAllNotes(application).collectLatest {
-                _notes = it
+                _notes = it.sortedWith(compareByDescending<Note> { note -> note.pinned }.thenByDescending { note -> note.created })
                 filterNotes()
             }
         }
