@@ -17,5 +17,6 @@ data class Note(
     val modified: Long? = null,
     val reminder: Long? = null,
     val deleted: Boolean = false,
+    val pinned: Boolean = false,
     val labels: List<Label> = emptyList(),
 )

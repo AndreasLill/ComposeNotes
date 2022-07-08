@@ -8,7 +8,7 @@ import androidx.room.TypeConverters
 import com.andlill.keynotes.model.Label
 import com.andlill.keynotes.model.Note
 
-@Database(entities = [Note::class, Label::class], version = 5, exportSchema = false)
+@Database(entities = [Note::class, Label::class], version = 6, exportSchema = false)
 @TypeConverters(DataConverter::class)
 abstract class AppDatabase : RoomDatabase(){
 

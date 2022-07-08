@@ -54,6 +54,7 @@ class NoteViewModel(private val application: Application, private val noteId: In
             note.body == _note.body &&
             note.color == _note.color &&
             note.deleted == _note.deleted &&
+            note.pinned == _note.pinned &&
             note.reminder == _note.reminder) {
             return@launch
         }
@@ -76,6 +77,10 @@ class NoteViewModel(private val application: Application, private val noteId: In
 
     fun onChangeBody(value: String) {
         note = note.copy(body = value)
+    }
+
+    fun onTogglePin() {
+        note = note.copy(pinned = !note.pinned)
     }
 
     fun onDeleteNote() = viewModelScope.launch {

@@ -14,6 +14,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.NotificationsActive
+import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -51,6 +52,10 @@ fun NoteScreen(navigation: NavController, noteId: Int = -1) {
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
 
+    val pinIcon = when {
+        viewModel.note.pinned -> Icons.Filled.PushPin
+        else -> Icons.Outlined.PushPin
+    }
     val reminderIcon = when {
         viewModel.note.reminder != null -> Icons.Filled.NotificationsActive
         else -> Icons.Outlined.Notifications
@@ -92,6 +97,9 @@ fun NoteScreen(navigation: NavController, noteId: Int = -1) {
                     },
                     actions = {
                         if (!viewModel.note.deleted) {
+                            MenuIconButton(icon = pinIcon, color = MaterialTheme.colors.onSurface, onClick = {
+                                viewModel.onTogglePin()
+                            })
                             MenuIconButton(icon = reminderIcon, color = MaterialTheme.colors.onSurface, onClick = {
                                 reminderDialogState.value = true
                             })
