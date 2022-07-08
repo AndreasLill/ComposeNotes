@@ -38,6 +38,7 @@ class HomeViewModel(private val application: Application) : ViewModel() {
         private set
 
     var drawerSelectedItem by mutableStateOf(0)
+    var drawerSelectedItemName by mutableStateOf("Notes")
     var drawerSelectedLabel by mutableStateOf(Label())
 
     init {

@@ -29,7 +29,7 @@ import com.andlill.keynotes.R
 import com.andlill.keynotes.app.shared.clearFocusOnKeyboardDismiss
 
 @Composable
-fun SearchBar(query: String, onValueChange: (String) -> Unit) {
+fun SearchBar(query: String, placeholder: String, onValueChange: (String) -> Unit) {
     val focusManager = LocalFocusManager.current
     BasicTextField(
         modifier = Modifier
@@ -65,7 +65,7 @@ fun SearchBar(query: String, onValueChange: (String) -> Unit) {
                     Text(
                         modifier = Modifier
                             .align(Alignment.CenterStart),
-                        text = stringResource(R.string.home_screen_search_bar_placeholder),
+                        text = String.format(stringResource(R.string.home_screen_search_bar_placeholder), placeholder),
                         style = TextStyle(
                             fontSize = 14.sp,
                             color = MaterialTheme.colors.onSurface.copy(0.6f)

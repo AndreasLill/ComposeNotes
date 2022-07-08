@@ -54,8 +54,11 @@ fun HomeScreen(navigation: NavController) {
                     backgroundColor = MaterialTheme.colors.surface,
                     elevation = 0.dp,
                     title = {
-                        SearchBar(viewModel.query, onValueChange = {
-                            viewModel.onQuery(it)
+                        SearchBar(
+                            query = viewModel.query,
+                            placeholder = viewModel.drawerSelectedItemName,
+                            onValueChange = {
+                                viewModel.onQuery(it)
                         })
                     },
                     navigationIcon = {

@@ -5,7 +5,7 @@
 
     <!-- Home Screen -->
     <string name="home_Screen_button_add_note">Add Note</string>
-    <string name="home_screen_search_bar_placeholder">Search Notes</string>
+    <string name="home_screen_search_bar_placeholder">Search %s</string>
     <string name="home_screen_label_dialog_title">Edit Label</string>
     <string name="home_screen_label_dialog_placeholder">Label</string>
     <string name="home_screen_label_dialog_button_ok">OK</string>

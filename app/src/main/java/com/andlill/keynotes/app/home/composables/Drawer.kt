@@ -37,11 +37,13 @@ fun Drawer(state: DrawerState, viewModel: HomeViewModel) {
             DrawerItem(viewModel.drawerSelectedItem, id = 0, icon = Icons.Outlined.Home, text = "Notes", onClick = {
                 scope.launch { state.close() }
                 viewModel.drawerSelectedItem = 0
+                viewModel.drawerSelectedItemName = "Notes"
                 viewModel.onFilterDeleted(false)
             })
             DrawerItem(viewModel.drawerSelectedItem, id = 1, icon = Icons.Outlined.Delete, text = "Deleted", onClick = {
                 scope.launch { state.close() }
                 viewModel.drawerSelectedItem = 1
+                viewModel.drawerSelectedItemName = "Deleted"
                 viewModel.onFilterDeleted(true)
             })
         }
@@ -64,6 +66,7 @@ fun Drawer(state: DrawerState, viewModel: HomeViewModel) {
                     onClick = {
                         scope.launch { state.close() }
                         viewModel.drawerSelectedItem = index + 3
+                        viewModel.drawerSelectedItemName = label.value
                         viewModel.onFilterLabel(label)
                     },
                     onEditClick = {
@@ -81,9 +84,13 @@ fun Drawer(state: DrawerState, viewModel: HomeViewModel) {
                 viewModel.drawerSelectedLabel = Label()
             },
             onDelete = {
+                // Set selected item back to zero if this deleted label was selected.
+                if (it.value == viewModel.drawerSelectedItemName) {
+                    viewModel.drawerSelectedItem = 0
+                    viewModel.drawerSelectedItemName = "Notes"
+                    viewModel.onFilterLabel(null)
+                }
                 viewModel.onDeleteLabel(it)
-                viewModel.drawerSelectedItem = 0
-                viewModel.onFilterDeleted(false)
                 viewModel.drawerSelectedLabel = Label()
             },
             onDismiss = {
