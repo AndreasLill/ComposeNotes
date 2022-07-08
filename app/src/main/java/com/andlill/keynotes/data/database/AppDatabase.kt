@@ -1,14 +1,12 @@
 package com.andlill.keynotes.data.database
 
 import android.content.Context
-import androidx.room.Database
-import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
+import androidx.room.*
 import com.andlill.keynotes.model.Label
 import com.andlill.keynotes.model.Note
 
-@Database(entities = [Note::class, Label::class], version = 6, exportSchema = false)
+//autoMigrations = [ AutoMigration(from = 5, to = 6) ]
+@Database(version = 6, entities = [Note::class, Label::class], exportSchema = true)
 @TypeConverters(DataConverter::class)
 abstract class AppDatabase : RoomDatabase(){
 
