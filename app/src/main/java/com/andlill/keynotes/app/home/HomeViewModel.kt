@@ -13,6 +13,7 @@ import com.andlill.keynotes.data.repository.LabelRepository
 import com.andlill.keynotes.data.repository.NoteRepository
 import com.andlill.keynotes.model.Label
 import com.andlill.keynotes.model.Note
+import com.andlill.keynotes.model.NoteWrapper
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.*
@@ -24,9 +25,9 @@ class HomeViewModel(private val application: Application) : ViewModel() {
     }
 
     // Contains all notes unfiltered.
-    private var _notes: List<Note> = emptyList()
+    private var _notes: List<NoteWrapper> = emptyList()
 
-    var notes by mutableStateOf<List<Note>>(emptyList())
+    var notes by mutableStateOf<List<NoteWrapper>>(emptyList())
         private set
     var labels by mutableStateOf<List<Label>>(emptyList())
         private set
@@ -44,7 +45,7 @@ class HomeViewModel(private val application: Application) : ViewModel() {
     init {
         viewModelScope.launch {
             NoteRepository.getAllNotes(application).collectLatest {
-                _notes = it.sortedWith(compareByDescending<Note> { note -> note.pinned }.thenByDescending { note -> note.created })
+                _notes = it.sortedWith(compareByDescending<NoteWrapper> { note -> note.note.pinned }.thenByDescending { note -> note.note.created })
                 filterNotes()
             }
         }
@@ -57,18 +58,19 @@ class HomeViewModel(private val application: Application) : ViewModel() {
 
     private fun filterNotes() {
         // Filter notes on modified value. (Modified 'null' notes are temporary created but unsaved notes.)
-        var filterList = _notes.filter { note -> note.modified != null }
+        var filterList = _notes.filter { note -> note.note.modified != null }
 
         // Filter notes on deleted boolean status.
-        filterList = filterList.filter { note -> note.deleted == filterDeleted }
+        filterList = filterList.filter { note -> note.note.deleted == filterDeleted }
 
         // Filter notes on label.
-        if (filterLabel != null)
-            filterList = filterList.filter { note -> note.labels.contains(filterLabel) }
+        filterLabel?.let { label ->
+            filterList = filterList.filter { note -> note.labels.contains(label) }
+        }
 
         // Filter notes on query.
         if (query.isNotEmpty()) {
-            filterList = filterList.filter { note -> note.title.contains(query, ignoreCase = true) || note.body.contains(query, ignoreCase = true) }
+            filterList = filterList.filter { note -> note.note.title.contains(query, ignoreCase = true) || note.note.body.contains(query, ignoreCase = true) }
         }
 
         notes = filterList

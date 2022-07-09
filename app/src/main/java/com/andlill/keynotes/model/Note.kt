@@ -1,12 +1,8 @@
 package com.andlill.keynotes.model
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import androidx.room.TypeConverters
-import com.andlill.keynotes.data.database.DataConverter
+import androidx.room.*
 
 @Entity
-@TypeConverters(DataConverter::class)
 data class Note(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
@@ -18,5 +14,4 @@ data class Note(
     val reminder: Long? = null,
     val deleted: Boolean = false,
     val pinned: Boolean = false,
-    val labels: List<Label> = emptyList(),
 )

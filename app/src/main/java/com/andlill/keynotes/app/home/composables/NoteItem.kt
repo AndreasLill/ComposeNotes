@@ -12,15 +12,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.andlill.keynotes.model.Note
+import com.andlill.keynotes.model.NoteWrapper
 import com.andlill.keynotes.ui.theme.DarkNoteColors
 import com.andlill.keynotes.ui.theme.LightNoteColors
 
 @Composable
-fun NoteItem(note: Note, callback: () -> Unit) {
+fun NoteItem(note: NoteWrapper, callback: () -> Unit) {
     val noteColor = when {
-        isSystemInDarkTheme() -> DarkNoteColors[note.color]
-        else -> LightNoteColors[note.color]
+        isSystemInDarkTheme() -> DarkNoteColors[note.note.color]
+        else -> LightNoteColors[note.note.color]
     }
 
     OutlinedButton(
@@ -43,16 +43,16 @@ fun NoteItem(note: Note, callback: () -> Unit) {
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            if (note.title.isNotEmpty()) {
+            if (note.note.title.isNotEmpty()) {
                 Box(modifier = Modifier.fillMaxWidth()) {
                     Text(
                         modifier = Modifier.padding(end = 24.dp),
-                        text = note.title,
+                        text = note.note.title,
                         style = MaterialTheme.typography.h3,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
-                    if (note.pinned) {
+                    if (note.note.pinned) {
                         Icon(
                             modifier = Modifier.size(16.dp).align(Alignment.CenterEnd),
                             imageVector = Icons.Outlined.PushPin,
@@ -61,12 +61,12 @@ fun NoteItem(note: Note, callback: () -> Unit) {
                     }
                 }
             }
-            if (note.title.isNotEmpty() && note.body.isNotEmpty())
+            if (note.note.title.isNotEmpty() && note.note.body.isNotEmpty())
                 Spacer(modifier = Modifier
                     .fillMaxWidth()
                     .height(16.dp))
-            if (note.body.isNotEmpty()) {
-                Text(text = note.body, style = MaterialTheme.typography.body2, maxLines = 10,overflow = TextOverflow.Ellipsis)
+            if (note.note.body.isNotEmpty()) {
+                Text(text = note.note.body, style = MaterialTheme.typography.body2, maxLines = 10,overflow = TextOverflow.Ellipsis)
             }
         }
     }
