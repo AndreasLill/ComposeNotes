@@ -36,7 +36,7 @@ class NoteViewModel(private val application: Application, private val noteId: In
                     _note = it.copy()
                     note = it.copy()
                     it.modified?.let { modified ->
-                        modifiedDate = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(modified)
+                        modifiedDate = SimpleDateFormat("yyyy-MM-dd, HH:mm", Locale.getDefault()).format(modified)
                     }
                 }
             }
@@ -50,8 +50,8 @@ class NoteViewModel(private val application: Application, private val noteId: In
         }
 
         // Don't save note without changes.
-        if (note.title == _note.title &&
-            note.body == _note.body &&
+        if (note.title.trim() == _note.title.trim() &&
+            note.body.trim() == _note.body.trim() &&
             note.color == _note.color &&
             note.deleted == _note.deleted &&
             note.pinned == _note.pinned &&
