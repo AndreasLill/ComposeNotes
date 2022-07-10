@@ -1,4 +1,4 @@
-package com.andlill.keynotes.app.receiver
+package com.andlill.keynotes.app
 
 import android.app.AlarmManager
 import android.app.PendingIntent
@@ -12,8 +12,6 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.TaskStackBuilder
 import androidx.core.net.toUri
 import com.andlill.keynotes.R
-import com.andlill.keynotes.app.MainActivity
-import com.andlill.keynotes.app.Screen
 import com.andlill.keynotes.data.repository.NoteRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -21,7 +19,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
-class AlarmReceiver : BroadcastReceiver() {
+class MainReceiver : BroadcastReceiver() {
 
     companion object {
         const val CHANNEL_ID = "com.andlill.keynotes.AlarmReceiverChannel"
@@ -50,7 +48,7 @@ class AlarmReceiver : BroadcastReceiver() {
                     return@forEach
 
                 // Restore all active reminders.
-                val intent = Intent(context, AlarmReceiver::class.java).let { intent ->
+                val intent = Intent(context, MainReceiver::class.java).let { intent ->
                     intent.action = ACTION_REMINDER
                     intent.putExtra("id", note.note.id)
                     intent.putExtra("color", note.note.color)
