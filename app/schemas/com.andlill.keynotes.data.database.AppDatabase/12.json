@@ -1,8 +1,8 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 9,
-    "identityHash": "c07a192da33788f2e9ecde920f20d41c",
+    "version": 12,
+    "identityHash": "e910e001aa8e96c53d97a3c3da895097",
     "entities": [
       {
         "tableName": "Note",
@@ -99,7 +99,7 @@
         "foreignKeys": []
       },
       {
-        "tableName": "NoteLabelCrossRef",
+        "tableName": "NoteLabelJoin",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `noteId` INTEGER NOT NULL, `labelId` INTEGER NOT NULL, FOREIGN KEY(`noteId`) REFERENCES `Note`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`labelId`) REFERENCES `Label`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
@@ -157,7 +157,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c07a192da33788f2e9ecde920f20d41c')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e910e001aa8e96c53d97a3c3da895097')"
     ]
   }
 }

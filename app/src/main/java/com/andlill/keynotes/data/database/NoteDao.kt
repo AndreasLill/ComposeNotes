@@ -17,6 +17,7 @@ interface NoteDao {
     @Query("SELECT * FROM Note WHERE id = :id")
     fun getNote(id: Int): Flow<Note?>
 
+    @Transaction
     @Query("SELECT * FROM Note ORDER BY created DESC")
     fun getAllNotes(): Flow<List<NoteWrapper>>
 }

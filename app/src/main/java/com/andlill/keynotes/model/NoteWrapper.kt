@@ -7,6 +7,6 @@ import androidx.room.Relation
 data class NoteWrapper(
     @Embedded
     val note: Note = Note(),
-    @Relation(parentColumn = "id", entityColumn = "id", associateBy = Junction(NoteLabelCrossRef::class))
+    @Relation(parentColumn = "id", entityColumn = "id", associateBy = Junction(NoteLabelJoin::class))
     val labels: List<Label> = emptyList()
 )
