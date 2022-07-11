@@ -2,24 +2,19 @@ package com.andlill.keynotes.app.note
 
 import android.app.Application
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.NotificationsActive
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
@@ -27,43 +22,35 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.andlill.keynotes.R
-import com.andlill.keynotes.app.note.composables.NoteBodyTextField
-import com.andlill.keynotes.app.note.composables.NoteTitleTextField
-import com.andlill.keynotes.app.note.composables.ReminderDialog
-import com.andlill.keynotes.app.note.composables.ThemeDropDown
+import com.andlill.keynotes.app.note.composables.*
 import com.andlill.keynotes.app.shared.LifecycleEventHandler
 import com.andlill.keynotes.app.shared.MenuIconButton
+import com.andlill.keynotes.ui.label.NoteLabel
 import com.andlill.keynotes.ui.theme.DarkNoteColors
 import com.andlill.keynotes.ui.theme.LightNoteColors
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun NoteScreen(navigation: NavController, noteId: Int = -1) {
     val viewModel: NoteViewModel = viewModel(factory = NoteViewModel.Factory(LocalContext.current.applicationContext as Application, noteId))
 
     val themeMenuState = remember { mutableStateOf(false) }
+    val labelDialogState = remember { mutableStateOf(false) }
     val reminderDialogState = remember { mutableStateOf(false) }
     val interactionSource = remember { MutableInteractionSource() }
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
 
-    val pinIcon = when {
-        viewModel.note.pinned -> Icons.Filled.PushPin
-        else -> Icons.Outlined.PushPin
-    }
-    val reminderIcon = when {
-        viewModel.note.reminder != null -> Icons.Filled.NotificationsActive
-        else -> Icons.Outlined.Notifications
-    }
-    val noteColor = when {
-        isSystemInDarkTheme() -> DarkNoteColors[viewModel.note.color]
-        else -> LightNoteColors[viewModel.note.color]
-    }
+    val pinIcon = if (viewModel.note.pinned) Icons.Filled.PushPin else Icons.Outlined.PushPin
+    val reminderIcon = if (viewModel.note.reminder != null) Icons.Filled.Notifications else Icons.Outlined.Notifications
+    val noteColor = if (isSystemInDarkTheme()) DarkNoteColors[viewModel.note.color] else LightNoteColors[viewModel.note.color]
 
     // Handle lifecycle events.
     LifecycleEventHandler { event ->
@@ -80,11 +67,7 @@ fun NoteScreen(navigation: NavController, noteId: Int = -1) {
     Scaffold(
         backgroundColor = animateColorAsState(noteColor).value,
         topBar = {
-            Column {
-                Spacer(modifier = Modifier
-                    .statusBarsPadding()
-                    .fillMaxWidth()
-                )
+            Column(modifier = Modifier.statusBarsPadding().fillMaxWidth()) {
                 TopAppBar(
                     backgroundColor = Color.Transparent,
                     elevation = 0.dp,
@@ -103,6 +86,15 @@ fun NoteScreen(navigation: NavController, noteId: Int = -1) {
                             MenuIconButton(icon = reminderIcon, color = MaterialTheme.colors.onSurface, onClick = {
                                 reminderDialogState.value = true
                             })
+                            ReminderDialog(state = reminderDialogState, reminderTime = viewModel.note.reminder, onClick = {
+                                viewModel.onToggleReminder(it)
+                            })
+                            MenuIconButton(icon = Icons.Outlined.Label, color = MaterialTheme.colors.onSurface, onClick = {
+                                labelDialogState.value = true
+                            })
+                            LabelDialog(state = labelDialogState, noteLabel = viewModel.note.label, labels = viewModel.labels, onClick = {
+                                viewModel.onToggleLabel(it)
+                            })
                             MenuIconButton(icon = Icons.Outlined.Palette, color = MaterialTheme.colors.onSurface, onClick = {
                                 themeMenuState.value = true
                             })
@@ -113,14 +105,6 @@ fun NoteScreen(navigation: NavController, noteId: Int = -1) {
                             ThemeDropDown(state = themeMenuState, onClick = {
                                 viewModel.onChangeColor(it)
                             })
-                            ReminderDialog(reminderTime = viewModel.note.reminder, state = reminderDialogState, onClick = {
-                                if (it == null) {
-                                    viewModel.onCancelReminder()
-                                }
-                                else {
-                                    viewModel.onSetReminder(it)
-                                }
-                            })
                         }
                         else {
                             MenuIconButton(icon = Icons.Outlined.Restore, color = MaterialTheme.colors.onSurface, onClick = {
@@ -128,7 +112,7 @@ fun NoteScreen(navigation: NavController, noteId: Int = -1) {
                                 navigation.navigateUp()
                             })
                             MenuIconButton(icon = Icons.Outlined.DeleteForever, color = MaterialTheme.colors.onSurface, onClick = {
-                                viewModel.onDeleteForever()
+                                viewModel.onDeletePermanently()
                                 navigation.navigateUp()
                             })
                         }
@@ -137,30 +121,37 @@ fun NoteScreen(navigation: NavController, noteId: Int = -1) {
             }
         },
         bottomBar = {
-            Box(modifier = Modifier
-                .navigationBarsPadding()
-                .imePadding()
-                .fillMaxWidth()) {
-                Text(
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .padding(4.dp),
-                    color = MaterialTheme.colors.onSurface.copy(0.6f),
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    text = String.format("Last Modified: %s", viewModel.modifiedDate)
-                )
+            if (!WindowInsets.isImeVisible) {
+                Column(modifier = Modifier.navigationBarsPadding().fillMaxWidth()) {
+                    if (viewModel.note.label != null) {
+                        Row(modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, bottom = 4.dp, top = 4.dp)) {
+                            val label = viewModel.labels.firstOrNull { label -> label.id == viewModel.note.label }
+                            label?.let {
+                                NoteLabel(text = label.value)
+                            }
+                        }
+                    }
+                    Text(
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp),
+                        color = MaterialTheme.colors.onSurface.copy(0.6f),
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        text = String.format("Last Modified: %s", viewModel.modifiedDate),
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
         },
         content = { innerPadding ->
             Column(modifier = Modifier
-                .background(Color.Transparent)
                 .padding(innerPadding)
+                .imePadding()
                 .fillMaxSize()
                 .clickable(
                     interactionSource = interactionSource,
-                    indication = null
-                ) { focusRequester.requestFocus() }) {
+                    indication = null) {
+                    focusRequester.requestFocus()
+                }) {
                 NoteTitleTextField(
                     placeholder = stringResource(R.string.note_screen_title_placeholder),
                     value = viewModel.note.title,

@@ -26,6 +26,7 @@ import com.andlill.keynotes.app.home.composables.SearchBar
 import com.andlill.keynotes.app.shared.MenuIconButton
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun HomeScreen(navigation: NavController) {
     val viewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory(LocalContext.current.applicationContext as Application))
@@ -74,29 +75,32 @@ fun HomeScreen(navigation: NavController) {
             }
         },
         bottomBar = {
-            Box(modifier = Modifier.navigationBarsPadding().fillMaxWidth()) {
-                if (!viewModel.filterDeleted) {
-                    OutlinedButton(modifier = Modifier
-                        .padding(start = 8.dp, end = 8.dp, bottom = 4.dp)
-                        .fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors(
-                            backgroundColor = MaterialTheme.colors.onSurface.copy(0.1f),
-                            contentColor = MaterialTheme.colors.onSurface,
-                        ),
-                        shape = RoundedCornerShape(32.dp),
-                        onClick = {
-                            viewModel.onCreateNote { id ->
-                                navigation.navigate("${Screen.NoteScreen.route}/$id") {
-                                    // To avoid multiple copies of same destination in backstack.
-                                    launchSingleTop = true
+            // Hide bottom bar if IME is showing.
+            if (!WindowInsets.isImeVisible) {
+                Box(modifier = Modifier.navigationBarsPadding().fillMaxWidth()) {
+                    if (!viewModel.filterDeleted) {
+                        OutlinedButton(modifier = Modifier
+                            .padding(start = 8.dp, end = 8.dp, bottom = 4.dp)
+                            .fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = MaterialTheme.colors.onSurface.copy(0.1f),
+                                contentColor = MaterialTheme.colors.onSurface,
+                            ),
+                            shape = RoundedCornerShape(32.dp),
+                            onClick = {
+                                viewModel.onCreateNote { id ->
+                                    navigation.navigate("${Screen.NoteScreen.route}/$id") {
+                                        // To avoid multiple copies of same destination in backstack.
+                                        launchSingleTop = true
+                                    }
                                 }
-                            }
-                        }) {
-                        Icon(
-                            modifier = Modifier.size(24.dp),
-                            imageVector = Icons.Default.Add,
-                            contentDescription = null
-                        )
+                            }) {
+                            Icon(
+                                modifier = Modifier.size(24.dp),
+                                imageVector = Icons.Default.Add,
+                                contentDescription = null
+                            )
+                        }
                     }
                 }
             }
@@ -104,13 +108,14 @@ fun HomeScreen(navigation: NavController) {
         content = { innerPadding ->
             LazyColumn(modifier = Modifier
                 .padding(innerPadding)
+                .imePadding()
                 .background(MaterialTheme.colors.surface)
                 .fillMaxSize()
                 .padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 items(viewModel.notes) { note ->
-                    NoteItem(note) {
-                        navigation.navigate("${Screen.NoteScreen.route}/${note.note.id}") {
+                    NoteItem(note, viewModel.labels) {
+                        navigation.navigate("${Screen.NoteScreen.route}/${note.id}") {
                             // To avoid multiple copies of same destination in backstack.
                             launchSingleTop = true
                         }

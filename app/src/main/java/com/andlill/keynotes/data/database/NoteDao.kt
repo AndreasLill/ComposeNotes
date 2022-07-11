@@ -2,7 +2,6 @@ package com.andlill.keynotes.data.database
 
 import androidx.room.*
 import com.andlill.keynotes.model.Note
-import com.andlill.keynotes.model.NoteWrapper
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -14,10 +13,11 @@ interface NoteDao {
     @Delete
     suspend fun deleteNote(note: Note)
 
+    @Transaction
     @Query("SELECT * FROM Note WHERE id = :id")
     fun getNote(id: Int): Flow<Note?>
 
     @Transaction
     @Query("SELECT * FROM Note ORDER BY created DESC")
-    fun getAllNotes(): Flow<List<NoteWrapper>>
+    fun getAllNotes(): Flow<List<Note>>
 }

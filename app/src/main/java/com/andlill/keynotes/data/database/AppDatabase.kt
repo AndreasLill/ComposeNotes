@@ -4,10 +4,9 @@ import android.content.Context
 import androidx.room.*
 import com.andlill.keynotes.model.Label
 import com.andlill.keynotes.model.Note
-import com.andlill.keynotes.model.NoteLabelJoin
 
 //autoMigrations = [ AutoMigration(from = 5, to = 6) ]
-@Database(version = 12, entities = [Note::class, Label::class, NoteLabelJoin::class], exportSchema = true)
+@Database(version = 17, entities = [Note::class, Label::class], exportSchema = false)
 abstract class AppDatabase : RoomDatabase(){
 
     abstract val noteDao: NoteDao

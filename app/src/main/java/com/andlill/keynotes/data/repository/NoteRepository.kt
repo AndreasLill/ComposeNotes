@@ -3,7 +3,6 @@ package com.andlill.keynotes.data.repository
 import android.content.Context
 import com.andlill.keynotes.data.database.AppDatabase
 import com.andlill.keynotes.model.Note
-import com.andlill.keynotes.model.NoteWrapper
 import kotlinx.coroutines.flow.Flow
 
 object NoteRepository {
@@ -20,7 +19,7 @@ object NoteRepository {
         return AppDatabase.get(context).noteDao.getNote(id)
     }
 
-    fun getAllNotes(context: Context): Flow<List<NoteWrapper>> {
+    fun getAllNotes(context: Context): Flow<List<Note>> {
         return AppDatabase.get(context).noteDao.getAllNotes()
     }
 }
