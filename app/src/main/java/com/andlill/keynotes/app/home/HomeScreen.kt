@@ -114,8 +114,8 @@ fun HomeScreen(navigation: NavController) {
                 .padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 items(viewModel.notes) { note ->
-                    NoteItem(note, viewModel.labels) {
-                        navigation.navigate("${Screen.NoteScreen.route}/${note.id}") {
+                    NoteItem(note) {
+                        navigation.navigate("${Screen.NoteScreen.route}/${note.note.id}") {
                             // To avoid multiple copies of same destination in backstack.
                             launchSingleTop = true
                         }

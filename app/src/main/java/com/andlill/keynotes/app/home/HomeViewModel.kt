@@ -13,6 +13,7 @@ import com.andlill.keynotes.data.repository.LabelRepository
 import com.andlill.keynotes.data.repository.NoteRepository
 import com.andlill.keynotes.model.Label
 import com.andlill.keynotes.model.Note
+import com.andlill.keynotes.model.NoteWrapper
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.*
@@ -24,9 +25,9 @@ class HomeViewModel(private val application: Application) : ViewModel() {
     }
 
     // Contains all notes unfiltered.
-    private var _notes = emptyList<Note>()
+    private var _notes = emptyList<NoteWrapper>()
 
-    var notes by mutableStateOf(emptyList<Note>())
+    var notes by mutableStateOf(emptyList<NoteWrapper>())
         private set
     var labels by mutableStateOf(emptyList<Label>())
         private set
@@ -43,8 +44,8 @@ class HomeViewModel(private val application: Application) : ViewModel() {
 
     init {
         viewModelScope.launch {
-            NoteRepository.getAllNotes(application).collectLatest {
-                _notes = it.sortedWith(compareByDescending<Note> { note -> note.pinned }.thenByDescending { note -> note.created })
+            NoteRepository.getAllNotes(application).collectLatest { note ->
+                _notes = note.sortedWith(compareByDescending<NoteWrapper> { it.note.pinned }.thenByDescending { it.note.created })
                 filterNotes()
             }
         }
@@ -57,19 +58,19 @@ class HomeViewModel(private val application: Application) : ViewModel() {
 
     private fun filterNotes() {
         // Filter notes on modified value. (Modified 'null' notes are temporary created but unsaved notes.)
-        var filterList = _notes.filter { note -> note.modified != null }
+        var filterList = _notes.filter { it.note.modified != null }
 
         // Filter notes on deleted boolean status.
-        filterList = filterList.filter { note -> note.deleted == filterDeleted }
+        filterList = filterList.filter { it.note.deleted == filterDeleted }
 
         // Filter notes on label.
         filterLabel?.let { label ->
-            filterList = filterList.filter { note -> note.label == label.id }
+            filterList = filterList.filter { it.labels.contains(label) }
         }
 
         // Filter notes on query.
         if (query.isNotEmpty()) {
-            filterList = filterList.filter { note -> note.title.contains(query, ignoreCase = true) || note.body.contains(query, ignoreCase = true) }
+            filterList = filterList.filter { it.note.title.contains(query, ignoreCase = true) || it.note.body.contains(query, ignoreCase = true) }
         }
 
         notes = filterList
@@ -85,6 +86,10 @@ class HomeViewModel(private val application: Application) : ViewModel() {
 
     fun onAddLabel(label: Label) = viewModelScope.launch {
         LabelRepository.insertLabel(application, label)
+    }
+
+    fun onUpdateLabel(label: Label) = viewModelScope.launch {
+        LabelRepository.updateLabel(application, label)
     }
 
     fun onDeleteLabel(label: Label) = viewModelScope.launch {

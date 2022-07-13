@@ -44,21 +44,21 @@ class MainReceiver : BroadcastReceiver() {
         CoroutineScope(Dispatchers.Default).launch {
             NoteRepository.getAllNotes(context).first().forEach { note ->
                 // Skip notes with no active reminders.
-                if (note.reminder == null)
+                if (note.note.reminder == null)
                     return@forEach
 
                 // Restore all active reminders.
                 val intent = Intent(context, MainReceiver::class.java).let { intent ->
                     intent.action = ACTION_REMINDER
-                    intent.putExtra("id", note.id)
-                    intent.putExtra("color", note.color)
-                    intent.putExtra("title", note.title)
-                    intent.putExtra("text", note.body)
+                    intent.putExtra("id", note.note.id)
+                    intent.putExtra("color", note.note.color)
+                    intent.putExtra("title", note.note.title)
+                    intent.putExtra("text", note.note.body)
                     intent.setPackage("com.andlill.keynotes")
-                    PendingIntent.getBroadcast(context, note.id, intent, PendingIntent.FLAG_IMMUTABLE)
+                    PendingIntent.getBroadcast(context, note.note.id, intent, PendingIntent.FLAG_IMMUTABLE)
                 }
-                alarm.setAlarmClock(AlarmManager.AlarmClockInfo(note.reminder, intent), intent)
-                Log.d("MainReceiver", "Broadcast '${note.id}' Restored")
+                alarm.setAlarmClock(AlarmManager.AlarmClockInfo(note.note.reminder, intent), intent)
+                Log.d("MainReceiver", "Broadcast '${note.note.id}' Restored")
             }
         }
     }
@@ -98,7 +98,7 @@ class MainReceiver : BroadcastReceiver() {
         // Remove reminder from note.
         CoroutineScope(Dispatchers.Default).launch {
             NoteRepository.getNote(context, id).first()?.let { note ->
-                NoteRepository.insertNote(context, note.copy(reminder = null))
+                NoteRepository.updateNote(context, note.note.copy(reminder = null))
             }
         }
 

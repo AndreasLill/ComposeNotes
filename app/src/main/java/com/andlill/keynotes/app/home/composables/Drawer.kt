@@ -80,7 +80,7 @@ fun Drawer(state: DrawerState, viewModel: HomeViewModel) {
             label = viewModel.drawerSelectedLabel,
             state = editLabelDialogState,
             onConfirm = {
-                viewModel.onAddLabel(it)
+                viewModel.onUpdateLabel(it)
                 viewModel.drawerSelectedLabel = Label()
             },
             onDelete = {
