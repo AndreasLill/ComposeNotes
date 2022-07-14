@@ -33,7 +33,7 @@ class NoteViewModel(private val application: Application, private val noteId: In
     var labels by mutableStateOf(emptyList<Label>())
         private set
 
-    var modifiedDate by mutableStateOf("-")
+    var modifiedDate by mutableStateOf("")
 
     init {
         viewModelScope.launch {

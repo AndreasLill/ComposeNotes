@@ -125,7 +125,7 @@ fun NoteScreen(navigation: NavController, noteId: Int = -1) {
             }
         },
         bottomBar = {
-            if (!WindowInsets.isImeVisible) {
+            if (!WindowInsets.isImeVisible && viewModel.modifiedDate.isNotEmpty()) {
                 Column(modifier = Modifier
                     .navigationBarsPadding()
                     .fillMaxWidth()) {
