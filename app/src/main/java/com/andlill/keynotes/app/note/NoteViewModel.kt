@@ -39,8 +39,14 @@ class NoteViewModel(private val application: Application, private val noteId: In
         viewModelScope.launch {
             NoteRepository.getNote(application, noteId).collectLatest {
                 it?.let {
+                    // Check if cached note title or body was edited and apply edit to copy.
+                    if (note.note.title.trim() != _note.note.title.trim() || note.note.body.trim() != _note.note.body.trim()) {
+                        note = it.copy(note = it.note.copy(title = note.note.title, body = note.note.body))
+                    }
+                    else {
+                        note = it.copy()
+                    }
                     _note = it.copy()
-                    note = it.copy()
                     it.note.modified?.let { modified ->
                         modifiedDate = SimpleDateFormat("yyyy-MM-dd, HH:mm", Locale.getDefault()).format(modified)
                     }
@@ -57,23 +63,21 @@ class NoteViewModel(private val application: Application, private val noteId: In
     fun onClose() = viewModelScope.launch {
         // Delete note with null created date.
         if (note.note.created == null) {
+            onCancelReminder()
             NoteRepository.deleteNote(application, note.note)
             return@launch
         }
 
         // Delete new note without any modifications.
         if (note.note.modified == null && note.note.title.isEmpty() && note.note.body.isEmpty()) {
+            onCancelReminder()
             NoteRepository.deleteNote(application, note.note)
             return@launch
         }
 
         // Don't save note without changes.
         if (note.note.title.trim() == _note.note.title.trim() &&
-            note.note.body.trim() == _note.note.body.trim() &&
-            note.note.color == _note.note.color &&
-            note.note.deleted == _note.note.deleted &&
-            note.note.pinned == _note.note.pinned &&
-            note.note.reminder == _note.note.reminder) {
+            note.note.body.trim() == _note.note.body.trim()) {
             return@launch
         }
 
@@ -99,14 +103,6 @@ class NoteViewModel(private val application: Application, private val noteId: In
             onCancelReminder()
     }
 
-    fun onTogglePin() {
-        note = note.copy(note = note.note.copy(pinned = !note.note.pinned))
-    }
-
-    fun onChangeColor(value: Int) {
-        note = note.copy(note = note.note.copy(color = value))
-    }
-
     fun onChangeTitle(value: String) {
         note = note.copy(note = note.note.copy(title = value))
     }
@@ -115,30 +111,34 @@ class NoteViewModel(private val application: Application, private val noteId: In
         note = note.copy(note = note.note.copy(body = value))
     }
 
-    fun onDeleteNote() {
-        // Set the note to deleted status.
-        note = note.copy(note = note.note.copy(deleted = true))
-        onCancelReminder()
-    }
-
     fun onDeletePermanently() {
-        // Delete the note forever.
         note = note.copy(note = note.note.copy(created = null))
+    }
+
+    fun onTogglePin() = viewModelScope.launch {
+        NoteRepository.updateNote(application, _note.note.copy(pinned = !_note.note.pinned))
+    }
+
+    fun onChangeColor(value: Int) = viewModelScope.launch {
+        NoteRepository.updateNote(application, _note.note.copy(color = value))
+    }
+
+    fun onDeleteNote() = viewModelScope.launch {
+        NoteRepository.updateNote(application, _note.note.copy(deleted = true))
         onCancelReminder()
     }
 
-    fun onRestore() {
-        // Restore the deleted note.
-        note = note.copy(note = note.note.copy(deleted = false))
+    fun onRestore() = viewModelScope.launch {
+        NoteRepository.updateNote(application, _note.note.copy(deleted = false))
     }
 
     private fun onSetReminder(calendar: Calendar) = viewModelScope.launch {
-        note = note.copy(note = note.note.copy(reminder = calendar.timeInMillis))
+        NoteRepository.updateNote(application, _note.note.copy(reminder = calendar.timeInMillis))
         NoteBroadcaster.setReminder(application, calendar, note.note)
     }
 
     private fun onCancelReminder() = viewModelScope.launch {
-        note = note.copy(note = note.note.copy(reminder = null))
+        NoteRepository.updateNote(application, _note.note.copy(reminder = null))
         NoteBroadcaster.cancelReminder(application, note.note)
     }
 }
