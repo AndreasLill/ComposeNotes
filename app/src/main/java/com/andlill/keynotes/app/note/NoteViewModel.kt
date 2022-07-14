@@ -133,12 +133,12 @@ class NoteViewModel(private val application: Application, private val noteId: In
     }
 
     private fun onSetReminder(calendar: Calendar) = viewModelScope.launch {
+        NoteBroadcaster.setReminder(application, calendar, _note.note.id)
         NoteRepository.updateNote(application, _note.note.copy(reminder = calendar.timeInMillis))
-        NoteBroadcaster.setReminder(application, calendar, note.note)
     }
 
     private fun onCancelReminder() = viewModelScope.launch {
+        NoteBroadcaster.cancelReminder(application, _note.note.id)
         NoteRepository.updateNote(application, _note.note.copy(reminder = null))
-        NoteBroadcaster.cancelReminder(application, note.note)
     }
 }
