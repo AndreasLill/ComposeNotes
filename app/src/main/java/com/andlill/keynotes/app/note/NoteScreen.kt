@@ -50,9 +50,9 @@ fun NoteScreen(navigation: NavController, noteId: Int) {
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
 
-    val pinIcon = if (viewModel.note.note.pinned) Icons.Filled.PushPin else Icons.Outlined.PushPin
-    val reminderIcon = if (viewModel.note.note.reminder != null) Icons.Filled.Notifications else Icons.Outlined.Notifications
-    val noteColor = if (isSystemInDarkTheme()) DarkNoteColors[viewModel.note.note.color] else LightNoteColors[viewModel.note.note.color]
+    val pinIcon = if (viewModel.isPinned) Icons.Filled.PushPin else Icons.Outlined.PushPin
+    val reminderIcon = if (viewModel.reminder != null) Icons.Filled.Notifications else Icons.Outlined.Notifications
+    val noteColor = if (isSystemInDarkTheme()) DarkNoteColors[viewModel.color] else LightNoteColors[viewModel.color]
 
     // Handle lifecycle events.
     LifecycleEventHandler { event ->
@@ -83,20 +83,20 @@ fun NoteScreen(navigation: NavController, noteId: Int) {
                         })
                     },
                     actions = {
-                        if (!viewModel.note.note.deleted) {
+                        if (!viewModel.isDeleted) {
                             MenuIconButton(icon = pinIcon, color = MaterialTheme.colors.onSurface, onClick = {
                                 viewModel.onTogglePin()
                             })
                             MenuIconButton(icon = reminderIcon, color = MaterialTheme.colors.onSurface, onClick = {
                                 reminderDialogState.value = true
                             })
-                            ReminderDialog(state = reminderDialogState, reminderTime = viewModel.note.note.reminder, onClick = {
+                            ReminderDialog(state = reminderDialogState, reminderTime = viewModel.reminder, onClick = {
                                 viewModel.onToggleReminder(it)
                             })
                             MenuIconButton(icon = Icons.Outlined.Label, color = MaterialTheme.colors.onSurface, onClick = {
                                 labelDialogState.value = true
                             })
-                            LabelDialog(state = labelDialogState, note = viewModel.note, labels = viewModel.labels, onClick = {
+                            LabelDialog(state = labelDialogState, noteLabels = viewModel.noteLabels, labels = viewModel.allLabels, onClick = {
                                 viewModel.onToggleLabel(it)
                             })
                             MenuIconButton(icon = Icons.Outlined.Palette, color = MaterialTheme.colors.onSurface, onClick = {
@@ -151,20 +151,21 @@ fun NoteScreen(navigation: NavController, noteId: Int) {
                     interactionSource = interactionSource,
                     indication = null
                 ) {
+                    viewModel.setBodySelectionEnd()
                     focusRequester.requestFocus()
                 }) {
                 NoteTitleTextField(
                     placeholder = stringResource(R.string.note_screen_title_placeholder),
-                    value = viewModel.note.note.title,
-                    readOnly = viewModel.note.note.deleted,
+                    state = viewModel.titleText,
+                    readOnly = viewModel.isDeleted,
                     onValueChange = {
                         viewModel.onChangeTitle(it)
                     }
                 )
                 NoteBodyTextField(
                     placeholder = stringResource(R.string.note_screen_body_placeholder),
-                    value = viewModel.note.note.body,
-                    readOnly = viewModel.note.note.deleted,
+                    state = viewModel.bodyText,
+                    readOnly = viewModel.isDeleted,
                     focusRequester = focusRequester,
                     onValueChange = {
                         viewModel.onChangeBody(it)

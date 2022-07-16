@@ -16,12 +16,13 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.andlill.keynotes.app.shared.clearFocusOnKeyboardDismiss
 
 @Composable
-fun NoteTitleTextField(placeholder: String, value: String, readOnly: Boolean, onValueChange: (String) -> Unit) {
+fun NoteTitleTextField(placeholder: String, state: TextFieldValue, readOnly: Boolean, onValueChange: (TextFieldValue) -> Unit) {
     val focusManager = LocalFocusManager.current
     BasicTextField(
         modifier = Modifier
@@ -29,7 +30,7 @@ fun NoteTitleTextField(placeholder: String, value: String, readOnly: Boolean, on
             .padding(start = 20.dp, end = 20.dp, top = 8.dp, bottom = 8.dp)
             .fillMaxWidth(),
         readOnly = readOnly,
-        value = value,
+        value = state,
         onValueChange = onValueChange,
         singleLine = true,
         cursorBrush = SolidColor(MaterialTheme.colors.primary),
@@ -48,7 +49,7 @@ fun NoteTitleTextField(placeholder: String, value: String, readOnly: Boolean, on
             }
         ),
         decorationBox = { innerTextField ->
-            if (value.isEmpty()) {
+            if (state.text.isEmpty()) {
                 Text(
                     text = placeholder,
                     style = TextStyle(

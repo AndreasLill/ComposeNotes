@@ -17,11 +17,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.andlill.keynotes.model.Label
-import com.andlill.keynotes.model.NoteWrapper
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun LabelDialog(state: MutableState<Boolean>, note: NoteWrapper, labels: List<Label>, onClick: (Label) -> Unit) {
+fun LabelDialog(state: MutableState<Boolean>, noteLabels: List<Label>, labels: List<Label>, onClick: (Label) -> Unit) {
     if (state.value) {
         Dialog(onDismissRequest = { state.value = false }) {
             Column(modifier = Modifier
@@ -62,7 +61,7 @@ fun LabelDialog(state: MutableState<Boolean>, note: NoteWrapper, labels: List<La
                                 }
                                 Checkbox(
                                     modifier = Modifier.align(Alignment.CenterEnd),
-                                    checked = note.labels.contains(label),
+                                    checked = noteLabels.contains(label),
                                     onCheckedChange = {
                                         onClick(label)
                                     },

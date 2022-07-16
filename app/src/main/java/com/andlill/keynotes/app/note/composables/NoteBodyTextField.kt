@@ -13,12 +13,13 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.andlill.keynotes.app.shared.clearFocusOnKeyboardDismiss
 
 @Composable
-fun NoteBodyTextField(placeholder: String, value: String, readOnly: Boolean, focusRequester: FocusRequester, onValueChange: (String) -> Unit) {
+fun NoteBodyTextField(placeholder: String, state: TextFieldValue, readOnly: Boolean, focusRequester: FocusRequester, onValueChange: (TextFieldValue) -> Unit) {
     BasicTextField(
         modifier = Modifier
             .focusRequester(focusRequester)
@@ -26,7 +27,7 @@ fun NoteBodyTextField(placeholder: String, value: String, readOnly: Boolean, foc
             .padding(start = 20.dp, end = 20.dp, top = 16.dp, bottom = 16.dp)
             .fillMaxWidth(),
         readOnly = readOnly,
-        value = value,
+        value = state,
         onValueChange = onValueChange,
         cursorBrush = SolidColor(MaterialTheme.colors.primary),
         textStyle = TextStyle(
@@ -37,7 +38,7 @@ fun NoteBodyTextField(placeholder: String, value: String, readOnly: Boolean, foc
             capitalization = KeyboardCapitalization.Sentences
         ),
         decorationBox = { innerTextField ->
-            if (value.isEmpty()) {
+            if (state.text.isEmpty()) {
                 Text(
                     text = placeholder,
                     style = TextStyle(

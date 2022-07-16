@@ -4,8 +4,6 @@ import android.app.Application
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.text.intl.Locale
-import androidx.compose.ui.text.toLowerCase
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -52,7 +50,7 @@ class HomeViewModel(private val application: Application) : ViewModel() {
         }
         viewModelScope.launch {
             LabelRepository.getAllLabels(application).collectLatest {
-                labels = it.sortedBy { label -> label.value.toLowerCase(Locale.current) }
+                labels = it.sortedBy { label -> label.value.lowercase(Locale.ROOT) }
             }
         }
     }
