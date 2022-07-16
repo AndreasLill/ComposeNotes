@@ -77,7 +77,9 @@ fun HomeScreen(navigation: NavController) {
         bottomBar = {
             // Hide bottom bar if IME is showing.
             if (!WindowInsets.isImeVisible) {
-                Box(modifier = Modifier.navigationBarsPadding().fillMaxWidth()) {
+                Box(modifier = Modifier
+                    .navigationBarsPadding()
+                    .fillMaxWidth()) {
                     if (!viewModel.filterDeleted) {
                         OutlinedButton(modifier = Modifier
                             .padding(start = 8.dp, end = 8.dp, bottom = 4.dp)
@@ -89,6 +91,10 @@ fun HomeScreen(navigation: NavController) {
                             shape = RoundedCornerShape(32.dp),
                             onClick = {
                                 viewModel.onCreateNote { id ->
+                                    viewModel.filterLabel?.let { label ->
+                                        // Add label to new note if label is selected.
+                                        viewModel.onAddNoteLabel(id, label.id)
+                                    }
                                     navigation.navigate("${Screen.NoteScreen.route}/$id") {
                                         // To avoid multiple copies of same destination in backstack.
                                         launchSingleTop = true

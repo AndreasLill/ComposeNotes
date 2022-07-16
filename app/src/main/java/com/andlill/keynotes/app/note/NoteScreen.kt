@@ -40,7 +40,7 @@ import com.andlill.keynotes.ui.theme.LightNoteColors
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun NoteScreen(navigation: NavController, noteId: Int = -1) {
+fun NoteScreen(navigation: NavController, noteId: Int) {
     val viewModel: NoteViewModel = viewModel(factory = NoteViewModel.Factory(LocalContext.current.applicationContext as Application, noteId))
 
     val themeMenuState = remember { mutableStateOf(false) }

@@ -13,6 +13,7 @@ import com.andlill.keynotes.data.repository.LabelRepository
 import com.andlill.keynotes.data.repository.NoteRepository
 import com.andlill.keynotes.model.Label
 import com.andlill.keynotes.model.Note
+import com.andlill.keynotes.model.NoteLabelJoin
 import com.andlill.keynotes.model.NoteWrapper
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -82,6 +83,10 @@ class HomeViewModel(private val application: Application) : ViewModel() {
             created = Calendar.getInstance().timeInMillis,
         ))
         callback(noteId)
+    }
+
+    fun onAddNoteLabel(noteId: Int, labelId: Int) = viewModelScope.launch {
+        NoteRepository.insertNoteLabel(application, NoteLabelJoin(noteId = noteId, labelId = labelId))
     }
 
     fun onAddLabel(label: Label) = viewModelScope.launch {

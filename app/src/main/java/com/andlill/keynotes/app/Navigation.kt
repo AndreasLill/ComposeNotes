@@ -2,7 +2,6 @@ package com.andlill.keynotes.app
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavDeepLink
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -23,10 +22,17 @@ fun Navigation() {
         // Note screen with argument for note id.
         composable(
             route = Screen.NoteScreen.route + "/{noteId}",
-            arguments = listOf(navArgument("noteId") { type = NavType.IntType }),
-            deepLinks = listOf(NavDeepLink(uri = String.format(Screen.NoteScreen.uri[0], "{noteId}")))
+            arguments = listOf(
+                navArgument("noteId") { defaultValue = -1 },
+            ),
+            deepLinks = listOf(
+                NavDeepLink(uri = String.format(Screen.NoteScreen.uri[0], "{noteId}")),
+            )
         ) {
-            NoteScreen(navigation = navController, noteId = it.arguments!!.getInt("noteId"))
+            NoteScreen(
+                navigation = navController,
+                noteId = it.arguments!!.getInt("noteId"),
+            )
         }
     }
 }
