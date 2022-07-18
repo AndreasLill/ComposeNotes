@@ -1,4 +1,4 @@
-package com.andlill.keynotes.app.shared
+package com.andlill.keynotes.ui.shared.button
 
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton

@@ -19,7 +19,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.andlill.keynotes.app.shared.clearFocusOnKeyboardDismiss
+import com.andlill.keynotes.ui.shared.util.clearFocusOnKeyboardDismiss
 
 @Composable
 fun NoteTitleTextField(placeholder: String, state: TextFieldValue, readOnly: Boolean, onValueChange: (TextFieldValue) -> Unit) {

@@ -23,7 +23,7 @@ import com.andlill.keynotes.app.Screen
 import com.andlill.keynotes.app.home.composables.Drawer
 import com.andlill.keynotes.app.home.composables.NoteItem
 import com.andlill.keynotes.app.home.composables.SearchBar
-import com.andlill.keynotes.app.shared.MenuIconButton
+import com.andlill.keynotes.ui.shared.button.MenuIconButton
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalLayoutApi::class)

@@ -1,4 +1,4 @@
-package com.andlill.keynotes.app.shared
+package com.andlill.keynotes.ui.shared.util
 
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.WindowInsets

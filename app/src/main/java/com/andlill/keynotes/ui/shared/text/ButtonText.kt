@@ -1,4 +1,4 @@
-package com.andlill.keynotes.ui.text
+package com.andlill.keynotes.ui.shared.text
 
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text

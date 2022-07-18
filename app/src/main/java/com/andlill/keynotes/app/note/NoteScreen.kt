@@ -33,8 +33,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.andlill.keynotes.R
 import com.andlill.keynotes.app.note.composables.*
-import com.andlill.keynotes.app.shared.LifecycleEventHandler
-import com.andlill.keynotes.app.shared.MenuIconButton
+import com.andlill.keynotes.ui.shared.util.LifecycleEventHandler
+import com.andlill.keynotes.ui.shared.button.MenuIconButton
 import com.andlill.keynotes.ui.theme.DarkNoteColors
 import com.andlill.keynotes.ui.theme.LightNoteColors
 

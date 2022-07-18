@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.andlill.keynotes.R
 import com.andlill.keynotes.model.Label
-import com.andlill.keynotes.ui.text.ButtonText
+import com.andlill.keynotes.ui.shared.text.ButtonText
 
 @Composable
 fun EditLabelDialog(label: Label, state: MutableState<Boolean>, onConfirm: (Label) -> Unit, onDelete: (Label) -> Unit, onDismiss: () -> Unit) {

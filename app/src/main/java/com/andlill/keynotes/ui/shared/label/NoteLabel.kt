@@ -1,4 +1,4 @@
-package com.andlill.keynotes.ui.label
+package com.andlill.keynotes.ui.shared.label
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape

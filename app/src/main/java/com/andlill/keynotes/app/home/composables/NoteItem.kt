@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.andlill.keynotes.model.NoteWrapper
-import com.andlill.keynotes.ui.label.NoteLabel
+import com.andlill.keynotes.ui.shared.label.NoteLabel
 import com.andlill.keynotes.ui.theme.DarkNoteColors
 import com.andlill.keynotes.ui.theme.LightNoteColors
 
