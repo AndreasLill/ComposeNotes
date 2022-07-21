@@ -1,26 +1,34 @@
 <resources>
+    <!-- Global -->
     <string name="app_name">KeyNotes</string>
     <string name="channel_name">AppNotifications</string>
     <string name="channel_description">AppNotifications</string>
 
+    <!-- Shared -->
+    <string name="dialog_confirm_text_title">Confirmation</string>
+    <string name="dialog_confirm_button_cancel">Cancel</string>
+    <string name="dialog_confirm_button_confirm">Confirm</string>
+
     <!-- Home Screen -->
+    <string name="home_screen_placeholder_search">Search %s</string>
     <string name="home_Screen_button_add_note">Add Note</string>
-    <string name="home_screen_search_bar_placeholder">Search %s</string>
-    <string name="home_screen_label_dialog_title">Edit Label</string>
-    <string name="home_screen_label_dialog_placeholder">Label</string>
-    <string name="home_screen_label_dialog_button_ok">OK</string>
-    <string name="home_screen_label_dialog_button_cancel">Cancel</string>
-    <string name="home_screen_label_dialog_button_delete">Delete</string>
-    <string name="home_screen_create_label_dialog_title">New Label</string>
-    <string name="home_screen_create_label_dialog_placeholder">Label</string>
-    <string name="home_screen_create_label_dialog_button_ok">OK</string>
-    <string name="home_screen_create_label_dialog_button_cancel">Cancel</string>
+    <string name="home_screen_dialog_edit_label_title">Edit Label</string>
+    <string name="home_screen_dialog_edit_label_placeholder">Label</string>
+    <string name="home_screen_dialog_edit_label_button_ok">OK</string>
+    <string name="home_screen_dialog_edit_label_button_cancel">Cancel</string>
+    <string name="home_screen_dialog_edit_label_button_delete">Delete</string>
+    <string name="home_screen_dialog_create_label_title">New Label</string>
+    <string name="home_screen_dialog_create_label_placeholder">Label</string>
+    <string name="home_screen_dialog_create_label_button_ok">OK</string>
+    <string name="home_screen_dialog_create_label_button_cancel">Cancel</string>
 
     <!-- Note Screen -->
-    <string name="note_screen_title_placeholder">No Title</string>
-    <string name="note_screen_body_placeholder">Empty</string>
-    <string name="note_screen_theme_dropdown_title">Colors</string>
-    <string name="note_screen_reminder_dialog_title">Reminder</string>
-    <string name="note_screen_reminder_dialog_button_add">Add Reminder</string>
-    <string name="note_screen_reminder_dialog_button_cancel">Cancel Reminder</string>
+    <string name="note_screen_placeholder_title">No Title</string>
+    <string name="note_screen_placeholder_body">Empty</string>
+    <string name="note_screen_text_modified">Last Modified: %s</string>
+    <string name="note_screen_dialog_theme_title">Colors</string>
+    <string name="note_screen_dialog_reminder_title">Reminder</string>
+    <string name="note_screen_dialog_reminder_button_add">Add Reminder</string>
+    <string name="note_screen_dialog_reminder_button_cancel">Cancel Reminder</string>
+    <string name="note_screen_dialog_confirm_text_body">Note will be permanently deleted.\nAre you sure?</string>
 </resources>

@@ -70,7 +70,7 @@ fun CreateLabelDialog(state: MutableState<Boolean>, onConfirm: (Label) -> Unit) 
                         .padding(16.dp)
                 ) {
                     Text(
-                        text = stringResource(R.string.home_screen_create_label_dialog_title).uppercase(),
+                        text = stringResource(R.string.home_screen_dialog_create_label_title).uppercase(),
                         letterSpacing = 1.sp,
                         fontSize = 10.sp,
                         fontWeight = FontWeight.SemiBold,
@@ -86,7 +86,7 @@ fun CreateLabelDialog(state: MutableState<Boolean>, onConfirm: (Label) -> Unit) 
                         singleLine = true,
                         placeholder = {
                             Text(
-                                text = stringResource(R.string.home_screen_create_label_dialog_placeholder),
+                                text = stringResource(R.string.home_screen_dialog_create_label_placeholder),
                                 fontSize = 15.sp
                             )
                         },
@@ -113,7 +113,7 @@ fun CreateLabelDialog(state: MutableState<Boolean>, onConfirm: (Label) -> Unit) 
                                     text = ""
                                     state.value = false
                                 }) {
-                                ButtonText(text = stringResource(R.string.home_screen_create_label_dialog_button_cancel))
+                                ButtonText(text = stringResource(R.string.home_screen_dialog_create_label_button_cancel))
                             }
                             Spacer(modifier = Modifier.width(16.dp))
                             OutlinedButton(
@@ -122,7 +122,7 @@ fun CreateLabelDialog(state: MutableState<Boolean>, onConfirm: (Label) -> Unit) 
                                     text = ""
                                     state.value = false
                                 }) {
-                                ButtonText(text = stringResource(R.string.home_screen_create_label_dialog_button_ok))
+                                ButtonText(text = stringResource(R.string.home_screen_dialog_create_label_button_ok))
                             }
                         }
                     }

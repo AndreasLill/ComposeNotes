@@ -79,7 +79,7 @@ fun ReminderDialog(state: MutableState<Boolean>, reminderTime: Long?, onClick: (
                 .background(MaterialTheme.colors.surface)
                 .padding(16.dp)) {
                 Text(
-                    text = stringResource(R.string.note_screen_reminder_dialog_title).uppercase(),
+                    text = stringResource(R.string.note_screen_dialog_reminder_title).uppercase(),
                     letterSpacing = 1.sp,
                     fontSize = 10.sp,
                     fontWeight = FontWeight.SemiBold,
@@ -148,7 +148,7 @@ fun ReminderDialog(state: MutableState<Boolean>, reminderTime: Long?, onClick: (
                             contentDescription = null)
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = stringResource(R.string.note_screen_reminder_dialog_button_cancel),
+                            text = stringResource(R.string.note_screen_dialog_reminder_button_cancel),
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Normal,
                             letterSpacing = 0.sp)
@@ -171,7 +171,7 @@ fun ReminderDialog(state: MutableState<Boolean>, reminderTime: Long?, onClick: (
                             contentDescription = null)
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = stringResource(R.string.note_screen_reminder_dialog_button_add),
+                            text = stringResource(R.string.note_screen_dialog_reminder_button_add),
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Normal,
                             letterSpacing = 0.sp)

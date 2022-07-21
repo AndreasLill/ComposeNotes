@@ -35,6 +35,7 @@ import com.andlill.keynotes.R
 import com.andlill.keynotes.app.note.composables.*
 import com.andlill.keynotes.ui.shared.util.LifecycleEventHandler
 import com.andlill.keynotes.ui.shared.button.MenuIconButton
+import com.andlill.keynotes.ui.shared.dialog.ConfirmDialog
 import com.andlill.keynotes.ui.theme.DarkNoteColors
 import com.andlill.keynotes.ui.theme.LightNoteColors
 
@@ -46,6 +47,7 @@ fun NoteScreen(navigation: NavController, noteId: Int) {
     val themeMenuState = remember { mutableStateOf(false) }
     val labelDialogState = remember { mutableStateOf(false) }
     val reminderDialogState = remember { mutableStateOf(false) }
+    val confirmDialogState = remember { mutableStateOf(false) }
     val interactionSource = remember { MutableInteractionSource() }
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
@@ -113,9 +115,11 @@ fun NoteScreen(navigation: NavController, noteId: Int) {
                         else {
                             MenuIconButton(icon = Icons.Outlined.Restore, color = MaterialTheme.colors.onSurface, onClick = {
                                 viewModel.onRestore()
-                                navigation.navigateUp()
                             })
                             MenuIconButton(icon = Icons.Outlined.DeleteForever, color = MaterialTheme.colors.onSurface, onClick = {
+                                confirmDialogState.value = true
+                            })
+                            ConfirmDialog(state = confirmDialogState, body = stringResource(R.string.note_screen_dialog_confirm_text_body), onConfirm = {
                                 viewModel.onDeletePermanently()
                                 navigation.navigateUp()
                             })
@@ -136,7 +140,7 @@ fun NoteScreen(navigation: NavController, noteId: Int) {
                         color = MaterialTheme.colors.onSurface.copy(0.6f),
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
-                        text = String.format("Last Modified: %s", viewModel.modifiedDate),
+                        text = String.format(stringResource(R.string.note_screen_text_modified), viewModel.modifiedDate),
                         textAlign = TextAlign.Center
                     )
                 }
@@ -155,7 +159,7 @@ fun NoteScreen(navigation: NavController, noteId: Int) {
                     focusRequester.requestFocus()
                 }) {
                 NoteTitleTextField(
-                    placeholder = stringResource(R.string.note_screen_title_placeholder),
+                    placeholder = stringResource(R.string.note_screen_placeholder_title),
                     state = viewModel.titleText,
                     readOnly = viewModel.isDeleted,
                     onValueChange = {
@@ -163,7 +167,7 @@ fun NoteScreen(navigation: NavController, noteId: Int) {
                     }
                 )
                 NoteBodyTextField(
-                    placeholder = stringResource(R.string.note_screen_body_placeholder),
+                    placeholder = stringResource(R.string.note_screen_placeholder_body),
                     state = viewModel.bodyText,
                     readOnly = viewModel.isDeleted,
                     focusRequester = focusRequester,

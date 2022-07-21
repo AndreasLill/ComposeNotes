@@ -61,7 +61,7 @@ fun EditLabelDialog(label: Label, state: MutableState<Boolean>, onConfirm: (Labe
                         .padding(16.dp)
                 ) {
                     Text(
-                        text = stringResource(R.string.home_screen_label_dialog_title).uppercase(),
+                        text = stringResource(R.string.home_screen_dialog_edit_label_title).uppercase(),
                         letterSpacing = 1.sp,
                         fontSize = 10.sp,
                         fontWeight = FontWeight.SemiBold,
@@ -104,7 +104,7 @@ fun EditLabelDialog(label: Label, state: MutableState<Boolean>, onConfirm: (Labe
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             ButtonText(
-                                text = stringResource(R.string.home_screen_label_dialog_button_delete),
+                                text = stringResource(R.string.home_screen_dialog_edit_label_button_delete),
                                 color = MaterialTheme.colors.error
                             )
                         }
@@ -115,7 +115,7 @@ fun EditLabelDialog(label: Label, state: MutableState<Boolean>, onConfirm: (Labe
                                     text = ""
                                     state.value = false
                                 }) {
-                                ButtonText(text = stringResource(R.string.home_screen_label_dialog_button_cancel))
+                                ButtonText(text = stringResource(R.string.home_screen_dialog_edit_label_button_cancel))
                             }
                             Spacer(modifier = Modifier.width(16.dp))
                             OutlinedButton(
@@ -124,7 +124,7 @@ fun EditLabelDialog(label: Label, state: MutableState<Boolean>, onConfirm: (Labe
                                     text = ""
                                     state.value = false
                                 }) {
-                                ButtonText(text = stringResource(R.string.home_screen_label_dialog_button_ok))
+                                ButtonText(text = stringResource(R.string.home_screen_dialog_edit_label_button_ok))
                             }
                         }
                     }

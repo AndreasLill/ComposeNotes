@@ -33,7 +33,7 @@ fun ThemeDropDown(state: MutableState<Boolean>, onClick: (Int) -> Unit) {
         Column(modifier = Modifier.padding(PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp))) {
             val colorList = if (isSystemInDarkTheme()) DarkNoteColors else LightNoteColors
             Text(
-                text = stringResource(R.string.note_screen_theme_dropdown_title).uppercase(),
+                text = stringResource(R.string.note_screen_dialog_theme_title).uppercase(),
                 letterSpacing = 1.sp,
                 fontSize = 10.sp,
                 fontWeight = FontWeight.SemiBold,

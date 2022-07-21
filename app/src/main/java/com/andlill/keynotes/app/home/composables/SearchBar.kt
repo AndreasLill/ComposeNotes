@@ -63,7 +63,7 @@ fun SearchBar(query: String, placeholder: String, onValueChange: (String) -> Uni
                     Text(
                         modifier = Modifier
                             .align(Alignment.CenterStart),
-                        text = String.format(stringResource(R.string.home_screen_search_bar_placeholder), placeholder),
+                        text = String.format(stringResource(R.string.home_screen_placeholder_search), placeholder),
                         style = TextStyle(
                             fontSize = 14.sp,
                             color = MaterialTheme.colors.onSurface.copy(0.6f)
