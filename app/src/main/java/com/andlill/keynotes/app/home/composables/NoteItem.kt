@@ -8,6 +8,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Alarm
+import androidx.compose.material.icons.outlined.Label
 import androidx.compose.material.icons.outlined.PushPin
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -42,8 +44,8 @@ fun NoteItem(note: NoteWrapper, callback: () -> Unit) {
         onClick = { callback() }
     ) {
         Column(modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)) {
+            .fillMaxSize()
+            .padding(16.dp)) {
             if (note.note.title.isNotEmpty()) {
                 Box(modifier = Modifier.fillMaxWidth()) {
                     Text(
@@ -72,13 +74,18 @@ fun NoteItem(note: NoteWrapper, callback: () -> Unit) {
             }
             if (note.labels.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(16.dp))
-            }
-            LazyRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                items(note.labels) { label ->
-                    NoteLabel(text = label.value)
+                LazyRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    items(note.labels) { label ->
+                        NoteLabel(icon = Icons.Outlined.Label, text = label.value)
+                    }
                 }
+            }
+            if (note.note.reminder != null) {
+                val height = if (note.labels.isEmpty()) 16.dp else 8.dp
+                Spacer(modifier = Modifier.height(height))
+                NoteLabel(icon = Icons.Outlined.Alarm, text = "reminder")
             }
         }
     }

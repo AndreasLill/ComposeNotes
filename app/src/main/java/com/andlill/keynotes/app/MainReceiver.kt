@@ -1,6 +1,5 @@
 package com.andlill.keynotes.app
 
-import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -11,6 +10,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.TaskStackBuilder
 import androidx.core.net.toUri
 import com.andlill.keynotes.R
+import com.andlill.keynotes.app.note.NoteBroadcaster
 import com.andlill.keynotes.data.repository.NoteRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -23,6 +23,7 @@ class MainReceiver : BroadcastReceiver() {
     companion object {
         const val CHANNEL_ID = "com.andlill.keynotes.AlarmReceiverChannel"
         const val ACTION_REMINDER = "com.andlill.keynotes.Reminder"
+        const val EXTRA_NOTE_ID = "com.andlill.keynotes.extra.noteId"
     }
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -44,25 +45,13 @@ class MainReceiver : BroadcastReceiver() {
             if (note.note.reminder == null)
                 return@forEach
 
-            // Restore intent for active reminder.
-            val intent = Intent(context, MainReceiver::class.java).let { intent ->
-                intent.action = ACTION_REMINDER
-                intent.putExtra("id", note.note.id)
-                intent.setPackage("com.andlill.keynotes")
-                PendingIntent.getBroadcast(context, note.note.id, intent, PendingIntent.FLAG_IMMUTABLE)
-            }
-
-            // Set reminder.
-            val alarm = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-            alarm.setAlarmClock(AlarmManager.AlarmClockInfo(note.note.reminder, intent), intent)
-
-            Log.d("MainReceiver", "Broadcast '${note.note.id}' Restored")
+            NoteBroadcaster.setReminder(context, note.note.reminder, note.note.id)
         }
     }
 
     // Send reminder by notification and remove reminder from note.
     private fun sendReminder(context: Context, intent: Intent) = CoroutineScope(Dispatchers.Default).launch {
-        val id = intent.getIntExtra("id", 0)
+        val id = intent.getIntExtra(EXTRA_NOTE_ID, -1)
 
         NoteRepository.getNote(context, id).firstOrNull()?.let { note ->
 
