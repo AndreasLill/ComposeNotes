@@ -112,6 +112,7 @@ class HomeViewModel(private val application: Application) : ViewModel() {
 
     fun onFilterLabel(value: Label?) = viewModelScope.launch {
         filterLabel = value
+        filterDeleted = false
         filterNotes()
     }
 }
