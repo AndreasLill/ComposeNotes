@@ -20,6 +20,8 @@ import com.andlill.keynotes.model.NoteWrapper
 import com.andlill.keynotes.ui.shared.label.NoteLabel
 import com.andlill.keynotes.ui.theme.DarkNoteColors
 import com.andlill.keynotes.ui.theme.LightNoteColors
+import com.andlill.keynotes.utils.TimeUtils.daysBetween
+import com.andlill.keynotes.utils.TimeUtils.toDateString
 
 @Composable
 fun NoteItem(note: NoteWrapper, callback: () -> Unit) {
@@ -84,8 +86,16 @@ fun NoteItem(note: NoteWrapper, callback: () -> Unit) {
             }
             if (note.note.reminder != null) {
                 val height = if (note.labels.isEmpty()) 16.dp else 8.dp
+                val daysBetween = note.note.reminder.daysBetween()
+                val reminderText = when {
+                    daysBetween == 0 -> "Today, " + note.note.reminder.toDateString("HH:mm")
+                    daysBetween == 1 -> "Tomorrow, " + note.note.reminder.toDateString("HH:mm")
+                    daysBetween > 365 -> note.note.reminder.toDateString("d MMM YYYY, HH:mm")
+                    else -> note.note.reminder.toDateString("d MMM, HH:mm")
+                }
+
                 Spacer(modifier = Modifier.height(height))
-                NoteLabel(icon = Icons.Outlined.Alarm, text = "reminder")
+                NoteLabel(icon = Icons.Outlined.Alarm, text = reminderText)
             }
         }
     }

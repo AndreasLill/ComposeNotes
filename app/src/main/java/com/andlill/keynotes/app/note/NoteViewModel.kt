@@ -14,9 +14,9 @@ import com.andlill.keynotes.data.repository.NoteRepository
 import com.andlill.keynotes.model.Label
 import com.andlill.keynotes.model.Note
 import com.andlill.keynotes.model.NoteLabelJoin
+import com.andlill.keynotes.utils.TimeUtils.toDateString
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
 import java.util.*
 
 class NoteViewModel(private val application: Application, private val noteId: Int) : ViewModel() {
@@ -63,7 +63,7 @@ class NoteViewModel(private val application: Application, private val noteId: In
                     if (bodyText.text.isEmpty())
                         bodyText = bodyText.copy(text = it.note.body)
                     it.note.modified?.let { modified ->
-                        modifiedDate = SimpleDateFormat("yyyy-MM-dd, HH:mm", Locale.getDefault()).format(modified)
+                        modifiedDate = modified.toDateString("yyyy-MM-dd, HH:mm")
                     }
                 }
             }
@@ -100,7 +100,7 @@ class NoteViewModel(private val application: Application, private val noteId: In
         NoteRepository.updateNote(application, note.copy(
             title = titleText.text.trim(),
             body = bodyText.text.trim(),
-            modified = Calendar.getInstance().timeInMillis,
+            modified = System.currentTimeMillis(),
         ))
     }
 
