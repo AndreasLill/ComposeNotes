@@ -10,6 +10,9 @@
     <string name="dialog_confirm_text_title">Confirmation</string>
     <string name="dialog_confirm_button_cancel">Cancel</string>
     <string name="dialog_confirm_button_confirm">Confirm</string>
+    <string name="date_today">Today</string>
+    <string name="date_tomorrow">Tomorrow</string>
+    <string name="date_yesterday">Yesterday</string>
 
     <!-- Drawer -->
     <string name="drawer_item_notes">Notes</string>
@@ -32,7 +35,6 @@
     <!-- Note Screen -->
     <string name="note_screen_placeholder_title">No Title</string>
     <string name="note_screen_placeholder_body">Empty</string>
-    <string name="note_screen_text_modified">Last Modified: %s</string>
     <string name="note_screen_dialog_theme_title">Colors</string>
     <string name="note_screen_dialog_reminder_title">Reminder</string>
     <string name="note_screen_dialog_reminder_button_add">Add Reminder</string>

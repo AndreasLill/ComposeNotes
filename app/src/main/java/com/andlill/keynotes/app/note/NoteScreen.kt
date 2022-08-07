@@ -38,6 +38,8 @@ import com.andlill.keynotes.ui.shared.button.MenuIconButton
 import com.andlill.keynotes.ui.shared.dialog.ConfirmDialog
 import com.andlill.keynotes.ui.theme.DarkNoteColors
 import com.andlill.keynotes.ui.theme.LightNoteColors
+import com.andlill.keynotes.utils.TimeUtils.daysBetween
+import com.andlill.keynotes.utils.TimeUtils.toDateString
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -129,20 +131,29 @@ fun NoteScreen(navigation: NavController, noteId: Int) {
             }
         },
         bottomBar = {
-            if (!WindowInsets.isImeVisible && viewModel.modifiedDate.isNotEmpty()) {
-                Column(modifier = Modifier
-                    .navigationBarsPadding()
-                    .fillMaxWidth()) {
-                    Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 4.dp),
-                        color = MaterialTheme.colors.onSurface.copy(0.6f),
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
-                        text = String.format(stringResource(R.string.note_screen_text_modified), viewModel.modifiedDate),
-                        textAlign = TextAlign.Center
-                    )
+            if (!WindowInsets.isImeVisible) {
+                viewModel.modified?.let { modified ->
+                    val daysBetween = modified.daysBetween()
+                    val modifiedText = when {
+                        daysBetween == 0 -> String.format("%s, %s", stringResource(R.string.date_today), modified.toDateString("HH:mm"))
+                        daysBetween == -1 -> String.format("%s, %s", stringResource(R.string.date_yesterday), modified.toDateString("HH:mm"))
+                        daysBetween < 365 -> modified.toDateString("d MMM YYYY, HH:mm")
+                        else -> modified.toDateString("d MMM, HH:mm")
+                    }
+                    Column(modifier = Modifier
+                        .navigationBarsPadding()
+                        .fillMaxWidth()) {
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 4.dp),
+                            color = MaterialTheme.colors.onSurface.copy(0.6f),
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            text = modifiedText,
+                            textAlign = TextAlign.Center
+                        )
+                    }
                 }
             }
         },

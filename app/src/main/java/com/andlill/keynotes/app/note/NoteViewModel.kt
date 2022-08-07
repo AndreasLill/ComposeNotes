@@ -14,7 +14,6 @@ import com.andlill.keynotes.data.repository.NoteRepository
 import com.andlill.keynotes.model.Label
 import com.andlill.keynotes.model.Note
 import com.andlill.keynotes.model.NoteLabelJoin
-import com.andlill.keynotes.utils.TimeUtils.toDateString
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.*
@@ -32,8 +31,6 @@ class NoteViewModel(private val application: Application, private val noteId: In
         private set
     var noteLabels by mutableStateOf(emptyList<Label>())
         private set
-    var modifiedDate by mutableStateOf("")
-        private set
     var titleText by mutableStateOf(TextFieldValue())
         private set
     var bodyText by mutableStateOf(TextFieldValue())
@@ -43,6 +40,8 @@ class NoteViewModel(private val application: Application, private val noteId: In
     var isDeleted by mutableStateOf(false)
         private set
     var reminder by mutableStateOf<Long?>(null)
+        private set
+    var modified by mutableStateOf<Long?>(null)
         private set
     var color by mutableStateOf(0)
         private set
@@ -56,15 +55,13 @@ class NoteViewModel(private val application: Application, private val noteId: In
                     isPinned = it.note.pinned
                     isDeleted = it.note.deleted
                     reminder = it.note.reminder
+                    modified = it.note.modified
                     color = it.note.color
 
                     if (titleText.text.isEmpty())
                         titleText = titleText.copy(text = it.note.title)
                     if (bodyText.text.isEmpty())
                         bodyText = bodyText.copy(text = it.note.body)
-                    it.note.modified?.let { modified ->
-                        modifiedDate = modified.toDateString("yyyy-MM-dd, HH:mm")
-                    }
                 }
             }
         }
@@ -84,7 +81,7 @@ class NoteViewModel(private val application: Application, private val noteId: In
         }
 
         // Delete new note without any modifications.
-        if (modifiedDate.isEmpty() && titleText.text.trim().isEmpty() && bodyText.text.trim().isEmpty()) {
+        if (modified == null && titleText.text.trim().isEmpty() && bodyText.text.trim().isEmpty()) {
             NoteBroadcaster.cancelReminder(application, note.id)
             NoteRepository.deleteNote(application, note)
             return@launch

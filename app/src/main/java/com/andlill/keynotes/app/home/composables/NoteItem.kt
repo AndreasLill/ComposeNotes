@@ -14,8 +14,10 @@ import androidx.compose.material.icons.outlined.PushPin
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.andlill.keynotes.R
 import com.andlill.keynotes.model.NoteWrapper
 import com.andlill.keynotes.ui.shared.label.NoteLabel
 import com.andlill.keynotes.ui.theme.DarkNoteColors
@@ -88,8 +90,8 @@ fun NoteItem(note: NoteWrapper, callback: () -> Unit) {
                 val height = if (note.labels.isEmpty()) 16.dp else 8.dp
                 val daysBetween = note.note.reminder.daysBetween()
                 val reminderText = when {
-                    daysBetween == 0 -> "Today, " + note.note.reminder.toDateString("HH:mm")
-                    daysBetween == 1 -> "Tomorrow, " + note.note.reminder.toDateString("HH:mm")
+                    daysBetween == 0 -> String.format("%s, %s", stringResource(R.string.date_today), note.note.reminder.toDateString("HH:mm"))
+                    daysBetween == 1 -> String.format("%s, %s", stringResource(R.string.date_tomorrow), note.note.reminder.toDateString("HH:mm"))
                     daysBetween > 365 -> note.note.reminder.toDateString("d MMM YYYY, HH:mm")
                     else -> note.note.reminder.toDateString("d MMM, HH:mm")
                 }
