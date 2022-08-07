@@ -137,8 +137,8 @@ fun NoteScreen(navigation: NavController, noteId: Int) {
                     val modifiedText = when {
                         daysBetween == 0 -> String.format("%s, %s", stringResource(R.string.date_today), modified.toDateString("HH:mm"))
                         daysBetween == -1 -> String.format("%s, %s", stringResource(R.string.date_yesterday), modified.toDateString("HH:mm"))
-                        daysBetween < 365 -> modified.toDateString("d MMM YYYY, HH:mm")
-                        else -> modified.toDateString("d MMM, HH:mm")
+                        daysBetween < -365 -> modified.toDateString("d MMMM YYYY, HH:mm")
+                        else -> modified.toDateString("d MMMM, HH:mm")
                     }
                     Column(modifier = Modifier
                         .navigationBarsPadding()
