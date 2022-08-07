@@ -144,11 +144,11 @@ class NoteViewModel(private val application: Application, private val noteId: In
     }
 
     fun onDeleteNote() = viewModelScope.launch {
-        NoteRepository.updateNote(application, note.copy(deleted = true, reminder = null))
+        NoteRepository.updateNote(application, note.copy(deleted = true, reminder = null, modified = System.currentTimeMillis()))
         NoteBroadcaster.cancelReminder(application, note.id)
     }
 
     fun onRestore() = viewModelScope.launch {
-        NoteRepository.updateNote(application, note.copy(deleted = false))
+        NoteRepository.updateNote(application, note.copy(deleted = false, modified = System.currentTimeMillis()))
     }
 }
