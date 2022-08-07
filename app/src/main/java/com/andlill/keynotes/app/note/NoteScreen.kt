@@ -142,11 +142,10 @@ fun NoteScreen(navigation: NavController, noteId: Int) {
                     }
                     Column(modifier = Modifier
                         .navigationBarsPadding()
-                        .fillMaxWidth()) {
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp)) {
                         Text(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = 4.dp),
+                            modifier = Modifier.fillMaxWidth(),
                             color = MaterialTheme.colors.onSurface.copy(0.6f),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
