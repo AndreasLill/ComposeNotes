@@ -30,9 +30,9 @@ class MaintenanceJobService : JobService() {
 
     // Permanently delete notes in trash at least 7 days old.
     private fun deleteScheduledNotes() = CoroutineScope(Dispatchers.Default).launch {
-        NoteRepository.getAllNotes(this@MaintenanceJobService).firstOrNull()?.filter { it.note.deleted }?.forEach { note ->
-            note.note.modified?.let {
-                if (it.daysBetween() <= -7) {
+        NoteRepository.getAllNotes(this@MaintenanceJobService).firstOrNull()?.filter { it.note.deletion != null }?.forEach { note ->
+            note.note.deletion?.let {
+                if (it.daysBetween() <= 0) {
                     NoteRepository.deleteNote(this@MaintenanceJobService, note.note)
                     Log.d("MaintenanceJobService", "Scheduled deletion of note: ${note.note.id}")
                 }

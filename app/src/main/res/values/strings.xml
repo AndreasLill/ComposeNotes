@@ -40,4 +40,7 @@
     <string name="note_screen_dialog_reminder_button_add">Add Reminder</string>
     <string name="note_screen_dialog_reminder_button_cancel">Cancel Reminder</string>
     <string name="note_screen_dialog_confirm_text_body">Note will be permanently deleted.\nAre you sure?</string>
+    <string name="note_screen_status_text_deletion_today">Scheduled for deletion today.</string>
+    <string name="note_screen_status_text_deletion_tomorrow">Scheduled for deletion tomorrow.</string>
+    <string name="note_screen_status_text_deletion_days">Scheduled for deletion in %s days.</string>
 </resources>

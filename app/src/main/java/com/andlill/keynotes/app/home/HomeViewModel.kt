@@ -59,8 +59,8 @@ class HomeViewModel(private val application: Application) : ViewModel() {
         // Filter notes on modified value. (Modified 'null' notes are temporary created but unsaved notes.)
         var filterList = _notes.filter { it.note.modified != null }
 
-        // Filter notes on deleted boolean status.
-        filterList = filterList.filter { it.note.deleted == filterDeleted }
+        // Filter notes on deleted status.
+        filterList = filterList.filter { (it.note.deletion != null) == filterDeleted }
 
         // Filter notes on label.
         filterLabel?.let { label ->

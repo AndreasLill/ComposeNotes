@@ -12,6 +12,6 @@ data class Note(
     val created: Long? = null,
     val modified: Long? = null,
     val reminder: Long? = null,
-    val deleted: Boolean = false,
+    val deletion: Long? = null,
     val pinned: Boolean = false,
 )

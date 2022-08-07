@@ -9,13 +9,18 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.andlill.keynotes.R
 import com.andlill.keynotes.data.repository.LabelRepository
 import com.andlill.keynotes.data.repository.NoteRepository
 import com.andlill.keynotes.model.Label
 import com.andlill.keynotes.model.Note
 import com.andlill.keynotes.model.NoteLabelJoin
+import com.andlill.keynotes.utils.TimeUtils.daysBetween
+import com.andlill.keynotes.utils.TimeUtils.toDateString
+import com.andlill.keynotes.utils.TimeUtils.toMilliSeconds
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 import java.util.*
 
 class NoteViewModel(private val application: Application, private val noteId: Int) : ViewModel() {
@@ -37,13 +42,15 @@ class NoteViewModel(private val application: Application, private val noteId: In
         private set
     var isPinned by mutableStateOf(false)
         private set
-    var isDeleted by mutableStateOf(false)
-        private set
     var reminder by mutableStateOf<Long?>(null)
         private set
     var modified by mutableStateOf<Long?>(null)
         private set
+    var deletion by mutableStateOf<Long?>(null)
+        private set
     var color by mutableStateOf(0)
+        private set
+    var statusText by mutableStateOf("")
         private set
 
     init {
@@ -53,15 +60,38 @@ class NoteViewModel(private val application: Application, private val noteId: In
                     note = it.note.copy()
                     noteLabels = it.labels
                     isPinned = it.note.pinned
-                    isDeleted = it.note.deleted
                     reminder = it.note.reminder
                     modified = it.note.modified
+                    deletion = it.note.deletion
                     color = it.note.color
 
                     if (titleText.text.isEmpty())
                         titleText = titleText.copy(text = it.note.title)
                     if (bodyText.text.isEmpty())
                         bodyText = bodyText.copy(text = it.note.body)
+
+                    if (deletion != null) {
+                        // Set status text days until deletion.
+                        deletion?.let { value ->
+                            statusText = when (value.daysBetween()) {
+                                0 -> application.resources.getString(R.string.note_screen_status_text_deletion_today)
+                                1 -> application.resources.getString(R.string.note_screen_status_text_deletion_tomorrow)
+                                else -> String.format(application.resources.getString(R.string.note_screen_status_text_deletion_days), value.daysBetween())
+                            }
+                        }
+                    }
+                    else {
+                        // Set status text days since modified.
+                        modified?.let { value ->
+                            val days = value.daysBetween()
+                            statusText = when {
+                                days == 0 -> String.format("%s, %s", application.resources.getString(R.string.date_today), value.toDateString("HH:mm"))
+                                days == -1 -> String.format("%s, %s", application.resources.getString(R.string.date_yesterday), value.toDateString("HH:mm"))
+                                days < -365 -> value.toDateString("d MMM YYYY, HH:mm")
+                                else -> value.toDateString("d MMM, HH:mm")
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -144,11 +174,13 @@ class NoteViewModel(private val application: Application, private val noteId: In
     }
 
     fun onDeleteNote() = viewModelScope.launch {
-        NoteRepository.updateNote(application, note.copy(deleted = true, reminder = null, modified = System.currentTimeMillis()))
+        // Set deletion date to 7 days from now.
+        val deletionTime = LocalDateTime.now().plusDays(7).toMilliSeconds()
+        NoteRepository.updateNote(application, note.copy(reminder = null, deletion = deletionTime))
         NoteBroadcaster.cancelReminder(application, note.id)
     }
 
     fun onRestore() = viewModelScope.launch {
-        NoteRepository.updateNote(application, note.copy(deleted = false, modified = System.currentTimeMillis()))
+        NoteRepository.updateNote(application, note.copy(deletion = null))
     }
 }

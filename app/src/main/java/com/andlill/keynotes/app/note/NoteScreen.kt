@@ -33,13 +33,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.andlill.keynotes.R
 import com.andlill.keynotes.app.note.composables.*
-import com.andlill.keynotes.ui.shared.util.LifecycleEventHandler
 import com.andlill.keynotes.ui.shared.button.MenuIconButton
 import com.andlill.keynotes.ui.shared.dialog.ConfirmDialog
+import com.andlill.keynotes.ui.shared.util.LifecycleEventHandler
 import com.andlill.keynotes.ui.theme.DarkNoteColors
 import com.andlill.keynotes.ui.theme.LightNoteColors
-import com.andlill.keynotes.utils.TimeUtils.daysBetween
-import com.andlill.keynotes.utils.TimeUtils.toDateString
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -87,7 +85,7 @@ fun NoteScreen(navigation: NavController, noteId: Int) {
                         })
                     },
                     actions = {
-                        if (!viewModel.isDeleted) {
+                        if (viewModel.deletion == null) {
                             MenuIconButton(icon = pinIcon, color = MaterialTheme.colors.onSurface, onClick = {
                                 viewModel.onTogglePin()
                             })
@@ -132,27 +130,18 @@ fun NoteScreen(navigation: NavController, noteId: Int) {
         },
         bottomBar = {
             if (!WindowInsets.isImeVisible) {
-                viewModel.modified?.let { modified ->
-                    val daysBetween = modified.daysBetween()
-                    val modifiedText = when {
-                        daysBetween == 0 -> String.format("%s, %s", stringResource(R.string.date_today), modified.toDateString("HH:mm"))
-                        daysBetween == -1 -> String.format("%s, %s", stringResource(R.string.date_yesterday), modified.toDateString("HH:mm"))
-                        daysBetween < -365 -> modified.toDateString("d MMMM YYYY, HH:mm")
-                        else -> modified.toDateString("d MMMM, HH:mm")
-                    }
-                    Column(modifier = Modifier
-                        .navigationBarsPadding()
-                        .fillMaxWidth()
-                        .padding(bottom = 8.dp)) {
-                        Text(
-                            modifier = Modifier.fillMaxWidth(),
-                            color = MaterialTheme.colors.onSurface.copy(0.6f),
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold,
-                            text = modifiedText,
-                            textAlign = TextAlign.Center
-                        )
-                    }
+                Column(modifier = Modifier
+                    .navigationBarsPadding()
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp)) {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        color = MaterialTheme.colors.onSurface.copy(0.6f),
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        text = viewModel.statusText,
+                        textAlign = TextAlign.Center
+                    )
                 }
             }
         },
@@ -171,7 +160,7 @@ fun NoteScreen(navigation: NavController, noteId: Int) {
                 NoteTitleTextField(
                     placeholder = stringResource(R.string.note_screen_placeholder_title),
                     state = viewModel.titleText,
-                    readOnly = viewModel.isDeleted,
+                    readOnly = (viewModel.deletion != null),
                     onValueChange = {
                         viewModel.onChangeTitle(it)
                     }
@@ -179,7 +168,7 @@ fun NoteScreen(navigation: NavController, noteId: Int) {
                 NoteBodyTextField(
                     placeholder = stringResource(R.string.note_screen_placeholder_body),
                     state = viewModel.bodyText,
-                    readOnly = viewModel.isDeleted,
+                    readOnly = (viewModel.deletion != null),
                     focusRequester = focusRequester,
                     onValueChange = {
                         viewModel.onChangeBody(it)
