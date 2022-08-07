@@ -45,23 +45,9 @@ fun Drawer(state: DrawerState, viewModel: HomeViewModel) {
         Text(
             modifier = Modifier.padding(start = 16.dp),
             text = stringResource(R.string.app_name),
-            fontSize = 20.sp,
+            fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colors.onSurface
-        )
-        Text(
-            modifier = Modifier.padding(start = 16.dp),
-            text = stringResource(R.string.app_version),
-            fontSize = 12.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colors.onSurface.copy(0.6f)
-        )
-        Text(
-            modifier = Modifier.padding(start = 16.dp),
-            text = stringResource(R.string.app_db_version),
-            fontSize = 12.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colors.onSurface.copy(0.6f)
         )
         Spacer(modifier = Modifier.height(16.dp))
         Column {
