@@ -1,6 +1,8 @@
 <resources>
     <!-- Global -->
     <string name="app_name">KeyNotes</string>
+    <string name="app_version">Version: 1.0</string>
+    <string name="app_db_version">Database: v24</string>
     <string name="channel_name">AppNotifications</string>
     <string name="channel_description">AppNotifications</string>
 
@@ -8,6 +10,11 @@
     <string name="dialog_confirm_text_title">Confirmation</string>
     <string name="dialog_confirm_button_cancel">Cancel</string>
     <string name="dialog_confirm_button_confirm">Confirm</string>
+
+    <!-- Drawer -->
+    <string name="drawer_item_notes">Notes</string>
+    <string name="drawer_item_deleted">Deleted</string>
+    <string name="drawer_item_new_label">New Label</string>
 
     <!-- Home Screen -->
     <string name="home_screen_placeholder_search">Search %s</string>

@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Divider
 import androidx.compose.material.DrawerState
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Delete
@@ -17,13 +18,21 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.andlill.keynotes.app.home.HomeViewModel
 import com.andlill.keynotes.model.Label
 import kotlinx.coroutines.launch
+import com.andlill.keynotes.R
 
 @Composable
 fun Drawer(state: DrawerState, viewModel: HomeViewModel) {
+
+    val titleNotes = stringResource(R.string.drawer_item_notes)
+    val titleDeleted = stringResource(R.string.drawer_item_deleted)
+    val titleNewLabel = stringResource(R.string.drawer_item_new_label)
     val editLabelDialogState = remember { mutableStateOf(false) }
     val createLabelDialogState = remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
@@ -33,23 +42,45 @@ fun Drawer(state: DrawerState, viewModel: HomeViewModel) {
         .statusBarsPadding()
         .fillMaxSize()) {
         Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            modifier = Modifier.padding(start = 16.dp),
+            text = stringResource(R.string.app_name),
+            fontSize = 20.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colors.onSurface
+        )
+        Text(
+            modifier = Modifier.padding(start = 16.dp),
+            text = stringResource(R.string.app_version),
+            fontSize = 12.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colors.onSurface.copy(0.6f)
+        )
+        Text(
+            modifier = Modifier.padding(start = 16.dp),
+            text = stringResource(R.string.app_db_version),
+            fontSize = 12.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colors.onSurface.copy(0.6f)
+        )
+        Spacer(modifier = Modifier.height(16.dp))
         Column {
-            DrawerItem(viewModel.drawerSelectedItem, id = 0, icon = Icons.Outlined.Home, text = "Notes", onClick = {
+            DrawerItem(viewModel.drawerSelectedItem, id = 0, icon = Icons.Outlined.Home, text = titleNotes, onClick = {
                 scope.launch { state.close() }
                 viewModel.drawerSelectedItem = 0
-                viewModel.drawerSelectedItemName = "Notes"
+                viewModel.drawerSelectedItemName = titleNotes
                 viewModel.onFilterDeleted(false)
             })
-            DrawerItem(viewModel.drawerSelectedItem, id = 1, icon = Icons.Outlined.Delete, text = "Deleted", onClick = {
+            DrawerItem(viewModel.drawerSelectedItem, id = 1, icon = Icons.Outlined.Delete, text = titleDeleted, onClick = {
                 scope.launch { state.close() }
                 viewModel.drawerSelectedItem = 1
-                viewModel.drawerSelectedItemName = "Deleted"
+                viewModel.drawerSelectedItemName = titleDeleted
                 viewModel.onFilterDeleted(true)
             })
         }
         Divider(modifier = Modifier.padding(top = 16.dp, bottom = 16.dp))
         Column {
-            DrawerItem(viewModel.drawerSelectedItem, id = 2, icon = Icons.Outlined.Add, alpha = 0.32f, text = "New Label", onClick = {
+            DrawerItem(viewModel.drawerSelectedItem, id = 2, icon = Icons.Outlined.Add, alpha = 0.32f, text = titleNewLabel, onClick = {
                 createLabelDialogState.value = true
             })
         }
@@ -87,7 +118,7 @@ fun Drawer(state: DrawerState, viewModel: HomeViewModel) {
                 // Set selected item back to zero if this deleted label was selected.
                 if (it.value == viewModel.drawerSelectedItemName) {
                     viewModel.drawerSelectedItem = 0
-                    viewModel.drawerSelectedItemName = "Notes"
+                    viewModel.drawerSelectedItemName = titleNotes
                     viewModel.onFilterLabel(null)
                 }
                 viewModel.onDeleteLabel(it)
