@@ -24,7 +24,6 @@ class MainActivity : AppCompatActivity() {
 
         setContent {
             AppTheme {
-                // Provide status bar and navigation bar insets.
                 Navigation()
             }
         }

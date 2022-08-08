@@ -17,7 +17,9 @@ fun Navigation() {
         startDestination = Screen.HomeScreen.route) {
         // Root home screen
         composable(Screen.HomeScreen.route) {
-            HomeScreen(navController)
+            HomeScreen(
+                navController = navController
+            )
         }
         // Note screen with argument for note id.
         composable(
@@ -30,7 +32,7 @@ fun Navigation() {
             )
         ) {
             NoteScreen(
-                navigation = navController,
+                navController = navController,
                 noteId = it.arguments!!.getInt("noteId"),
             )
         }

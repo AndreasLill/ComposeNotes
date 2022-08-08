@@ -41,7 +41,7 @@ import com.andlill.keynotes.ui.theme.LightNoteColors
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun NoteScreen(navigation: NavController, noteId: Int) {
+fun NoteScreen(navController: NavController, noteId: Int) {
     val viewModel: NoteViewModel = viewModel(factory = NoteViewModel.Factory(LocalContext.current.applicationContext as Application, noteId))
 
     val themeMenuState = remember { mutableStateOf(false) }
@@ -81,7 +81,7 @@ fun NoteScreen(navigation: NavController, noteId: Int) {
                     },
                     navigationIcon = {
                         MenuIconButton(icon = Icons.Filled.ArrowBack, color = MaterialTheme.colors.onSurface, onClick = {
-                            navigation.navigateUp()
+                            navController.navigateUp()
                         })
                     },
                     actions = {
@@ -106,7 +106,8 @@ fun NoteScreen(navigation: NavController, noteId: Int) {
                             })
                             MenuIconButton(icon = Icons.Outlined.Delete, color = MaterialTheme.colors.onSurface, onClick = {
                                 viewModel.onDeleteNote()
-                                navigation.navigateUp()
+                                navController.previousBackStackEntry?.savedStateHandle?.set("KEY_MESSAGE", "Note was moved to trash.")
+                                navController.navigateUp()
                             })
                             ThemeDropDown(state = themeMenuState, onClick = {
                                 viewModel.onChangeColor(it)
@@ -115,13 +116,16 @@ fun NoteScreen(navigation: NavController, noteId: Int) {
                         else {
                             MenuIconButton(icon = Icons.Outlined.Restore, color = MaterialTheme.colors.onSurface, onClick = {
                                 viewModel.onRestore()
+                                navController.previousBackStackEntry?.savedStateHandle?.set("KEY_MESSAGE", "Note was restored from trash.")
+                                navController.navigateUp()
                             })
                             MenuIconButton(icon = Icons.Outlined.DeleteForever, color = MaterialTheme.colors.onSurface, onClick = {
                                 confirmDialogState.value = true
                             })
                             ConfirmDialog(state = confirmDialogState, body = stringResource(R.string.note_screen_dialog_confirm_text_body), onConfirm = {
                                 viewModel.onDeletePermanently()
-                                navigation.navigateUp()
+                                navController.previousBackStackEntry?.savedStateHandle?.set("KEY_MESSAGE", "Note was permanently deleted.")
+                                navController.navigateUp()
                             })
                         }
                     }
