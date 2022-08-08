@@ -51,6 +51,7 @@ fun NoteScreen(navController: NavController, noteId: Int) {
     val interactionSource = remember { MutableInteractionSource() }
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
+    val context = LocalContext.current
 
     val pinIcon = if (viewModel.isPinned) Icons.Filled.PushPin else Icons.Outlined.PushPin
     val reminderIcon = if (viewModel.reminder != null) Icons.Filled.Notifications else Icons.Outlined.Notifications
@@ -106,7 +107,7 @@ fun NoteScreen(navController: NavController, noteId: Int) {
                             })
                             MenuIconButton(icon = Icons.Outlined.Delete, color = MaterialTheme.colors.onSurface, onClick = {
                                 viewModel.onDeleteNote()
-                                navController.previousBackStackEntry?.savedStateHandle?.set("KEY_MESSAGE", "Note was moved to trash.")
+                                navController.previousBackStackEntry?.savedStateHandle?.set("KEY_MESSAGE", context.resources.getString(R.string.note_screen_message_note_trash))
                                 navController.navigateUp()
                             })
                             ThemeDropDown(state = themeMenuState, onClick = {
@@ -116,7 +117,7 @@ fun NoteScreen(navController: NavController, noteId: Int) {
                         else {
                             MenuIconButton(icon = Icons.Outlined.Restore, color = MaterialTheme.colors.onSurface, onClick = {
                                 viewModel.onRestore()
-                                navController.previousBackStackEntry?.savedStateHandle?.set("KEY_MESSAGE", "Note was restored from trash.")
+                                navController.previousBackStackEntry?.savedStateHandle?.set("KEY_MESSAGE", context.resources.getString(R.string.note_screen_message_note_restored))
                                 navController.navigateUp()
                             })
                             MenuIconButton(icon = Icons.Outlined.DeleteForever, color = MaterialTheme.colors.onSurface, onClick = {
@@ -124,7 +125,7 @@ fun NoteScreen(navController: NavController, noteId: Int) {
                             })
                             ConfirmDialog(state = confirmDialogState, body = stringResource(R.string.note_screen_dialog_confirm_text_body), onConfirm = {
                                 viewModel.onDeletePermanently()
-                                navController.previousBackStackEntry?.savedStateHandle?.set("KEY_MESSAGE", "Note was permanently deleted.")
+                                navController.previousBackStackEntry?.savedStateHandle?.set("KEY_MESSAGE", context.resources.getString(R.string.note_screen_message_note_deleted))
                                 navController.navigateUp()
                             })
                         }

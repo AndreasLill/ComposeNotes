@@ -40,4 +40,7 @@
     <string name="note_screen_status_text_deletion_today">Scheduled for deletion today.</string>
     <string name="note_screen_status_text_deletion_tomorrow">Scheduled for deletion tomorrow.</string>
     <string name="note_screen_status_text_deletion_days">Scheduled for deletion in %s days.</string>
+    <string name="note_screen_message_note_trash">Note was moved to trash.</string>
+    <string name="note_screen_message_note_restored">Note was restored from trash.</string>
+    <string name="note_screen_message_note_deleted">Note was permanently deleted.</string>
 </resources>
