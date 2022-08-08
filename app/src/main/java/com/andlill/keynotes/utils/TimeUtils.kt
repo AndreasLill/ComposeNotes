@@ -4,7 +4,6 @@ import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
 import java.util.*
 
@@ -31,6 +30,6 @@ object TimeUtils {
     }
 
     fun LocalDateTime.toMilliSeconds(): Long {
-        return this.toInstant(ZoneOffset.UTC).toEpochMilli()
+        return this.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
     }
 }
