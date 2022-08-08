@@ -13,12 +13,17 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.andlill.keynotes.R
 import com.andlill.keynotes.app.Screen
 import com.andlill.keynotes.app.home.composables.Drawer
 import com.andlill.keynotes.app.home.composables.NoteItem
@@ -79,11 +84,10 @@ fun HomeScreen(navigation: NavController) {
             if (!WindowInsets.isImeVisible) {
                 Box(modifier = Modifier
                     .navigationBarsPadding()
+                    .padding(8.dp)
                     .fillMaxWidth()) {
-                    if (!viewModel.filterDeleted) {
-                        OutlinedButton(modifier = Modifier
-                            .padding(start = 8.dp, end = 8.dp, bottom = 4.dp)
-                            .fillMaxWidth(),
+                    if (!viewModel.filterTrash) {
+                        OutlinedButton(modifier = Modifier.fillMaxWidth(),
                             colors = ButtonDefaults.buttonColors(
                                 backgroundColor = MaterialTheme.colors.onSurface.copy(0.1f),
                                 contentColor = MaterialTheme.colors.onSurface,
@@ -107,6 +111,15 @@ fun HomeScreen(navigation: NavController) {
                                 contentDescription = null
                             )
                         }
+                    }
+                    else {
+                        Text(
+                            modifier = Modifier.align(Alignment.Center),
+                            text = stringResource(R.string.home_screen_text_trash),
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colors.onSurface.copy(0.6f)
+                        )
                     }
                 }
             }

@@ -138,7 +138,7 @@ fun NoteScreen(navigation: NavController, noteId: Int) {
                         modifier = Modifier.fillMaxWidth(),
                         color = MaterialTheme.colors.onSurface.copy(0.6f),
                         fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.SemiBold,
                         text = viewModel.statusText,
                         textAlign = TextAlign.Center
                     )

@@ -174,7 +174,7 @@ class NoteViewModel(private val application: Application, private val noteId: In
     }
 
     fun onDeleteNote() = viewModelScope.launch {
-        // Set deletion date to 7 days from now.
+        // Set deletion date to 7 days from now and move to "trash".
         val deletionTime = LocalDateTime.now().plusDays(7).toMilliSeconds()
         NoteRepository.updateNote(application, note.copy(reminder = null, deletion = deletionTime))
         NoteBroadcaster.cancelReminder(application, note.id)

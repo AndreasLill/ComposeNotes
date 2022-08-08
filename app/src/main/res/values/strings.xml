@@ -12,11 +12,12 @@
 
     <!-- Drawer -->
     <string name="drawer_item_notes">Notes</string>
-    <string name="drawer_item_deleted">Deleted</string>
+    <string name="drawer_item_trash">Trash</string>
     <string name="drawer_item_new_label">New Label</string>
 
     <!-- Home Screen -->
     <string name="home_screen_placeholder_search">Search %s</string>
+    <string name="home_screen_text_trash">Notes in trash will be automatically deleted.</string>
     <string name="home_Screen_button_add_note">Add Note</string>
     <string name="home_screen_dialog_edit_label_title">Edit Label</string>
     <string name="home_screen_dialog_edit_label_placeholder">Label</string>

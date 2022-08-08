@@ -30,7 +30,7 @@ class HomeViewModel(private val application: Application) : ViewModel() {
         private set
     var labels by mutableStateOf(emptyList<Label>())
         private set
-    var filterDeleted by mutableStateOf(false)
+    var filterTrash by mutableStateOf(false)
         private set
     var filterLabel by mutableStateOf<Label?>(null)
         private set
@@ -60,7 +60,7 @@ class HomeViewModel(private val application: Application) : ViewModel() {
         var filterList = _notes.filter { it.note.modified != null }
 
         // Filter notes on deleted status.
-        filterList = filterList.filter { (it.note.deletion != null) == filterDeleted }
+        filterList = filterList.filter { (it.note.deletion != null) == filterTrash }
 
         // Filter notes on label.
         filterLabel?.let { label ->
@@ -106,13 +106,13 @@ class HomeViewModel(private val application: Application) : ViewModel() {
 
     fun onFilterDeleted(value: Boolean) = viewModelScope.launch {
         filterLabel = null
-        filterDeleted = value
+        filterTrash = value
         filterNotes()
     }
 
     fun onFilterLabel(value: Label?) = viewModelScope.launch {
         filterLabel = value
-        filterDeleted = false
+        filterTrash = false
         filterNotes()
     }
 }
