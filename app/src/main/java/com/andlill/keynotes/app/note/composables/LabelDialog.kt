@@ -12,11 +12,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.andlill.keynotes.R
 import com.andlill.keynotes.model.Label
+import com.andlill.keynotes.ui.shared.text.DialogTitle
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -26,12 +28,7 @@ fun LabelDialog(state: MutableState<Boolean>, noteLabels: List<Label>, labels: L
             Column(modifier = Modifier
                 .background(MaterialTheme.colors.surface)
                 .padding(16.dp)) {
-                Text(
-                    text = "Labels".uppercase(),
-                    letterSpacing = 1.sp,
-                    fontSize = 10.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colors.primary)
+                DialogTitle(text = stringResource(R.string.note_screen_dialog_labels_title))
                 Spacer(modifier = Modifier.height(16.dp))
                 LazyColumn {
                     items(labels) { label ->
@@ -51,7 +48,7 @@ fun LabelDialog(state: MutableState<Boolean>, noteLabels: List<Label>, labels: L
                                         modifier = Modifier.align(Alignment.CenterVertically),
                                         imageVector = Icons.Outlined.Label,
                                         tint = MaterialTheme.colors.onSurface,
-                                        contentDescription = "Label")
+                                        contentDescription = null)
                                     Spacer(modifier = Modifier.width(16.dp))
                                     Text(
                                         modifier = Modifier.align(Alignment.CenterVertically),

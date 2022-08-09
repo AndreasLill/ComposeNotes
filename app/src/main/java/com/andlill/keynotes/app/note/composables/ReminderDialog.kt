@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.andlill.keynotes.R
+import com.andlill.keynotes.ui.shared.text.DialogTitle
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
@@ -78,12 +79,7 @@ fun ReminderDialog(state: MutableState<Boolean>, reminderTime: Long?, onClick: (
             Column(modifier = Modifier
                 .background(MaterialTheme.colors.surface)
                 .padding(16.dp)) {
-                Text(
-                    text = stringResource(R.string.note_screen_dialog_reminder_title).uppercase(),
-                    letterSpacing = 1.sp,
-                    fontSize = 10.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colors.primary)
+                DialogTitle(text = stringResource(R.string.note_screen_dialog_reminder_title))
                 Spacer(modifier = Modifier.height(16.dp))
                 TextField(
                     modifier = Modifier

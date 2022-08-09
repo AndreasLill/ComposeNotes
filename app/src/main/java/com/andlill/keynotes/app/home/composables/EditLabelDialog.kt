@@ -6,22 +6,25 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedButton
+import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.andlill.keynotes.R
 import com.andlill.keynotes.model.Label
-import com.andlill.keynotes.ui.shared.text.ButtonText
+import com.andlill.keynotes.ui.shared.button.DialogButton
+import com.andlill.keynotes.ui.shared.text.DialogTitle
 
 @Composable
 fun EditLabelDialog(label: Label, state: MutableState<Boolean>, onConfirm: (Label) -> Unit, onDelete: (Label) -> Unit, onDismiss: () -> Unit) {
@@ -60,13 +63,7 @@ fun EditLabelDialog(label: Label, state: MutableState<Boolean>, onConfirm: (Labe
                         .background(MaterialTheme.colors.surface)
                         .padding(16.dp)
                 ) {
-                    Text(
-                        text = stringResource(R.string.home_screen_dialog_edit_label_title).uppercase(),
-                        letterSpacing = 1.sp,
-                        fontSize = 10.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colors.primary
-                    )
+                    DialogTitle(text = stringResource(R.string.home_screen_dialog_edit_label_title))
                     Spacer(modifier = Modifier.height(16.dp))
                     TextField(
                         modifier = Modifier.fillMaxWidth(),
@@ -102,30 +99,29 @@ fun EditLabelDialog(label: Label, state: MutableState<Boolean>, onConfirm: (Labe
                                 imageVector = Icons.Outlined.Delete,
                                 tint = MaterialTheme.colors.error,
                             )
-                            Spacer(modifier = Modifier.width(4.dp))
-                            ButtonText(
-                                text = stringResource(R.string.home_screen_dialog_edit_label_button_delete),
-                                color = MaterialTheme.colors.error
-                            )
                         }
                         Row(modifier = Modifier.align(Alignment.CenterEnd)) {
-                            OutlinedButton(
+                            DialogButton(
+                                text = stringResource(R.string.button_cancel),
+                                backgroundColor = Color.Transparent,
+                                textColor = MaterialTheme.colors.primary,
                                 onClick = {
                                     onDismiss()
                                     text = ""
                                     state.value = false
-                                }) {
-                                ButtonText(text = stringResource(R.string.home_screen_dialog_edit_label_button_cancel))
-                            }
-                            Spacer(modifier = Modifier.width(16.dp))
-                            OutlinedButton(
+                                }
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            DialogButton(
+                                text = stringResource(R.string.button_ok),
+                                backgroundColor = MaterialTheme.colors.primary,
+                                textColor = MaterialTheme.colors.onPrimary,
                                 onClick = {
                                     onConfirm(label.copy(value = text))
                                     text = ""
                                     state.value = false
-                                }) {
-                                ButtonText(text = stringResource(R.string.home_screen_dialog_edit_label_button_ok))
-                            }
+                                }
+                            )
                         }
                     }
                 }

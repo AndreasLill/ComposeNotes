@@ -3,9 +3,10 @@
     <string name="app_name">KeyNotes</string>
 
     <!-- Shared -->
-    <string name="dialog_confirm_text_title">Confirmation</string>
-    <string name="dialog_confirm_button_cancel">Cancel</string>
-    <string name="dialog_confirm_button_confirm">Confirm</string>
+    <string name="dialog_confirm_title">Confirmation</string>
+    <string name="button_ok">OK</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="button_confirm">Confirm</string>
     <string name="date_today">Today</string>
     <string name="date_tomorrow">Tomorrow</string>
     <string name="date_yesterday">Yesterday</string>
@@ -21,17 +22,13 @@
     <string name="home_Screen_button_add_note">Add Note</string>
     <string name="home_screen_dialog_edit_label_title">Edit Label</string>
     <string name="home_screen_dialog_edit_label_placeholder">Label</string>
-    <string name="home_screen_dialog_edit_label_button_ok">OK</string>
-    <string name="home_screen_dialog_edit_label_button_cancel">Cancel</string>
-    <string name="home_screen_dialog_edit_label_button_delete">Delete</string>
     <string name="home_screen_dialog_create_label_title">New Label</string>
     <string name="home_screen_dialog_create_label_placeholder">Label</string>
-    <string name="home_screen_dialog_create_label_button_ok">OK</string>
-    <string name="home_screen_dialog_create_label_button_cancel">Cancel</string>
 
     <!-- Note Screen -->
     <string name="note_screen_placeholder_title">No Title</string>
     <string name="note_screen_placeholder_body">Empty</string>
+    <string name="note_screen_dialog_labels_title">Labels</string>
     <string name="note_screen_dialog_theme_title">Colors</string>
     <string name="note_screen_dialog_reminder_title">Reminder</string>
     <string name="note_screen_dialog_reminder_button_add">Add Reminder</string>
