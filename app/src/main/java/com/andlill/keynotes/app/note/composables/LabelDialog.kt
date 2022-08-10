@@ -31,7 +31,7 @@ fun LabelDialog(state: MutableState<Boolean>, noteLabels: List<Label>, labels: L
                 DialogTitle(text = stringResource(R.string.note_screen_dialog_labels_title))
                 Spacer(modifier = Modifier.height(16.dp))
                 LazyColumn {
-                    items(labels) { label ->
+                    items(items = labels, key = { it.id }) { label ->
                         Surface(
                             modifier = Modifier
                                 .fillMaxWidth()

@@ -86,7 +86,7 @@ fun Drawer(state: DrawerState, viewModel: HomeViewModel) {
             },
         )
         LazyColumn {
-            itemsIndexed(viewModel.labels) { index, label ->
+            itemsIndexed(items = viewModel.labels, key = { _, label -> label.id }) { index, label ->
                 // ID = index plus static drawer items above (Notes + Trash).
                 DrawerLabel(viewModel.drawerSelectedItem, id = index + 2, text = label.value, editMode = viewModel.labelEditMode,
                     onClick = {
@@ -101,9 +101,9 @@ fun Drawer(state: DrawerState, viewModel: HomeViewModel) {
                         if (label.value == viewModel.drawerSelectedItemName) {
                             viewModel.drawerSelectedItemName = it
                             viewModel.drawerSelectedLabel = updatedLabel
+                            viewModel.onFilterLabel(updatedLabel)
                         }
                         viewModel.onUpdateLabel(updatedLabel)
-                        viewModel.onFilterLabel(updatedLabel)
                     },
                     onDelete = {
                         // Set selected item back to zero if this deleted label was selected.

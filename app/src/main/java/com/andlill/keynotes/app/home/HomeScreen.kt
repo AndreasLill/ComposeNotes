@@ -160,7 +160,7 @@ fun HomeScreen(navController: NavController) {
                 .fillMaxSize()
                 .padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                items(viewModel.notes) { note ->
+                items(items = viewModel.notes, key = { it.note.id }) { note ->
                     NoteItem(note) {
                         navController.navigate("${Screen.NoteScreen.route}/${note.note.id}") {
                             // To avoid multiple copies of same destination in backstack.
