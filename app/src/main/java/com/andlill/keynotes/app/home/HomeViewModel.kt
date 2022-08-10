@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.andlill.keynotes.R
 import com.andlill.keynotes.data.repository.LabelRepository
 import com.andlill.keynotes.data.repository.NoteRepository
 import com.andlill.keynotes.model.Label
@@ -37,9 +38,12 @@ class HomeViewModel(private val application: Application) : ViewModel() {
     var query by mutableStateOf("")
         private set
 
+    var drawerItemTitleNotes by mutableStateOf(application.resources.getString(R.string.drawer_item_notes))
+    var drawerItemTitleTrash by mutableStateOf(application.resources.getString(R.string.drawer_item_trash))
     var drawerSelectedItem by mutableStateOf(0)
-    var drawerSelectedItemName by mutableStateOf("Notes")
+    var drawerSelectedItemName by mutableStateOf(application.resources.getString(R.string.drawer_item_notes))
     var drawerSelectedLabel by mutableStateOf(Label())
+    var labelEditMode by mutableStateOf(false)
 
     init {
         viewModelScope.launch {

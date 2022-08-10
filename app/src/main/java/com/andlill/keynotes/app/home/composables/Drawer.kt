@@ -9,34 +9,26 @@ import androidx.compose.material.DrawerState
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Add
-import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Label
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.andlill.keynotes.R
 import com.andlill.keynotes.app.home.HomeViewModel
 import com.andlill.keynotes.model.Label
 import kotlinx.coroutines.launch
-import com.andlill.keynotes.R
 
 @Composable
 fun Drawer(state: DrawerState, viewModel: HomeViewModel) {
 
-    val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val titleNotes = remember { mutableStateOf(context.resources.getString(R.string.drawer_item_notes)) }
-    val titleTrash = remember { mutableStateOf(context.resources.getString(R.string.drawer_item_trash)) }
-    val titleNewLabel = remember { mutableStateOf(context.resources.getString(R.string.drawer_item_new_label)) }
-    val editLabelDialogState = remember { mutableStateOf(false) }
     val createLabelDialogState = remember { mutableStateOf(false) }
 
     Column(modifier = Modifier
@@ -53,24 +45,39 @@ fun Drawer(state: DrawerState, viewModel: HomeViewModel) {
         )
         Spacer(modifier = Modifier.height(16.dp))
         Column {
-            DrawerItem(viewModel.drawerSelectedItem, id = 0, icon = Icons.Outlined.Home, text = titleNotes.value, onClick = {
+            DrawerItem(viewModel.drawerSelectedItem, id = 0, icon = Icons.Outlined.Home, text = viewModel.drawerItemTitleNotes, onClick = {
                 scope.launch { state.close() }
                 viewModel.drawerSelectedItem = 0
-                viewModel.drawerSelectedItemName = titleNotes.value
+                viewModel.drawerSelectedItemName = viewModel.drawerItemTitleNotes
                 viewModel.onFilterDeleted(false)
+                viewModel.labelEditMode = false
             })
-            DrawerItem(viewModel.drawerSelectedItem, id = 1, icon = Icons.Outlined.Delete, text = titleTrash.value, onClick = {
+            DrawerItem(viewModel.drawerSelectedItem, id = 1, icon = Icons.Outlined.Delete, text = viewModel.drawerItemTitleTrash, onClick = {
                 scope.launch { state.close() }
                 viewModel.drawerSelectedItem = 1
-                viewModel.drawerSelectedItemName = titleTrash.value
+                viewModel.drawerSelectedItemName = viewModel.drawerItemTitleTrash
                 viewModel.onFilterDeleted(true)
+                viewModel.labelEditMode = false
             })
         }
-        Divider(modifier = Modifier.padding(top = 16.dp, bottom = 16.dp))
-        Column {
-            DrawerItem(viewModel.drawerSelectedItem, id = 2, icon = Icons.Outlined.Add, alpha = 0.32f, text = titleNewLabel.value, onClick = {
-                createLabelDialogState.value = true
-            })
+        Divider(modifier = Modifier.padding(top = 16.dp, bottom = 0.dp))
+        Box(modifier = Modifier.fillMaxWidth().padding(start = 8.dp, end = 8.dp)) {
+            DrawerLabelButton(
+                modifier = Modifier.align(Alignment.CenterStart),
+                icon = Icons.Outlined.Add,
+                text = "NEW LABEL",
+                onClick = {
+                    createLabelDialogState.value = true
+                }
+            )
+            DrawerLabelButton(
+                modifier = Modifier.align(Alignment.CenterEnd),
+                icon = if (!viewModel.labelEditMode) Icons.Outlined.Edit else Icons.Outlined.Check,
+                text = if (!viewModel.labelEditMode) "EDIT" else "DONE",
+                onClick = {
+                    viewModel.labelEditMode = !viewModel.labelEditMode
+                }
+            )
         }
         CreateLabelDialog(
             state = createLabelDialogState,
@@ -80,41 +87,36 @@ fun Drawer(state: DrawerState, viewModel: HomeViewModel) {
         )
         LazyColumn {
             itemsIndexed(viewModel.labels) { index, label ->
-                // Index minus static drawer items above.
-                DrawerItem(viewModel.drawerSelectedItem, id = index + 3, icon = Icons.Outlined.Label, text = label.value, showEditButton = true,
+                // ID = index plus static drawer items above (Notes + Trash).
+                DrawerLabel(viewModel.drawerSelectedItem, id = index + 2, text = label.value, editMode = viewModel.labelEditMode,
                     onClick = {
                         scope.launch { state.close() }
-                        viewModel.drawerSelectedItem = index + 3
+                        viewModel.drawerSelectedItem = index + 2
                         viewModel.drawerSelectedItemName = label.value
                         viewModel.onFilterLabel(label)
                     },
-                    onEditClick = {
-                        viewModel.drawerSelectedLabel = label
-                        editLabelDialogState.value = true
+                    onUpdate = {
+                        val updatedLabel = label.copy(value = it)
+                        // Update selected label and name if this label was updated.
+                        if (label.value == viewModel.drawerSelectedItemName) {
+                            viewModel.drawerSelectedItemName = it
+                            viewModel.drawerSelectedLabel = updatedLabel
+                        }
+                        viewModel.onUpdateLabel(updatedLabel)
+                        viewModel.onFilterLabel(updatedLabel)
+                    },
+                    onDelete = {
+                        // Set selected item back to zero if this deleted label was selected.
+                        if (label.value == viewModel.drawerSelectedItemName) {
+                            viewModel.drawerSelectedItem = 0
+                            viewModel.drawerSelectedItemName = viewModel.drawerItemTitleNotes
+                            viewModel.onFilterLabel(null)
+                        }
+                        viewModel.onDeleteLabel(label)
+                        viewModel.drawerSelectedLabel = Label()
                     }
                 )
             }
         }
-        EditLabelDialog(
-            label = viewModel.drawerSelectedLabel,
-            state = editLabelDialogState,
-            onConfirm = {
-                viewModel.onUpdateLabel(it)
-                viewModel.drawerSelectedLabel = Label()
-            },
-            onDelete = {
-                // Set selected item back to zero if this deleted label was selected.
-                if (it.value == viewModel.drawerSelectedItemName) {
-                    viewModel.drawerSelectedItem = 0
-                    viewModel.drawerSelectedItemName = titleNotes.value
-                    viewModel.onFilterLabel(null)
-                }
-                viewModel.onDeleteLabel(it)
-                viewModel.drawerSelectedLabel = Label()
-            },
-            onDismiss = {
-                viewModel.drawerSelectedLabel = Label()
-            }
-        )
     }
 }

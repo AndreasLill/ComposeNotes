@@ -52,10 +52,17 @@ fun HomeScreen(navController: NavController) {
             }
         }
     }
-
+    LaunchedEffect(state.drawerState.isClosed) {
+        viewModel.labelEditMode = false
+    }
     BackHandler(state.drawerState.isOpen) {
-        scope.launch {
-            state.drawerState.close()
+        if (viewModel.labelEditMode) {
+            viewModel.labelEditMode = false
+        }
+        else {
+            scope.launch {
+                state.drawerState.close()
+            }
         }
     }
 
@@ -103,7 +110,10 @@ fun HomeScreen(navController: NavController) {
                     .fillMaxWidth()) {
                     AppSnackbar(state = state.snackbarHostState, modifier = Modifier.align(Alignment.BottomCenter))
                     if (!viewModel.filterTrash) {
-                        OutlinedButton(modifier = Modifier.fillMaxWidth().padding(8.dp).align(Alignment.BottomCenter),
+                        OutlinedButton(modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                            .align(Alignment.BottomCenter),
                             colors = ButtonDefaults.buttonColors(
                                 backgroundColor = MaterialTheme.colors.onSurface.copy(0.1f),
                                 contentColor = MaterialTheme.colors.onSurface,
@@ -130,7 +140,9 @@ fun HomeScreen(navController: NavController) {
                     }
                     else {
                         Text(
-                            modifier = Modifier.align(Alignment.BottomCenter).padding(8.dp),
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .padding(8.dp),
                             text = stringResource(R.string.home_screen_text_trash),
                             fontSize = 12.sp,
                             fontWeight = FontWeight.SemiBold,
