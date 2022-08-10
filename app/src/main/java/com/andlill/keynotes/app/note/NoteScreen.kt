@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -55,7 +56,12 @@ fun NoteScreen(navController: NavController, noteId: Int) {
 
     val pinIcon = if (viewModel.isPinned) Icons.Filled.PushPin else Icons.Outlined.PushPin
     val reminderIcon = if (viewModel.reminder != null) Icons.Filled.Notifications else Icons.Outlined.Notifications
-    val noteColor = if (isSystemInDarkTheme()) DarkNoteColors[viewModel.color] else LightNoteColors[viewModel.color]
+    val noteColor by animateColorAsState(
+        if (isSystemInDarkTheme())
+            DarkNoteColors[viewModel.color]
+        else
+            LightNoteColors[viewModel.color]
+    )
 
     // Handle lifecycle events.
     LifecycleEventHandler { event ->
@@ -70,7 +76,7 @@ fun NoteScreen(navController: NavController, noteId: Int) {
         }
     }
     Scaffold(
-        backgroundColor = animateColorAsState(noteColor).value,
+        backgroundColor = noteColor,
         topBar = {
             Column(modifier = Modifier
                 .statusBarsPadding()
