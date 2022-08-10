@@ -9,8 +9,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
@@ -110,13 +110,14 @@ fun HomeScreen(navController: NavController) {
                     .fillMaxWidth()) {
                     AppSnackbar(state = state.snackbarHostState, modifier = Modifier.align(Alignment.BottomCenter))
                     if (!viewModel.filterTrash) {
-                        OutlinedButton(modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp)
-                            .align(Alignment.BottomCenter),
-                            colors = ButtonDefaults.buttonColors(
-                                backgroundColor = MaterialTheme.colors.onSurface.copy(0.1f),
-                                contentColor = MaterialTheme.colors.onSurface,
+                        OutlinedButton(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp)
+                                .align(Alignment.BottomCenter),
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                backgroundColor = MaterialTheme.colors.primary.copy(0.1f),
+                                contentColor = MaterialTheme.colors.primary
                             ),
                             shape = RoundedCornerShape(32.dp),
                             onClick = {
@@ -132,9 +133,8 @@ fun HomeScreen(navController: NavController) {
                                 }
                             }) {
                             Icon(
-                                modifier = Modifier.size(24.dp),
-                                imageVector = Icons.Default.Add,
-                                contentDescription = null
+                                imageVector = Icons.Outlined.Add,
+                                contentDescription = null,
                             )
                         }
                     }
