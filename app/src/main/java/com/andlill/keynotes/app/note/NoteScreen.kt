@@ -45,7 +45,7 @@ import com.andlill.keynotes.ui.theme.LightNoteColors
 fun NoteScreen(navController: NavController, noteId: Int) {
     val viewModel: NoteViewModel = viewModel(factory = NoteViewModel.Factory(LocalContext.current.applicationContext as Application, noteId))
 
-    val themeMenuState = remember { mutableStateOf(false) }
+    val colorDialogState = remember { mutableStateOf(false) }
     val labelDialogState = remember { mutableStateOf(false) }
     val reminderDialogState = remember { mutableStateOf(false) }
     val confirmDialogState = remember { mutableStateOf(false) }
@@ -109,14 +109,14 @@ fun NoteScreen(navController: NavController, noteId: Int) {
                                 viewModel.onToggleLabel(it)
                             })
                             MenuIconButton(icon = Icons.Outlined.Palette, color = MaterialTheme.colors.onSurface, onClick = {
-                                themeMenuState.value = true
+                                colorDialogState.value = true
                             })
                             MenuIconButton(icon = Icons.Outlined.Delete, color = MaterialTheme.colors.onSurface, onClick = {
                                 viewModel.onDeleteNote()
                                 navController.previousBackStackEntry?.savedStateHandle?.set("KEY_MESSAGE", context.resources.getString(R.string.note_screen_message_note_trash))
                                 navController.navigateUp()
                             })
-                            ThemeDropDown(state = themeMenuState, onClick = {
+                            ThemeDropDown(state = colorDialogState, selectedColor = viewModel.color, onClick = {
                                 viewModel.onChangeColor(it)
                             })
                         }
