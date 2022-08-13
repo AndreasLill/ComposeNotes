@@ -72,11 +72,13 @@ fun Drawer(
             })
         }
         Divider(modifier = Modifier.padding(top = 16.dp, bottom = 0.dp))
-        Box(modifier = Modifier.fillMaxWidth().padding(start = 8.dp, end = 8.dp)) {
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 8.dp, end = 8.dp)) {
             DrawerLabelButton(
                 modifier = Modifier.align(Alignment.CenterStart),
                 icon = Icons.Outlined.Add,
-                text = "NEW LABEL",
+                text = stringResource(R.string.drawer_item_new_label).uppercase(),
                 onClick = {
                     createLabelDialogState.value = true
                 }
@@ -84,7 +86,7 @@ fun Drawer(
             DrawerLabelButton(
                 modifier = Modifier.align(Alignment.CenterEnd),
                 icon = if (!labelEditMode) Icons.Outlined.Edit else Icons.Outlined.Check,
-                text = if (!labelEditMode) "EDIT" else "DONE",
+                text = if (!labelEditMode) stringResource(R.string.drawer_item_edit).uppercase() else stringResource(R.string.drawer_item_done).uppercase(),
                 onClick = {
                     onLabelEditMode(!labelEditMode)
                 }

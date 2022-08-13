@@ -21,6 +21,8 @@
     <string name="drawer_item_notes">Notes</string>
     <string name="drawer_item_trash">Trash</string>
     <string name="drawer_item_new_label">New Label</string>
+    <string name="drawer_item_edit">Edit</string>
+    <string name="drawer_item_done">Done</string>
 
     <!-- Home Screen -->
     <string name="home_screen_placeholder_search">Search %s</string>
