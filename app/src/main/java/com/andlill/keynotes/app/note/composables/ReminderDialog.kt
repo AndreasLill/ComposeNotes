@@ -26,10 +26,10 @@ import androidx.compose.ui.window.Dialog
 import com.andlill.keynotes.R
 import com.andlill.keynotes.ui.shared.button.DialogButton
 import com.andlill.keynotes.ui.shared.text.DialogTitle
+import com.andlill.keynotes.utils.TimeUtils.toDateString
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
-import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
@@ -46,8 +46,8 @@ fun ReminderDialog(state: MutableState<Boolean>, reminderTime: Long?, onClick: (
             )
         }
         // Current date and time as default value.
-        val selectedDate = remember { mutableStateOf(SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(calendar.time)) }
-        val selectedTime = remember { mutableStateOf(SimpleDateFormat("HH:mm", Locale.getDefault()).format(calendar.time)) }
+        val selectedDate = remember { mutableStateOf(calendar.timeInMillis.toDateString("d MMM, YYYY")) }
+        val selectedTime = remember { mutableStateOf(calendar.timeInMillis.toDateString("HH:mm")) }
 
         // Create time picker dialog.
         val timeFormat = if (is24HourFormat(context)) TimeFormat.CLOCK_24H else TimeFormat.CLOCK_12H
@@ -59,7 +59,7 @@ fun ReminderDialog(state: MutableState<Boolean>, reminderTime: Long?, onClick: (
         timePickerDialog.addOnPositiveButtonClickListener {
             calendar.set(Calendar.HOUR_OF_DAY, timePickerDialog.hour)
             calendar.set(Calendar.MINUTE, timePickerDialog.minute)
-            selectedTime.value = SimpleDateFormat("HH:mm", Locale.getDefault()).format(calendar.time)
+            selectedTime.value = calendar.timeInMillis.toDateString("HH:mm")
         }
 
         // Create date picker dialog.
@@ -72,7 +72,7 @@ fun ReminderDialog(state: MutableState<Boolean>, reminderTime: Long?, onClick: (
             calendar.set(Calendar.YEAR, resultCalendar.get(Calendar.YEAR))
             calendar.set(Calendar.MONTH, resultCalendar.get(Calendar.MONTH))
             calendar.set(Calendar.DAY_OF_MONTH, resultCalendar.get(Calendar.DAY_OF_MONTH))
-            selectedDate.value = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(resultCalendar.time)
+            selectedDate.value = calendar.timeInMillis.toDateString("d MMM, YYYY")
         }
 
         Dialog(
