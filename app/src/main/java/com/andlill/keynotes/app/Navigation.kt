@@ -4,21 +4,19 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavDeepLink
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.andlill.keynotes.app.home.HomeScreen
 import com.andlill.keynotes.app.note.NoteScreen
 
 @Composable
-fun Navigation() {
-    val navController = rememberNavController()
+fun Navigation(appState: AppState) {
     NavHost(
-        navController = navController,
+        navController = appState.navigation,
         startDestination = Screen.HomeScreen.route) {
         // Root home screen
         composable(Screen.HomeScreen.route) {
             HomeScreen(
-                navController = navController
+                appState = appState
             )
         }
         // Note screen with argument for note id.
@@ -32,7 +30,7 @@ fun Navigation() {
             )
         ) {
             NoteScreen(
-                navController = navController,
+                appState = appState,
                 noteId = it.arguments!!.getInt("noteId"),
             )
         }

@@ -9,8 +9,16 @@ import android.content.Context
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Scaffold
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import com.andlill.keynotes.R
+import com.andlill.keynotes.ui.shared.AppSnackbar
 import com.andlill.keynotes.ui.theme.AppTheme
 
 class MainActivity : AppCompatActivity() {
@@ -25,7 +33,21 @@ class MainActivity : AppCompatActivity() {
 
         setContent {
             AppTheme {
-                Navigation()
+                val appState = rememberAppState()
+                Scaffold(
+                    scaffoldState = appState.scaffold,
+                    snackbarHost = { appState.scaffold.snackbarHostState },
+                    content = { innerPadding ->
+                        Box(modifier = Modifier
+                            .padding(innerPadding)
+                            .fillMaxSize()) {
+                            Navigation(appState)
+                            AppSnackbar(state = appState.scaffold.snackbarHostState, modifier = Modifier
+                                .navigationBarsPadding()
+                                .align(Alignment.BottomCenter))
+                        }
+                    }
+                )
             }
         }
     }

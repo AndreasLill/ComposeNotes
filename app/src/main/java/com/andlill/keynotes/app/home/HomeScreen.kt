@@ -14,44 +14,31 @@ import androidx.compose.material.icons.outlined.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import com.andlill.keynotes.R
+import com.andlill.keynotes.app.AppState
 import com.andlill.keynotes.app.Screen
 import com.andlill.keynotes.app.home.composables.Drawer
 import com.andlill.keynotes.app.home.composables.NoteItem
 import com.andlill.keynotes.app.home.composables.SearchBar
-import com.andlill.keynotes.ui.shared.AppSnackbar
 import com.andlill.keynotes.ui.shared.button.MenuIconButton
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun HomeScreen(navController: NavController) {
+fun HomeScreen(appState: AppState) {
     val viewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory(LocalContext.current.applicationContext as Application))
     val state = rememberScaffoldState()
     val scope = rememberCoroutineScope()
-    val lifecycleOwner = rememberUpdatedState(LocalLifecycleOwner.current)
 
-    LaunchedEffect(lifecycleOwner.value) {
-        // Listen for calls to show snackbar messages from another screen.
-        navController.currentBackStackEntry?.savedStateHandle?.getLiveData<String>("KEY_MESSAGE")?.observe(lifecycleOwner.value) { result ->
-            scope.launch {
-                navController.currentBackStackEntry?.savedStateHandle?.remove<String>("KEY_MESSAGE")
-                state.snackbarHostState.showSnackbar(result, null, SnackbarDuration.Short)
-            }
-        }
-    }
     LaunchedEffect(state.drawerState.isClosed) {
         viewModel.labelEditMode = false
     }
@@ -108,7 +95,6 @@ fun HomeScreen(navController: NavController) {
                 Box(modifier = Modifier
                     .navigationBarsPadding()
                     .fillMaxWidth()) {
-                    AppSnackbar(state = state.snackbarHostState, modifier = Modifier.align(Alignment.BottomCenter))
                     if (!viewModel.filterTrash) {
                         OutlinedButton(
                             modifier = Modifier
@@ -126,7 +112,7 @@ fun HomeScreen(navController: NavController) {
                                         // Add label to new note if label is selected.
                                         viewModel.onAddNoteLabel(id, label.id)
                                     }
-                                    navController.navigate("${Screen.NoteScreen.route}/$id") {
+                                    appState.navigation.navigate("${Screen.NoteScreen.route}/$id") {
                                         // To avoid multiple copies of same destination in backstack.
                                         launchSingleTop = true
                                     }
@@ -162,7 +148,7 @@ fun HomeScreen(navController: NavController) {
                 verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 items(items = viewModel.notes, key = { it.note.id }) { note ->
                     NoteItem(note) {
-                        navController.navigate("${Screen.NoteScreen.route}/${note.note.id}") {
+                        appState.navigation.navigate("${Screen.NoteScreen.route}/${note.note.id}") {
                             // To avoid multiple copies of same destination in backstack.
                             launchSingleTop = true
                         }
