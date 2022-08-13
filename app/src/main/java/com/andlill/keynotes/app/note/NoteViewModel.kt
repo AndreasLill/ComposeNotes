@@ -154,7 +154,7 @@ class NoteViewModel(private val application: Application, private val noteId: In
         deleteOnClose = true
     }
 
-    fun onToggleReminder(calendar: Calendar?) = viewModelScope.launch {
+    fun onUpdateReminder(calendar: Calendar?) = viewModelScope.launch {
         if (calendar != null) {
             NoteRepository.updateNote(application, note.copy(reminder = calendar.timeInMillis))
             NoteBroadcaster.setReminder(application, calendar.timeInMillis, note.id)

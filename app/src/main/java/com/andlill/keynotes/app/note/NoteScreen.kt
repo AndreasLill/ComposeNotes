@@ -100,7 +100,7 @@ fun NoteScreen(navController: NavController, noteId: Int) {
                                 reminderDialogState.value = true
                             })
                             ReminderDialog(state = reminderDialogState, reminderTime = viewModel.reminder, onClick = {
-                                viewModel.onToggleReminder(it)
+                                viewModel.onUpdateReminder(it)
                             })
                             MenuIconButton(icon = Icons.Outlined.Label, color = MaterialTheme.colors.onSurface, onClick = {
                                 labelDialogState.value = true

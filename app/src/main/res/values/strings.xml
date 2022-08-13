@@ -7,6 +7,8 @@
     <string name="button_ok">OK</string>
     <string name="button_cancel">Cancel</string>
     <string name="button_confirm">Confirm</string>
+    <string name="button_create">Create</string>
+    <string name="button_save">Save</string>
     <string name="date_today">Today</string>
     <string name="date_tomorrow">Tomorrow</string>
     <string name="date_yesterday">Yesterday</string>
