@@ -21,7 +21,7 @@ import kotlin.random.Random
 class MainReceiver : BroadcastReceiver() {
 
     companion object {
-        const val CHANNEL_ID = "com.andlill.keynotes.AlarmReceiverChannel"
+        const val NOTIFICATION_CHANNEL_ID = "com.andlill.keynotes.AlarmReceiverChannel"
         const val ACTION_REMINDER = "com.andlill.keynotes.Reminder"
         const val EXTRA_NOTE_ID = "com.andlill.keynotes.extra.noteId"
     }
@@ -67,7 +67,7 @@ class MainReceiver : BroadcastReceiver() {
             }
 
             // Build the notification.
-            val notification = NotificationCompat.Builder(context, CHANNEL_ID)
+            val notification = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_baseline_notifications_active)
                 .setContentTitle(note.note.title)
                 .setContentText(note.note.body)

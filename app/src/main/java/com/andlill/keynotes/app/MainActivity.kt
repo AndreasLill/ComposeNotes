@@ -10,6 +10,7 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
+import com.andlill.keynotes.R
 import com.andlill.keynotes.ui.theme.AppTheme
 
 class MainActivity : AppCompatActivity() {
@@ -30,9 +31,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initNotificationChannel() {
-        val channel = NotificationChannel(MainReceiver.CHANNEL_ID, MainReceiver.CHANNEL_ID, NotificationManager.IMPORTANCE_HIGH)
+        val channel = NotificationChannel(MainReceiver.NOTIFICATION_CHANNEL_ID, resources.getString(R.string.notification_reminder_name), NotificationManager.IMPORTANCE_HIGH)
         channel.enableLights(true)
-        channel.description = MainReceiver.CHANNEL_ID
+        channel.enableVibration(true)
+        channel.description = resources.getString(R.string.notification_reminder_description)
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
     }
