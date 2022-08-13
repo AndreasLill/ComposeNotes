@@ -15,8 +15,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.andlill.keynotes.R
 import com.andlill.keynotes.model.NoteWrapper
 import com.andlill.keynotes.ui.shared.label.NoteLabel
@@ -40,10 +42,10 @@ fun NoteItem(note: NoteWrapper, callback: () -> Unit) {
             contentColor = MaterialTheme.colors.onSurface,
         ),
         elevation = ButtonDefaults.elevation(
-            defaultElevation = 0.dp,
-            pressedElevation = 0.dp,
-            hoveredElevation = 0.dp,
-            focusedElevation = 0.dp,
+            defaultElevation = 2.dp,
+            pressedElevation = 2.dp,
+            hoveredElevation = 2.dp,
+            focusedElevation = 2.dp,
         ),
         onClick = { callback() }
     ) {
@@ -55,7 +57,9 @@ fun NoteItem(note: NoteWrapper, callback: () -> Unit) {
                     Text(
                         modifier = Modifier.padding(end = 24.dp),
                         text = note.note.title,
-                        style = MaterialTheme.typography.h3,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        letterSpacing = 0.sp,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -74,7 +78,14 @@ fun NoteItem(note: NoteWrapper, callback: () -> Unit) {
                 Spacer(modifier = Modifier.height(16.dp))
             }
             if (note.note.body.isNotEmpty()) {
-                Text(text = note.note.body, style = MaterialTheme.typography.body2, maxLines = 10,overflow = TextOverflow.Ellipsis)
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = note.note.body,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Normal,
+                    letterSpacing = 0.sp,
+                    maxLines = 8,
+                    overflow = TextOverflow.Ellipsis)
             }
             if (note.labels.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(16.dp))

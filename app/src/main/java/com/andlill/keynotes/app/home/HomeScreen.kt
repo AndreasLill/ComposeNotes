@@ -14,16 +14,11 @@ import androidx.compose.material.icons.outlined.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.andlill.keynotes.R
 import com.andlill.keynotes.app.AppState
 import com.andlill.keynotes.app.Screen
 import com.andlill.keynotes.app.home.composables.Drawer
@@ -115,63 +110,14 @@ fun HomeScreen(appState: AppState) {
                 )
             }
         },
-        bottomBar = {
-            // Hide bottom bar if IME is showing.
-            if (!WindowInsets.isImeVisible) {
-                Box(modifier = Modifier
-                    .navigationBarsPadding()
-                    .fillMaxWidth()) {
-                    if (!viewModel.filterTrash) {
-                        OutlinedButton(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp)
-                                .align(Alignment.BottomCenter),
-                            colors = ButtonDefaults.outlinedButtonColors(
-                                backgroundColor = MaterialTheme.colors.primary.copy(0.1f),
-                                contentColor = MaterialTheme.colors.primary
-                            ),
-                            shape = RoundedCornerShape(32.dp),
-                            onClick = {
-                                viewModel.onCreateNote { id ->
-                                    viewModel.filterLabel?.let { label ->
-                                        // Add label to new note if label is selected.
-                                        viewModel.onAddNoteLabel(id, label.id)
-                                    }
-                                    appState.navigation.navigate("${Screen.NoteScreen.route}/$id") {
-                                        // To avoid multiple copies of same destination in backstack.
-                                        launchSingleTop = true
-                                    }
-                                }
-                            }) {
-                            Icon(
-                                imageVector = Icons.Outlined.Add,
-                                contentDescription = null,
-                            )
-                        }
-                    }
-                    else {
-                        Text(
-                            modifier = Modifier
-                                .align(Alignment.BottomCenter)
-                                .padding(8.dp),
-                            text = stringResource(R.string.home_screen_text_trash),
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colors.onSurface.copy(0.6f)
-                        )
-                    }
-                }
-            }
-        },
         content = { innerPadding ->
             LazyColumn(modifier = Modifier
                 .padding(innerPadding)
                 .imePadding()
                 .background(MaterialTheme.colors.surface)
-                .fillMaxSize()
-                .padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                .fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                contentPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 56.dp)) {
                 items(items = viewModel.notes, key = { it.note.id }) { note ->
                     NoteItem(note) {
                         appState.navigation.navigate("${Screen.NoteScreen.route}/${note.note.id}") {
@@ -180,6 +126,39 @@ fun HomeScreen(appState: AppState) {
                         }
                     }
                 }
+            }
+        },
+        floatingActionButton = {
+            if (!WindowInsets.isImeVisible && !viewModel.filterTrash) {
+                FloatingActionButton(
+                    modifier = Modifier
+                        .navigationBarsPadding()
+                        .size(64.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    elevation = FloatingActionButtonDefaults.elevation(
+                        defaultElevation = 4.dp,
+                        pressedElevation = 4.dp,
+                        hoveredElevation = 4.dp,
+                        focusedElevation = 4.dp
+                    ),
+                    backgroundColor = MaterialTheme.colors.surface,
+                    contentColor = MaterialTheme.colors.primary,
+                    onClick = {
+                        viewModel.onCreateNote { id ->
+                            viewModel.filterLabel?.let { label ->
+                                // Add label to new note if label is selected.
+                                viewModel.onAddNoteLabel(id, label.id)
+                            }
+                            appState.navigation.navigate("${Screen.NoteScreen.route}/$id") {
+                                // To avoid multiple copies of same destination in backstack.
+                                launchSingleTop = true
+                            }
+                        }
+                    },
+                    content = {
+                        Icon(modifier = Modifier.size(28.dp), imageVector = Icons.Outlined.Add, contentDescription = null)
+                    }
+                )
             }
         }
     )
