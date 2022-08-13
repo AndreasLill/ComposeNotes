@@ -12,6 +12,7 @@ import androidx.compose.material.icons.outlined.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -40,7 +41,7 @@ fun Drawer(
     val createLabelDialogState = remember { mutableStateOf(false) }
     val titleNotes = remember { context.resources.getString(R.string.drawer_item_notes) }
     val titleTrash = remember { context.resources.getString(R.string.drawer_item_trash) }
-    val selectedId = remember { mutableStateOf(-1) }
+    val selectedId = rememberSaveable { mutableStateOf(-1) }
 
     Column(modifier = Modifier
         .background(MaterialTheme.colors.surface)
