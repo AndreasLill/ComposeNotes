@@ -82,7 +82,11 @@ fun NoteItem(note: NoteWrapper, callback: () -> Unit) {
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     items(note.labels) { label ->
-                        NoteLabel(icon = Icons.Outlined.Label, text = label.value)
+                        NoteLabel(
+                            icon = Icons.Outlined.Label,
+                            text = label.value,
+                            color = if (note.note.color == 0) MaterialTheme.colors.onSurface.copy(0.08f) else MaterialTheme.colors.surface.copy(0.5f)
+                        )
                     }
                 }
             }
@@ -97,7 +101,11 @@ fun NoteItem(note: NoteWrapper, callback: () -> Unit) {
                 }
 
                 Spacer(modifier = Modifier.height(height))
-                NoteLabel(icon = Icons.Outlined.Alarm, text = reminderText)
+                NoteLabel(
+                    icon = Icons.Outlined.Alarm,
+                    text = reminderText,
+                    color = if (note.note.color == 0) MaterialTheme.colors.onSurface.copy(0.08f) else MaterialTheme.colors.surface.copy(0.5f)
+                )
             }
         }
     }
