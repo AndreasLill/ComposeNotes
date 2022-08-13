@@ -38,11 +38,7 @@ class HomeViewModel(private val application: Application) : ViewModel() {
     var query by mutableStateOf("")
         private set
 
-    var drawerItemTitleNotes by mutableStateOf(application.resources.getString(R.string.drawer_item_notes))
-    var drawerItemTitleTrash by mutableStateOf(application.resources.getString(R.string.drawer_item_trash))
-    var drawerSelectedItem by mutableStateOf(0)
-    var drawerSelectedItemName by mutableStateOf(application.resources.getString(R.string.drawer_item_notes))
-    var drawerSelectedLabel by mutableStateOf(Label())
+    var selectedName by mutableStateOf(application.resources.getString(R.string.drawer_item_notes))
     var labelEditMode by mutableStateOf(false)
 
     init {
@@ -108,7 +104,7 @@ class HomeViewModel(private val application: Application) : ViewModel() {
         filterNotes()
     }
 
-    fun onFilterDeleted(value: Boolean) = viewModelScope.launch {
+    fun onFilterTrash(value: Boolean) = viewModelScope.launch {
         filterLabel = null
         filterTrash = value
         filterNotes()

@@ -20,11 +20,11 @@ import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun DrawerLabel(selectedItem: Int, id: Int, text: String, editMode: Boolean, onClick: () -> Unit, onUpdate: (String) -> Unit, onDelete: () -> Unit) {
+fun DrawerLabel(selectedId: Int, id: Int, text: String, editMode: Boolean, onClick: () -> Unit, onUpdate: (String) -> Unit, onDelete: () -> Unit) {
 
     // Color depends on if this item is selected or not.
-    val backgroundColor = if (selectedItem == id && !editMode) MaterialTheme.colors.primary.copy(0.1f) else Color.Transparent
-    val contentColor = if (selectedItem == id && !editMode) MaterialTheme.colors.primary else MaterialTheme.colors.onSurface
+    val backgroundColor = if (selectedId == id && !editMode) MaterialTheme.colors.primary.copy(0.1f) else Color.Transparent
+    val contentColor = if (selectedId == id && !editMode) MaterialTheme.colors.primary else MaterialTheme.colors.onSurface
 
     Surface(modifier = Modifier
         .fillMaxWidth()

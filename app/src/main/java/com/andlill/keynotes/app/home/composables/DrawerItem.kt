@@ -13,11 +13,11 @@ import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun DrawerItem(selectedItem: Int, id: Int, icon: ImageVector, text: String, onClick: () -> Unit) {
+fun DrawerItem(selectedId: Int, id: Int, icon: ImageVector, text: String, onClick: () -> Unit) {
 
     // Color depends on if this item is selected or not.
-    val backgroundColor = if (selectedItem == id) MaterialTheme.colors.primary.copy(0.1f) else Color.Transparent
-    val contentColor = if (selectedItem == id) MaterialTheme.colors.primary else MaterialTheme.colors.onSurface
+    val backgroundColor = if (selectedId == id) MaterialTheme.colors.primary.copy(0.1f) else Color.Transparent
+    val contentColor = if (selectedId == id) MaterialTheme.colors.primary else MaterialTheme.colors.onSurface
 
     Surface(modifier = Modifier
         .fillMaxWidth()

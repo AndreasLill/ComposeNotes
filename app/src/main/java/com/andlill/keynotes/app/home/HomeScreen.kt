@@ -59,8 +59,34 @@ fun HomeScreen(appState: AppState) {
         drawerScrimColor = Color.Black.copy(0.32f),
         drawerContent = {
             Drawer(
-                state = state.drawerState,
-                viewModel = viewModel,
+                labels = viewModel.labels,
+                labelEditMode = viewModel.labelEditMode,
+                onLabelEditMode = {
+                    viewModel.labelEditMode = it
+                },
+                onSelectItem = {
+                    viewModel.selectedName = it
+                },
+                onAddLabel = {
+                    viewModel.onAddLabel(it)
+                },
+                onUpdateLabel = {
+                    viewModel.onUpdateLabel(it)
+                },
+                onDeleteLabel = {
+                    viewModel.onDeleteLabel(it)
+                },
+                onFilterTrash = {
+                    viewModel.onFilterTrash(it)
+                },
+                onFilterLabel = {
+                    viewModel.onFilterLabel(it)
+                },
+                onClose = {
+                    scope.launch {
+                        state.drawerState.close()
+                    }
+                }
             )
         },
         topBar = {
@@ -72,7 +98,7 @@ fun HomeScreen(appState: AppState) {
                     title = {
                         SearchBar(
                             query = viewModel.query,
-                            placeholder = viewModel.drawerSelectedItemName,
+                            placeholder = viewModel.selectedName,
                             onValueChange = {
                                 viewModel.onQuery(it)
                         })
