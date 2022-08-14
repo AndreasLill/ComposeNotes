@@ -1,6 +1,7 @@
 package com.andlill.keynotes.app.home.composables
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -10,6 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Label
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -17,14 +19,16 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.andlill.keynotes.ui.shared.modifier.focusIndicatorLine
+import com.andlill.keynotes.ui.shared.util.clearFocusOnKeyboardDismiss
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun DrawerLabel(selectedId: Int, id: Int, text: String, editMode: Boolean, onClick: () -> Unit, onUpdate: (String) -> Unit, onDelete: () -> Unit) {
 
-    // Color depends on if this item is selected or not.
     val backgroundColor = if (selectedId == id && !editMode) MaterialTheme.colors.primary.copy(0.1f) else Color.Transparent
     val contentColor = if (selectedId == id && !editMode) MaterialTheme.colors.primary else MaterialTheme.colors.onSurface
+    val interactionSource = remember { MutableInteractionSource() }
 
     Surface(modifier = Modifier
         .fillMaxWidth()
@@ -67,12 +71,16 @@ fun DrawerLabel(selectedId: Int, id: Int, text: String, editMode: Boolean, onCli
                     Spacer(modifier = Modifier.width(16.dp))
                     BasicTextField(
                         modifier = Modifier
+                            .clearFocusOnKeyboardDismiss()
                             .padding(top = 3.dp, bottom = 3.dp, end = 48.dp)
-                            .fillMaxWidth()
-                            .fillMaxHeight()
                             .background(
                                 color = MaterialTheme.colors.onSurface.copy(0.1f),
-                                shape = RoundedCornerShape(8.dp)
+                                shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
+                            )
+                            .focusIndicatorLine(
+                                interactionSource = interactionSource,
+                                baseColor = MaterialTheme.colors.onSurface,
+                                focusColor = MaterialTheme.colors.primary
                             )
                             .align(Alignment.CenterVertically),
                         maxLines = 1,
@@ -83,6 +91,7 @@ fun DrawerLabel(selectedId: Int, id: Int, text: String, editMode: Boolean, onCli
                         ),
                         value = text,
                         onValueChange = { onUpdate(it) },
+                        interactionSource = interactionSource,
                         decorationBox = { innerTextField ->
                             Box(modifier = Modifier.fillMaxSize()) {
                                 Box (modifier = Modifier
