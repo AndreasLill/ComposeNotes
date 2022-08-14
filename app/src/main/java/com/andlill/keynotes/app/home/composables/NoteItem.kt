@@ -118,9 +118,10 @@ fun NoteItem(note: NoteWrapper, callback: () -> Unit) {
 
             note.note.deletion?.let {
                 val height = if (note.labels.isEmpty()) 16.dp else 8.dp
-                val deletionText = when (val daysBetween = note.note.deletion.daysBetween()) {
-                    0 -> stringResource(R.string.home_screen_note_text_deletion_today)
-                    1 -> stringResource(R.string.home_screen_note_text_deletion_tomorrow)
+                val daysBetween = note.note.deletion.daysBetween()
+                val deletionText = when {
+                    daysBetween <= 0 -> stringResource(R.string.home_screen_note_text_deletion_today)
+                    daysBetween == 1 -> stringResource(R.string.home_screen_note_text_deletion_tomorrow)
                     else -> String.format(stringResource(R.string.home_screen_note_text_deletion_days), daysBetween)
                 }
                 Spacer(modifier = Modifier.height(height))

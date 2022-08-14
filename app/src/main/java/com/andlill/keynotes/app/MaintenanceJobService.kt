@@ -11,12 +11,12 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
 // Responsible for scheduled background maintenance such as deleting notes scheduled for deletion.
-// Run once every 12 hours.
+// Run once every 6 hours.
 class MaintenanceJobService : JobService() {
 
     companion object {
         const val SERVICE_ID: Int = 100
-        const val SERVICE_INTERVAL: Long = 12*60*60*1000
+        const val SERVICE_INTERVAL: Long = 6*60*60*1000
     }
 
     override fun onStartJob(params: JobParameters): Boolean {
@@ -28,7 +28,7 @@ class MaintenanceJobService : JobService() {
         return false
     }
 
-    // Permanently delete notes in trash at least 7 days old.
+    // Permanently delete notes in trash.
     private fun deleteScheduledNotes() = CoroutineScope(Dispatchers.Default).launch {
         NoteRepository.getAllNotes(this@MaintenanceJobService).firstOrNull()?.filter { it.note.deletion != null }?.forEach { note ->
             note.note.deletion?.let {
