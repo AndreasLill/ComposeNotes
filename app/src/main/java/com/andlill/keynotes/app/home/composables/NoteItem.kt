@@ -40,10 +40,10 @@ fun NoteItem(note: NoteWrapper, callback: () -> Unit) {
             contentColor = MaterialTheme.colors.onSurface,
         ),
         elevation = ButtonDefaults.elevation(
-            defaultElevation = 2.dp,
-            pressedElevation = 2.dp,
-            hoveredElevation = 2.dp,
-            focusedElevation = 2.dp,
+            defaultElevation = 1.dp,
+            pressedElevation = 1.dp,
+            hoveredElevation = 1.dp,
+            focusedElevation = 1.dp,
         ),
         onClick = { callback() }
     ) {
