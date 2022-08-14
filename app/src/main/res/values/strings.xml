@@ -32,6 +32,9 @@
     <string name="home_screen_dialog_edit_label_placeholder">Label</string>
     <string name="home_screen_dialog_create_label_title">New Label</string>
     <string name="home_screen_dialog_create_label_placeholder">Label</string>
+    <string name="home_screen_note_text_deletion_today">Deletion today</string>
+    <string name="home_screen_note_text_deletion_tomorrow">Deletion tomorrow</string>
+    <string name="home_screen_note_text_deletion_days">Deletion in %s days</string>
 
     <!-- Note Screen -->
     <string name="note_screen_placeholder_title">No Title</string>

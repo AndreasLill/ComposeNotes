@@ -8,9 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Alarm
-import androidx.compose.material.icons.outlined.Label
-import androidx.compose.material.icons.outlined.PushPin
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -69,7 +67,7 @@ fun NoteItem(note: NoteWrapper, callback: () -> Unit) {
                                 .size(16.dp)
                                 .align(Alignment.CenterEnd),
                             imageVector = Icons.Outlined.PushPin,
-                            contentDescription = "Pinned",
+                            contentDescription = null,
                         )
                     }
                 }
@@ -101,7 +99,7 @@ fun NoteItem(note: NoteWrapper, callback: () -> Unit) {
                     }
                 }
             }
-            if (note.note.reminder != null) {
+            note.note.reminder?.let {
                 val height = if (note.labels.isEmpty()) 16.dp else 8.dp
                 val daysBetween = note.note.reminder.daysBetween()
                 val reminderText = when {
@@ -110,13 +108,26 @@ fun NoteItem(note: NoteWrapper, callback: () -> Unit) {
                     daysBetween > 365 -> note.note.reminder.toDateString("d MMM YYYY, HH:mm")
                     else -> note.note.reminder.toDateString("d MMM, HH:mm")
                 }
-
                 Spacer(modifier = Modifier.height(height))
                 NoteLabel(
                     icon = Icons.Outlined.Alarm,
                     text = reminderText,
                     color = if (note.note.color == 0) MaterialTheme.colors.onSurface.copy(0.08f) else MaterialTheme.colors.surface.copy(0.5f)
                 )
+            }
+
+            note.note.deletion?.let {
+                val height = if (note.labels.isEmpty()) 16.dp else 8.dp
+                val deletionText = when (val daysBetween = note.note.deletion.daysBetween()) {
+                    0 -> stringResource(R.string.home_screen_note_text_deletion_today)
+                    1 -> stringResource(R.string.home_screen_note_text_deletion_tomorrow)
+                    else -> String.format(stringResource(R.string.home_screen_note_text_deletion_days), daysBetween)
+                }
+                Spacer(modifier = Modifier.height(height))
+                NoteLabel(
+                    icon = Icons.Outlined.AutoDelete,
+                    text = deletionText,
+                    color = if (note.note.color == 0) MaterialTheme.colors.onSurface.copy(0.08f) else MaterialTheme.colors.surface.copy(0.5f))
             }
         }
     }
