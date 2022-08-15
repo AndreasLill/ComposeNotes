@@ -31,6 +31,10 @@ data class NoteWrapper(
             childColumns = ["labelId"],
             onDelete = ForeignKey.CASCADE,
         ),
+    ],
+    indices = [
+        Index("noteId"),
+        Index("labelId")
     ]
 )
 data class NoteLabelJoin(

@@ -2,6 +2,7 @@ package com.andlill.keynotes.app
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavDeepLink
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
@@ -23,10 +24,10 @@ fun Navigation(appState: AppState) {
         composable(
             route = Screen.NoteScreen.route + "/{noteId}",
             arguments = listOf(
-                navArgument("noteId") { defaultValue = -1 },
+                navArgument("noteId") { type = NavType.IntType },
             ),
             deepLinks = listOf(
-                NavDeepLink(uri = String.format(Screen.NoteScreen.uri[0], "{noteId}")),
+                NavDeepLink(String.format(Screen.NoteScreen.uri, "{noteId}")),
             )
         ) {
             NoteScreen(
@@ -37,10 +38,10 @@ fun Navigation(appState: AppState) {
     }
 }
 
-sealed class Screen(val route: String, vararg val uri: String) {
+sealed class Screen(val route: String, val uri: String = "") {
     companion object {
         private const val baseUri = "https://com.andlill.keynotes"
     }
     object HomeScreen : Screen("home")
-    object NoteScreen : Screen("note", "$baseUri/noteId=%s")
+    object NoteScreen : Screen("note", "$baseUri/note/noteId=%s")
 }

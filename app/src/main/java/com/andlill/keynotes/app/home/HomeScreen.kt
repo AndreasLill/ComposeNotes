@@ -133,7 +133,7 @@ fun HomeScreen(appState: AppState) {
                 FloatingActionButton(
                     modifier = Modifier
                         .navigationBarsPadding()
-                        .size(64.dp),
+                        .size(56.dp),
                     shape = RoundedCornerShape(16.dp),
                     elevation = FloatingActionButtonDefaults.elevation(
                         defaultElevation = 4.dp,
