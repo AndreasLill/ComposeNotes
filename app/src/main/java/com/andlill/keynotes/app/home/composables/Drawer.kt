@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.andlill.keynotes.R
 import com.andlill.keynotes.model.Label
+import com.andlill.keynotes.utils.DialogUtils
 
 @Composable
 fun Drawer(
@@ -89,7 +90,9 @@ fun Drawer(
                 icon = if (!labelEditMode) Icons.Outlined.Edit else Icons.Outlined.Check,
                 text = if (!labelEditMode) stringResource(R.string.drawer_item_edit).uppercase() else stringResource(R.string.drawer_item_done).uppercase(),
                 onClick = {
-                    onLabelEditMode(!labelEditMode)
+                    if (labels.isNotEmpty()) {
+                        onLabelEditMode(!labelEditMode)
+                    }
                 }
             )
         }
@@ -118,13 +121,19 @@ fun Drawer(
                         onUpdateLabel(updatedLabel)
                     },
                     onDelete = {
-                        // Set selected item back to zero if this deleted label was selected.
-                        if (selectedId.value == label.id) {
-                            selectedId.value = -1
-                            onSelectItem(titleNotes)
-                            onFilterLabel(null)
+                        DialogUtils.showConfirmDialog(String.format(context.resources.getString(R.string.home_screen_dialog_confirm_label_delete), label.value)) {
+                            // Set selected item back to zero if this deleted label was selected.
+                            if (selectedId.value == label.id) {
+                                selectedId.value = -1
+                                onSelectItem(titleNotes)
+                                onFilterLabel(null)
+                            }
+                            // Close label edit mode if last one was deleted.
+                            if (labels.size == 1) {
+                                onLabelEditMode(false)
+                            }
+                            onDeleteLabel(label)
                         }
-                        onDeleteLabel(label)
                     }
                 )
             }

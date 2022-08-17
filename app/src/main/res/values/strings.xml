@@ -35,6 +35,7 @@
     <string name="home_screen_note_text_deletion_today">Deletion today</string>
     <string name="home_screen_note_text_deletion_tomorrow">Deletion tomorrow</string>
     <string name="home_screen_note_text_deletion_days">Deletion in %s days</string>
+    <string name="home_screen_dialog_confirm_label_delete">Label \'%s\' will be deleted and removed from all notes.</string>
 
     <!-- Note Screen -->
     <string name="note_screen_placeholder_title">No Title</string>
@@ -44,7 +45,7 @@
     <string name="note_screen_dialog_reminder_title">Reminder</string>
     <string name="note_screen_dialog_reminder_button_add">Add Reminder</string>
     <string name="note_screen_dialog_reminder_button_cancel">Cancel Reminder</string>
-    <string name="note_screen_dialog_confirm_text_body">Note will be permanently deleted.\nAre you sure?</string>
+    <string name="note_screen_dialog_confirm_note_delete">This note will be permanently deleted.</string>
     <string name="note_screen_status_text_deletion_today">Scheduled for deletion today.</string>
     <string name="note_screen_status_text_deletion_tomorrow">Scheduled for deletion tomorrow.</string>
     <string name="note_screen_status_text_deletion_days">Scheduled for deletion in %s days.</string>

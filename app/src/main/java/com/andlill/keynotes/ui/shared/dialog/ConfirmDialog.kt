@@ -18,9 +18,9 @@ import com.andlill.keynotes.ui.shared.button.DialogButton
 import com.andlill.keynotes.ui.shared.text.DialogTitle
 
 @Composable
-fun ConfirmDialog(state: MutableState<Boolean>, body: String, onConfirm: () -> Unit) {
-    if (state.value) {
-        Dialog(onDismissRequest = { state.value = false }) {
+fun ConfirmDialog(state: Boolean, body: String, onDismiss: () -> Unit, onConfirm: () -> Unit) {
+    if (state) {
+        Dialog(onDismissRequest = onDismiss) {
             Column(modifier = Modifier
                 .fillMaxWidth()
                 .background(MaterialTheme.colors.surface)
@@ -39,19 +39,14 @@ fun ConfirmDialog(state: MutableState<Boolean>, body: String, onConfirm: () -> U
                             text = stringResource(R.string.button_cancel),
                             backgroundColor = Color.Transparent,
                             textColor = MaterialTheme.colors.primary,
-                            onClick = {
-                                state.value = false
-                            }
+                            onClick = onDismiss
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         DialogButton(
                             text = stringResource(R.string.button_confirm),
                             backgroundColor = MaterialTheme.colors.primary,
                             textColor = MaterialTheme.colors.onPrimary,
-                            onClick = {
-                                onConfirm()
-                                state.value = false
-                            }
+                            onClick = onConfirm
                         )
                     }
                 }

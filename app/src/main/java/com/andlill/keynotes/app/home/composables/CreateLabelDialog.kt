@@ -15,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalTextInputService
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -33,15 +32,13 @@ import kotlinx.coroutines.delay
 fun CreateLabelDialog(state: MutableState<Boolean>, onConfirm: (Label) -> Unit) {
     var text by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
-    val inputService = LocalTextInputService.current
 
     if (state.value) {
 
         LaunchedEffect(Unit) {
             // Keyboard doesn't show unless there is a delay. Jetpack Compose bug?
-            delay(50)
+            delay(100)
             focusRequester.requestFocus()
-            inputService?.showSoftwareKeyboard()
         }
 
         Dialog(

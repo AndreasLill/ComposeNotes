@@ -19,7 +19,9 @@ import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import com.andlill.keynotes.R
 import com.andlill.keynotes.ui.shared.AppSnackbar
+import com.andlill.keynotes.ui.shared.dialog.ConfirmDialog
 import com.andlill.keynotes.ui.theme.AppTheme
+import com.andlill.keynotes.utils.DialogUtils
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,6 +47,17 @@ class MainActivity : AppCompatActivity() {
                             AppSnackbar(state = appState.scaffold.snackbarHostState, modifier = Modifier
                                 .navigationBarsPadding()
                                 .align(Alignment.BottomCenter))
+                            ConfirmDialog(
+                                state = DialogUtils.confirmDialogState,
+                                body = DialogUtils.confirmDialogBody,
+                                onDismiss = {
+                                    DialogUtils.closeConfirmDialog()
+                                },
+                                onConfirm = {
+                                    DialogUtils.confirmDialogListener?.invoke()
+                                    DialogUtils.closeConfirmDialog()
+                                }
+                            )
                         }
                     }
                 )

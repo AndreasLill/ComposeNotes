@@ -32,10 +32,10 @@ import com.andlill.keynotes.R
 import com.andlill.keynotes.app.AppState
 import com.andlill.keynotes.app.note.composables.*
 import com.andlill.keynotes.ui.shared.button.MenuIconButton
-import com.andlill.keynotes.ui.shared.dialog.ConfirmDialog
 import com.andlill.keynotes.ui.shared.util.LifecycleEventHandler
 import com.andlill.keynotes.ui.theme.DarkNoteColors
 import com.andlill.keynotes.ui.theme.LightNoteColors
+import com.andlill.keynotes.utils.DialogUtils
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -45,7 +45,6 @@ fun NoteScreen(appState: AppState, noteId: Int) {
     val colorDialogState = remember { mutableStateOf(false) }
     val labelDialogState = remember { mutableStateOf(false) }
     val reminderDialogState = remember { mutableStateOf(false) }
-    val confirmDialogState = remember { mutableStateOf(false) }
     val interactionSource = remember { MutableInteractionSource() }
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
@@ -124,12 +123,11 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                                 appState.navigation.navigateUp()
                             })
                             MenuIconButton(icon = Icons.Outlined.DeleteForever, color = MaterialTheme.colors.onSurface, onClick = {
-                                confirmDialogState.value = true
-                            })
-                            ConfirmDialog(state = confirmDialogState, body = stringResource(R.string.note_screen_dialog_confirm_text_body), onConfirm = {
-                                viewModel.onDeletePermanently()
-                                appState.showSnackbar(context.resources.getString(R.string.note_screen_message_note_deleted), SnackbarDuration.Short)
-                                appState.navigation.navigateUp()
+                                DialogUtils.showConfirmDialog(context.resources.getString(R.string.note_screen_dialog_confirm_note_delete)) {
+                                    viewModel.onDeletePermanently()
+                                    appState.showSnackbar(context.resources.getString(R.string.note_screen_message_note_deleted), SnackbarDuration.Short)
+                                    appState.navigation.navigateUp()
+                                }
                             })
                         }
                     }
