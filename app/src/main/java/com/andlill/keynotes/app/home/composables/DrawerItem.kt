@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment.Companion.CenterVertically
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -29,15 +29,13 @@ fun DrawerItem(selectedId: Int, id: Int, icon: ImageVector, text: String, onClic
             onClick()
         }
     ) {
-        Row(modifier = Modifier.padding(start = 16.dp)) {
+        Row(modifier = Modifier.padding(start = 16.dp), verticalAlignment = Alignment.CenterVertically) {
             Icon(
-                modifier = Modifier.align(CenterVertically),
                 imageVector = icon,
                 contentDescription = null,
                 tint = contentColor)
             Spacer(modifier = Modifier.width(16.dp))
             Text(
-                modifier = Modifier.align(CenterVertically),
                 text = text,
                 fontSize = 15.sp,
                 color = contentColor)

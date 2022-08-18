@@ -33,7 +33,7 @@ class HomeViewModel(private val application: Application) : ViewModel() {
         private set
     var filterTrash by mutableStateOf(false)
         private set
-    var filterLabel by mutableStateOf<Label?>(null)
+    var filterLabel by mutableStateOf<Int?>(null)
         private set
     var query by mutableStateOf("")
         private set
@@ -62,9 +62,9 @@ class HomeViewModel(private val application: Application) : ViewModel() {
         // Filter notes on deleted status.
         filterList = filterList.filter { (it.note.deletion != null) == filterTrash }
 
-        // Filter notes on label.
-        filterLabel?.let { label ->
-            filterList = filterList.filter { it.labels.contains(label) }
+        // Filter notes on label id.
+        filterLabel?.let { id ->
+            filterList = filterList.filter { it.labels.firstOrNull { label -> label.id == id } != null }
         }
 
         // Filter notes on query.
@@ -110,8 +110,8 @@ class HomeViewModel(private val application: Application) : ViewModel() {
         filterNotes()
     }
 
-    fun onFilterLabel(value: Label?) = viewModelScope.launch {
-        filterLabel = value
+    fun onFilterLabel(labelId: Int?) = viewModelScope.launch {
+        filterLabel = labelId
         filterTrash = false
         filterNotes()
     }

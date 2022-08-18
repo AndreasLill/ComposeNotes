@@ -9,9 +9,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,7 +32,7 @@ fun Drawer(
     onUpdateLabel: (Label) -> Unit,
     onDeleteLabel: (Label) -> Unit,
     onFilterTrash: (Boolean) -> Unit,
-    onFilterLabel: (Label?) -> Unit,
+    onFilterLabel: (Int?) -> Unit,
     onClose: () -> Unit
 ) {
 
@@ -87,7 +85,7 @@ fun Drawer(
             )
             DrawerLabelButton(
                 modifier = Modifier.align(Alignment.CenterEnd),
-                icon = if (!labelEditMode) Icons.Outlined.Edit else Icons.Outlined.Check,
+                icon = if (!labelEditMode) Icons.Outlined.Edit else Icons.Outlined.ArrowBack,
                 text = if (!labelEditMode) stringResource(R.string.drawer_item_edit).uppercase() else stringResource(R.string.drawer_item_done).uppercase(),
                 onClick = {
                     if (labels.isNotEmpty()) {
@@ -104,38 +102,49 @@ fun Drawer(
         )
         LazyColumn {
             items(items = labels, key = { label -> label.id }) { label ->
-                DrawerLabel(selectedId = selectedId.value, id = label.id, text = label.value, editMode = labelEditMode,
-                    onClick = {
-                        selectedId.value = label.id
-                        onSelectItem(label.value)
-                        onFilterLabel(label)
-                        onClose()
-                    },
-                    onUpdate = {
-                        val updatedLabel = label.copy(value = it)
-                        // Update selected label and name if this label was updated.
-                        if (selectedId.value == label.id) {
-                            onSelectItem(it)
-                            onFilterLabel(updatedLabel)
-                        }
-                        onUpdateLabel(updatedLabel)
-                    },
-                    onDelete = {
-                        DialogUtils.showConfirmDialog(String.format(context.resources.getString(R.string.home_screen_dialog_confirm_label_delete), label.value)) {
-                            // Set selected item back to zero if this deleted label was selected.
+                if (labelEditMode) {
+                    DrawerLabelEdit(
+                        initialText = label.value,
+                        onUpdate = {
+                            val updatedLabel = label.copy(value = it)
+                            // Update selected label and name if this label was updated.
                             if (selectedId.value == label.id) {
-                                selectedId.value = -1
-                                onSelectItem(titleNotes)
-                                onFilterLabel(null)
+                                onSelectItem(it)
+                                onFilterLabel(label.id)
                             }
-                            // Close label edit mode if last one was deleted.
-                            if (labels.size == 1) {
-                                onLabelEditMode(false)
+                            onUpdateLabel(updatedLabel)
+                        },
+                        onDelete = {
+                            DialogUtils.showConfirmDialog(String.format(context.resources.getString(R.string.home_screen_dialog_confirm_label_delete), label.value)) {
+                                // Set selected item back to zero if this deleted label was selected.
+                                if (selectedId.value == label.id) {
+                                    selectedId.value = -1
+                                    onSelectItem(titleNotes)
+                                    onFilterLabel(null)
+                                }
+                                // Close label edit mode if last one was deleted.
+                                if (labels.size == 1) {
+                                    onLabelEditMode(false)
+                                }
+                                onDeleteLabel(label)
                             }
-                            onDeleteLabel(label)
                         }
-                    }
-                )
+                    )
+                }
+                else {
+                    DrawerItem(
+                        selectedId = selectedId.value,
+                        id = label.id,
+                        icon = Icons.Outlined.Label,
+                        text = label.value,
+                        onClick = {
+                            selectedId.value = label.id
+                            onSelectItem(label.value)
+                            onFilterLabel(label.id)
+                            onClose()
+                        },
+                    )
+                }
             }
         }
     }

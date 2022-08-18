@@ -144,12 +144,12 @@ fun HomeScreen(appState: AppState) {
                     backgroundColor = MaterialTheme.colors.surface,
                     contentColor = MaterialTheme.colors.primary,
                     onClick = {
-                        viewModel.onCreateNote { id ->
-                            viewModel.filterLabel?.let { label ->
+                        viewModel.onCreateNote { noteId ->
+                            viewModel.filterLabel?.let { labelId ->
                                 // Add label to new note if label is selected.
-                                viewModel.onAddNoteLabel(id, label.id)
+                                viewModel.onAddNoteLabel(noteId, labelId)
                             }
-                            appState.navigation.navigate("${Screen.NoteScreen.route}/$id") {
+                            appState.navigation.navigate("${Screen.NoteScreen.route}/$noteId") {
                                 // To avoid multiple copies of same destination in backstack.
                                 launchSingleTop = true
                             }
