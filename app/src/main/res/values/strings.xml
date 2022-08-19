@@ -7,7 +7,7 @@
     <string name="notification_reminder_description">Displays scheduled note reminders.</string>
 
     <!-- Shared -->
-    <string name="dialog_confirm_title">Confirmation</string>
+    <string name="dialog_confirm_title">Warning</string>
     <string name="button_ok">OK</string>
     <string name="button_cancel">Cancel</string>
     <string name="button_confirm">Confirm</string>
@@ -35,7 +35,7 @@
     <string name="home_screen_note_text_deletion_today">Deletion today</string>
     <string name="home_screen_note_text_deletion_tomorrow">Deletion tomorrow</string>
     <string name="home_screen_note_text_deletion_days">Deletion in %s days</string>
-    <string name="home_screen_dialog_confirm_label_delete">Label \'%s\' will be deleted and removed from all notes.</string>
+    <string name="home_screen_dialog_confirm_label_delete">%s label will be deleted and removed from all notes.</string>
 
     <!-- Note Screen -->
     <string name="note_screen_placeholder_title">No Title</string>

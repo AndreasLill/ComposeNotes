@@ -123,11 +123,14 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                                 appState.navigation.navigateUp()
                             })
                             MenuIconButton(icon = Icons.Outlined.DeleteForever, color = MaterialTheme.colors.onSurface, onClick = {
-                                DialogUtils.showConfirmDialog(context.resources.getString(R.string.note_screen_dialog_confirm_note_delete)) {
-                                    viewModel.onDeletePermanently()
-                                    appState.showSnackbar(context.resources.getString(R.string.note_screen_message_note_deleted), SnackbarDuration.Short)
-                                    appState.navigation.navigateUp()
-                                }
+                                DialogUtils.showConfirmDialog(
+                                    text = context.resources.getString(R.string.note_screen_dialog_confirm_note_delete),
+                                    onConfirm = {
+                                        viewModel.onDeletePermanently()
+                                        appState.showSnackbar(context.resources.getString(R.string.note_screen_message_note_deleted), SnackbarDuration.Short)
+                                        appState.navigation.navigateUp()
+                                    }
+                                )
                             })
                         }
                     }

@@ -20,6 +20,7 @@ import androidx.core.view.WindowCompat
 import com.andlill.keynotes.R
 import com.andlill.keynotes.ui.shared.AppSnackbar
 import com.andlill.keynotes.ui.shared.dialog.ConfirmDialog
+import com.andlill.keynotes.ui.shared.dialog.InputDialog
 import com.andlill.keynotes.ui.theme.AppTheme
 import com.andlill.keynotes.utils.DialogUtils
 
@@ -50,12 +51,26 @@ class MainActivity : AppCompatActivity() {
                             ConfirmDialog(
                                 state = DialogUtils.confirmDialogState,
                                 body = DialogUtils.confirmDialogBody,
+                                annotation = DialogUtils.confirmDialogAnnotation,
+                                annotationStyle = DialogUtils.confirmDialogAnnotationStyle,
                                 onDismiss = {
                                     DialogUtils.closeConfirmDialog()
                                 },
                                 onConfirm = {
                                     DialogUtils.confirmDialogListener?.invoke()
                                     DialogUtils.closeConfirmDialog()
+                                }
+                            )
+                            InputDialog(
+                                state = DialogUtils.inputDialogState,
+                                title = DialogUtils.inputDialogTitle,
+                                placeholder = DialogUtils.inputDialogPlaceholder,
+                                onDismiss = {
+                                    DialogUtils.closeInputDialog()
+                                },
+                                onConfirm = { result ->
+                                    DialogUtils.inputDialogListener?.invoke(result)
+                                    DialogUtils.closeInputDialog()
                                 }
                             )
                         }

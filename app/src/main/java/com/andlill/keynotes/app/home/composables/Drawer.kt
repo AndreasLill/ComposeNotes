@@ -9,12 +9,15 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -37,7 +40,6 @@ fun Drawer(
 ) {
 
     val context = LocalContext.current
-    val createLabelDialogState = remember { mutableStateOf(false) }
     val titleNotes = remember { context.resources.getString(R.string.drawer_item_notes) }
     val titleTrash = remember { context.resources.getString(R.string.drawer_item_trash) }
     val selectedId = rememberSaveable { mutableStateOf(-1) }
@@ -80,7 +82,13 @@ fun Drawer(
                 icon = Icons.Outlined.Add,
                 text = stringResource(R.string.drawer_item_new_label).uppercase(),
                 onClick = {
-                    createLabelDialogState.value = true
+                    DialogUtils.showInputDialog(
+                        title = context.resources.getString(R.string.home_screen_dialog_create_label_title),
+                        placeholder = context.resources.getString(R.string.home_screen_dialog_create_label_placeholder),
+                        onConfirm = {
+                            onAddLabel(Label(value = it))
+                        }
+                    )
                 }
             )
             DrawerLabelButton(
@@ -94,12 +102,6 @@ fun Drawer(
                 }
             )
         }
-        CreateLabelDialog(
-            state = createLabelDialogState,
-            onConfirm = {
-                onAddLabel(it)
-            },
-        )
         LazyColumn {
             items(items = labels, key = { label -> label.id }) { label ->
                 if (labelEditMode) {
@@ -115,19 +117,26 @@ fun Drawer(
                             onUpdateLabel(updatedLabel)
                         },
                         onDelete = {
-                            DialogUtils.showConfirmDialog(String.format(context.resources.getString(R.string.home_screen_dialog_confirm_label_delete), label.value)) {
-                                // Set selected item back to zero if this deleted label was selected.
-                                if (selectedId.value == label.id) {
-                                    selectedId.value = -1
-                                    onSelectItem(titleNotes)
-                                    onFilterLabel(null)
+                            DialogUtils.showConfirmDialog(
+                                text = String.format(context.resources.getString(R.string.home_screen_dialog_confirm_label_delete), label.value),
+                                annotation = label.value,
+                                annotationStyle = SpanStyle(
+                                    fontWeight = FontWeight.Bold,
+                                ),
+                                onConfirm = {
+                                    // Set selected item back to zero if this deleted label was selected.
+                                    if (selectedId.value == label.id) {
+                                        selectedId.value = -1
+                                        onSelectItem(titleNotes)
+                                        onFilterLabel(null)
+                                    }
+                                    // Close label edit mode if last one was deleted.
+                                    if (labels.size == 1) {
+                                        onLabelEditMode(false)
+                                    }
+                                    onDeleteLabel(label)
                                 }
-                                // Close label edit mode if last one was deleted.
-                                if (labels.size == 1) {
-                                    onLabelEditMode(false)
-                                }
-                                onDeleteLabel(label)
-                            }
+                            )
                         }
                     )
                 }

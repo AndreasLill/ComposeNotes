@@ -3,34 +3,40 @@ package com.andlill.keynotes.ui.shared.dialog
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.andlill.keynotes.R
 import com.andlill.keynotes.ui.shared.button.DialogButton
+import com.andlill.keynotes.ui.shared.text.AnnotatedText
 import com.andlill.keynotes.ui.shared.text.DialogTitle
 
 @Composable
-fun ConfirmDialog(state: Boolean, body: String, onDismiss: () -> Unit, onConfirm: () -> Unit) {
+fun ConfirmDialog(state: Boolean, body: String, annotation: String, annotationStyle: SpanStyle, onDismiss: () -> Unit, onConfirm: () -> Unit) {
     if (state) {
         Dialog(onDismissRequest = onDismiss) {
             Column(modifier = Modifier
                 .fillMaxWidth()
                 .background(MaterialTheme.colors.surface)
                 .padding(16.dp)) {
-                DialogTitle(text = stringResource(R.string.dialog_confirm_title))
+                DialogTitle(text = stringResource(R.string.dialog_confirm_title), color = MaterialTheme.colors.error)
                 Spacer(modifier = Modifier.height(16.dp))
-                Text(
+                AnnotatedText(
                     text = body,
-                    fontSize = 14.sp,
-                    color = MaterialTheme.colors.onSurface
+                    textStyle = TextStyle(
+                        fontSize = 14.sp,
+                        color = MaterialTheme.colors.onSurface
+                    ),
+                    annotation = annotation,
+                    annotationStyle = annotationStyle
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Box(modifier = Modifier.fillMaxWidth()) {
