@@ -47,6 +47,7 @@ fun Drawer(
     Column(modifier = Modifier
         .background(MaterialTheme.colors.surface)
         .statusBarsPadding()
+        .navigationBarsPadding()
         .fillMaxSize()) {
         Spacer(modifier = Modifier.height(16.dp))
         Text(
