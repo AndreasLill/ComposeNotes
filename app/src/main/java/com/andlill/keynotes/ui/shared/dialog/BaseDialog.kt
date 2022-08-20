@@ -1,5 +1,6 @@
 package com.andlill.keynotes.ui.shared.dialog
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -7,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.andlill.keynotes.ui.shared.text.DialogTitle
@@ -16,7 +18,7 @@ fun BaseDialog(
     state: MutableState<Boolean>,
     title: String,
     onDismiss: () -> Unit = {},
-    buttons: @Composable () -> Unit = {},
+    buttons: @Composable (() -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
     if (state.value) {
@@ -31,8 +33,10 @@ fun BaseDialog(
                         DialogTitle(text = title)
                         Spacer(modifier = Modifier.height(16.dp))
                         content()
-                        Box(modifier = Modifier.fillMaxWidth().padding(top = 16.dp), contentAlignment = Alignment.CenterEnd) {
-                            buttons()
+                        buttons?.let {
+                            Box(modifier = Modifier.fillMaxWidth().background(Color.Red).padding(top = 16.dp), contentAlignment = Alignment.CenterEnd) {
+                                buttons()
+                            }
                         }
                     }
                 }
