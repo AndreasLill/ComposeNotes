@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
@@ -23,7 +24,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
@@ -37,7 +37,6 @@ import com.andlill.keynotes.ui.theme.DarkNoteColors
 import com.andlill.keynotes.ui.theme.LightNoteColors
 import com.andlill.keynotes.utils.DialogUtils
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun NoteScreen(appState: AppState, noteId: Int) {
     val viewModel: NoteViewModel = viewModel(factory = NoteViewModel.Factory(LocalContext.current.applicationContext as Application, noteId))
@@ -137,52 +136,79 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                 )
             }
         },
-        bottomBar = {
-            if (!WindowInsets.isImeVisible) {
-                Column(modifier = Modifier
-                    .navigationBarsPadding()
+        content = { innerPadding ->
+            Box(modifier = Modifier
+                .padding(innerPadding)
+                .navigationBarsPadding()
+                .imePadding()
+                .fillMaxSize()
+                .clickable(interactionSource = interactionSource, indication = null) {
+                    viewModel.setBodySelectionEnd()
+                    focusRequester.requestFocus()
+                }) {
+                Column {
+                    NoteTitleTextField(
+                        placeholder = stringResource(R.string.note_screen_placeholder_title),
+                        state = viewModel.titleText,
+                        readOnly = (viewModel.deletion != null),
+                        onValueChange = {
+                            viewModel.onChangeTitle(it)
+                        }
+                    )
+                    NoteBodyTextField(
+                        placeholder = stringResource(R.string.note_screen_placeholder_body),
+                        state = viewModel.bodyText,
+                        readOnly = (viewModel.deletion != null),
+                        focusRequester = focusRequester,
+                        onValueChange = {
+                            viewModel.onChangeBody(it)
+                        }
+                    )
+                }
+                Box(modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 8.dp)) {
+                    .padding(start = 4.dp, end = 4.dp)
+                    .align(Alignment.BottomCenter)) {
                     Text(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .padding(4.dp)
+                            .align(Alignment.BottomCenter),
                         color = MaterialTheme.colors.onSurface.copy(0.6f),
                         fontSize = 12.sp,
                         fontWeight = FontWeight.SemiBold,
                         text = viewModel.statusText,
-                        textAlign = TextAlign.Center
                     )
+                    TextButton(
+                        modifier = Modifier.align(Alignment.CenterStart),
+                        enabled = viewModel.undoList.isNotEmpty(),
+                        colors = ButtonDefaults.textButtonColors(
+                            contentColor = MaterialTheme.colors.onSurface,
+                            disabledContentColor = MaterialTheme.colors.onSurface.copy(0.4f)
+                        ),
+                        onClick = {
+                            viewModel.onUndo()
+                        }) {
+                        Icon(
+                            imageVector = Icons.Outlined.Undo,
+                            contentDescription = null,
+                        )
+                    }
+                    TextButton(
+                        modifier = Modifier.align(Alignment.CenterEnd),
+                        enabled = viewModel.redoList.isNotEmpty(),
+                        colors = ButtonDefaults.textButtonColors(
+                            contentColor = MaterialTheme.colors.onSurface,
+                            disabledContentColor = MaterialTheme.colors.onSurface.copy(0.4f)
+                        ),
+                        onClick = {
+                            viewModel.onRedo()
+                        }) {
+                        Icon(
+                            imageVector = Icons.Outlined.Redo,
+                            contentDescription = null,
+                        )
+                    }
                 }
-            }
-        },
-        content = { innerPadding ->
-            Column(modifier = Modifier
-                .padding(innerPadding)
-                .imePadding()
-                .fillMaxSize()
-                .clickable(
-                    interactionSource = interactionSource,
-                    indication = null
-                ) {
-                    viewModel.setBodySelectionEnd()
-                    focusRequester.requestFocus()
-                }) {
-                NoteTitleTextField(
-                    placeholder = stringResource(R.string.note_screen_placeholder_title),
-                    state = viewModel.titleText,
-                    readOnly = (viewModel.deletion != null),
-                    onValueChange = {
-                        viewModel.onChangeTitle(it)
-                    }
-                )
-                NoteBodyTextField(
-                    placeholder = stringResource(R.string.note_screen_placeholder_body),
-                    state = viewModel.bodyText,
-                    readOnly = (viewModel.deletion != null),
-                    focusRequester = focusRequester,
-                    onValueChange = {
-                        viewModel.onChangeBody(it)
-                    }
-                )
             }
         }
     )

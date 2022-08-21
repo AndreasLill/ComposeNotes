@@ -52,6 +52,10 @@ class NoteViewModel(private val application: Application, private val noteId: In
         private set
     var statusText by mutableStateOf("")
         private set
+    var undoList by mutableStateOf(emptyList<TextFieldValue>())
+        private set
+    var redoList by mutableStateOf(emptyList<TextFieldValue>())
+        private set
 
     init {
         viewModelScope.launch {
@@ -143,6 +147,10 @@ class NoteViewModel(private val application: Application, private val noteId: In
     }
 
     fun onChangeBody(value: TextFieldValue) {
+        if (bodyText.text != value.text) {
+            // Add to undo list if text was changed.
+            undoList = undoList.plus(bodyText)
+        }
         bodyText = value
     }
 
@@ -182,5 +190,21 @@ class NoteViewModel(private val application: Application, private val noteId: In
 
     fun onRestore() = viewModelScope.launch {
         NoteRepository.updateNote(application, note.copy(deletion = null))
+    }
+
+    fun onUndo() {
+        // Undo and move action to redo list.
+        val undo = undoList.last()
+        redoList = redoList.plus(bodyText)
+        undoList = undoList.minus(undo)
+        bodyText = undo
+    }
+
+    fun onRedo() {
+        // Redo and move action to undo list.
+        val redo = redoList.last()
+        undoList = undoList.plus(bodyText)
+        redoList = redoList.minus(redo)
+        bodyText = redo
     }
 }

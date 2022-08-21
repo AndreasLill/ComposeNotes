@@ -3,12 +3,15 @@ package com.andlill.keynotes.ui.shared.button
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 
 @Composable
-fun MenuIconButton(icon: ImageVector, color: Color, description: String? = null, alpha: Float = 1f, onClick: () -> Unit) {
-    IconButton(onClick = { onClick() }) {
+fun MenuIconButton(modifier: Modifier = Modifier, icon: ImageVector, color: Color, description: String? = null, alpha: Float = 1f, onClick: () -> Unit) {
+    IconButton(
+        modifier = modifier,
+        onClick = onClick) {
         Icon(
             contentDescription = description,
             imageVector = icon,
