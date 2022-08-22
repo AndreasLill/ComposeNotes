@@ -16,7 +16,6 @@ import com.andlill.keynotes.model.NoteLabelJoin
 import com.andlill.keynotes.model.NoteWrapper
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.util.*
 
 class HomeViewModel(private val application: Application) : ViewModel() {
     class Factory(private val application: Application) : ViewModelProvider.NewInstanceFactory() {
@@ -33,7 +32,7 @@ class HomeViewModel(private val application: Application) : ViewModel() {
         private set
     var filterTrash by mutableStateOf(false)
         private set
-    var filterLabel by mutableStateOf<Int?>(null)
+    var filterLabel by mutableStateOf<Label?>(null)
         private set
     var query by mutableStateOf("")
         private set
@@ -50,7 +49,7 @@ class HomeViewModel(private val application: Application) : ViewModel() {
         }
         viewModelScope.launch {
             LabelRepository.getAllLabels(application).collectLatest {
-                labels = it.sortedBy { label -> label.value.lowercase(Locale.ROOT) }
+                labels = it.sortedBy { label -> label.value.lowercase() }
             }
         }
     }
@@ -63,8 +62,8 @@ class HomeViewModel(private val application: Application) : ViewModel() {
         filterList = filterList.filter { (it.note.deletion != null) == filterTrash }
 
         // Filter notes on label id.
-        filterLabel?.let { id ->
-            filterList = filterList.filter { it.labels.firstOrNull { label -> label.id == id } != null }
+        filterLabel?.let { label ->
+            filterList = filterList.filter { it.labels.contains(label) }
         }
 
         // Filter notes on query.
@@ -110,8 +109,8 @@ class HomeViewModel(private val application: Application) : ViewModel() {
         filterNotes()
     }
 
-    fun onFilterLabel(labelId: Int?) = viewModelScope.launch {
-        filterLabel = labelId
+    fun onFilterLabel(label: Label?) = viewModelScope.launch {
+        filterLabel = label
         filterTrash = false
         filterNotes()
     }

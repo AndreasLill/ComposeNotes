@@ -16,9 +16,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun NoteLabel(icon: ImageVector, text: String, color: Color) {
+fun NoteLabel(modifier: Modifier = Modifier, icon: ImageVector, text: String, color: Color) {
     Surface(
-        modifier = Modifier.height(24.dp),
+        modifier = modifier.height(24.dp),
         color = color,
         shape = RoundedCornerShape(8.dp),
     ) {

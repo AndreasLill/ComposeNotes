@@ -2,7 +2,6 @@ package com.andlill.keynotes.app.home
 
 import android.app.Application
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -11,20 +10,28 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Label
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.andlill.keynotes.R
 import com.andlill.keynotes.app.AppState
 import com.andlill.keynotes.app.Screen
 import com.andlill.keynotes.app.home.composables.Drawer
 import com.andlill.keynotes.app.home.composables.NoteItem
 import com.andlill.keynotes.app.home.composables.SearchBar
 import com.andlill.keynotes.ui.shared.button.MenuIconButton
+import com.andlill.keynotes.ui.shared.label.NoteLabel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -111,18 +118,47 @@ fun HomeScreen(appState: AppState) {
             }
         },
         content = { innerPadding ->
-            LazyColumn(modifier = Modifier
+            Box(modifier = Modifier
                 .padding(innerPadding)
                 .imePadding()
-                .background(MaterialTheme.colors.surface)
-                .fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                contentPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 56.dp)) {
-                items(items = viewModel.notes, key = { it.note.id }) { note ->
-                    NoteItem(note) {
-                        appState.navigation.navigate("${Screen.NoteScreen.route}/${note.note.id}") {
-                            // To avoid multiple copies of same destination in backstack.
-                            launchSingleTop = true
+                .fillMaxSize())  {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    contentPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 56.dp)) {
+                    items(items = viewModel.notes, key = { it.note.id }) { note ->
+                        NoteItem(note) {
+                            appState.navigation.navigate("${Screen.NoteScreen.route}/${note.note.id}") {
+                                // To avoid multiple copies of same destination in backstack.
+                                launchSingleTop = true
+                            }
+                        }
+                    }
+                }
+                Column(modifier = Modifier.align(Alignment.Center), horizontalAlignment = Alignment.CenterHorizontally) {
+                    if (viewModel.notes.isEmpty()) {
+                        if (viewModel.filterTrash) {
+                            Icon(
+                                modifier = Modifier.size(64.dp),
+                                imageVector = Icons.Outlined.Delete,
+                                contentDescription = null,
+                                tint = MaterialTheme.colors.onSurface.copy(0.2f)
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = stringResource(R.string.home_screen_status_text_empty_trash),
+                                fontSize = 15.sp,
+                                color = MaterialTheme.colors.onSurface.copy(0.7f)
+                            )
+                        }
+                        viewModel.filterLabel?.let { label ->
+                            NoteLabel(modifier = Modifier.scale(1.4f) ,icon = Icons.Outlined.Label, text = label.value, color = MaterialTheme.colors.onSurface.copy(0.08f))
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text(
+                                text = stringResource(R.string.home_screen_status_text_empty_label),
+                                fontSize = 15.sp,
+                                color = MaterialTheme.colors.onSurface.copy(0.7f)
+                            )
                         }
                     }
                 }
@@ -145,9 +181,9 @@ fun HomeScreen(appState: AppState) {
                     contentColor = MaterialTheme.colors.primary,
                     onClick = {
                         viewModel.onCreateNote { noteId ->
-                            viewModel.filterLabel?.let { labelId ->
+                            viewModel.filterLabel?.let { label ->
                                 // Add label to new note if label is selected.
-                                viewModel.onAddNoteLabel(noteId, labelId)
+                                viewModel.onAddNoteLabel(noteId, label.id)
                             }
                             appState.navigation.navigate("${Screen.NoteScreen.route}/$noteId") {
                                 // To avoid multiple copies of same destination in backstack.

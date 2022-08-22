@@ -35,7 +35,7 @@ fun Drawer(
     onUpdateLabel: (Label) -> Unit,
     onDeleteLabel: (Label) -> Unit,
     onFilterTrash: (Boolean) -> Unit,
-    onFilterLabel: (Int?) -> Unit,
+    onFilterLabel: (Label?) -> Unit,
     onClose: () -> Unit
 ) {
 
@@ -113,7 +113,7 @@ fun Drawer(
                             // Update selected label and name if this label was updated.
                             if (selectedId.value == label.id) {
                                 onSelectItem(it)
-                                onFilterLabel(label.id)
+                                onFilterLabel(label)
                             }
                             onUpdateLabel(updatedLabel)
                         },
@@ -150,7 +150,7 @@ fun Drawer(
                         onClick = {
                             selectedId.value = label.id
                             onSelectItem(label.value)
-                            onFilterLabel(label.id)
+                            onFilterLabel(label)
                             onClose()
                         },
                     )
