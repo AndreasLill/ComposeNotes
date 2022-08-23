@@ -37,8 +37,7 @@ class HomeViewModel(private val application: Application) : ViewModel() {
     var query by mutableStateOf("")
         private set
 
-    var selectedName by mutableStateOf(application.resources.getString(R.string.drawer_item_notes))
-    var labelEditMode by mutableStateOf(false)
+    var drawerSelectedItem by mutableStateOf(application.resources.getString(R.string.drawer_item_notes))
 
     init {
         viewModelScope.launch {
@@ -88,14 +87,6 @@ class HomeViewModel(private val application: Application) : ViewModel() {
 
     fun onAddLabel(label: Label) = viewModelScope.launch {
         LabelRepository.insertLabel(application, label)
-    }
-
-    fun onUpdateLabel(label: Label) = viewModelScope.launch {
-        LabelRepository.updateLabel(application, label)
-    }
-
-    fun onDeleteLabel(label: Label) = viewModelScope.launch {
-        LabelRepository.deleteLabel(application, label)
     }
 
     fun onQuery(value: String) = viewModelScope.launch {

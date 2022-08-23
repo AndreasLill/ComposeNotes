@@ -4,9 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Divider
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.runtime.Composable
@@ -17,7 +15,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -28,17 +25,13 @@ import com.andlill.keynotes.utils.DialogUtils
 @Composable
 fun Drawer(
     labels: List<Label>,
-    labelEditMode: Boolean,
-    onLabelEditMode: (Boolean) -> Unit,
     onSelectItem: (String) -> Unit,
     onAddLabel: (Label) -> Unit,
-    onUpdateLabel: (Label) -> Unit,
-    onDeleteLabel: (Label) -> Unit,
     onFilterTrash: (Boolean) -> Unit,
     onFilterLabel: (Label?) -> Unit,
-    onClose: () -> Unit
+    onClose: () -> Unit,
+    onEditLabels: () -> Unit
 ) {
-
     val context = LocalContext.current
     val titleNotes = remember { context.resources.getString(R.string.drawer_item_notes) }
     val titleTrash = remember { context.resources.getString(R.string.drawer_item_trash) }
@@ -63,14 +56,12 @@ fun Drawer(
                 selectedId.value = -1
                 onSelectItem(titleNotes)
                 onFilterTrash(false)
-                onLabelEditMode(false)
                 onClose()
             })
             DrawerItem(selectedId = selectedId.value, id = -2, icon = Icons.Outlined.Delete, text = titleTrash, onClick = {
                 selectedId.value = -2
                 onSelectItem(titleTrash)
                 onFilterTrash(true)
-                onLabelEditMode(false)
                 onClose()
             })
         }
@@ -78,10 +69,8 @@ fun Drawer(
         Box(modifier = Modifier
             .fillMaxWidth()
             .padding(start = 8.dp, end = 8.dp)) {
-            DrawerLabelButton(
+            TextButton(
                 modifier = Modifier.align(Alignment.CenterStart),
-                icon = Icons.Outlined.Add,
-                text = stringResource(R.string.drawer_item_new_label).uppercase(),
                 onClick = {
                     DialogUtils.showInputDialog(
                         title = context.resources.getString(R.string.home_screen_dialog_create_label_title),
@@ -90,71 +79,54 @@ fun Drawer(
                             onAddLabel(Label(value = it))
                         }
                     )
-                }
-            )
-            DrawerLabelButton(
+                }) {
+                Icon(
+                    modifier = Modifier.size(16.dp),
+                    imageVector = Icons.Outlined.Add,
+                    contentDescription = null,
+                    tint = MaterialTheme.colors.primary
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = stringResource(R.string.drawer_item_new_label).uppercase(),
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colors.primary
+                )
+            }
+            TextButton(
                 modifier = Modifier.align(Alignment.CenterEnd),
-                icon = if (!labelEditMode) Icons.Outlined.Edit else Icons.Outlined.ArrowBack,
-                text = if (!labelEditMode) stringResource(R.string.drawer_item_edit).uppercase() else stringResource(R.string.drawer_item_done).uppercase(),
-                onClick = {
-                    if (labels.isNotEmpty()) {
-                        onLabelEditMode(!labelEditMode)
-                    }
-                }
-            )
+                onClick = onEditLabels
+            ) {
+                Icon(
+                    modifier = Modifier.size(16.dp),
+                    imageVector = Icons.Outlined.Edit,
+                    contentDescription = null,
+                    tint = MaterialTheme.colors.primary
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = stringResource(R.string.drawer_item_edit).uppercase(),
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colors.primary
+                )
+            }
         }
         LazyColumn {
             items(items = labels, key = { label -> label.id }) { label ->
-                if (labelEditMode) {
-                    DrawerLabelEdit(
-                        initialText = label.value,
-                        onUpdate = {
-                            val updatedLabel = label.copy(value = it)
-                            // Update selected label and name if this label was updated.
-                            if (selectedId.value == label.id) {
-                                onSelectItem(it)
-                                onFilterLabel(label)
-                            }
-                            onUpdateLabel(updatedLabel)
-                        },
-                        onDelete = {
-                            DialogUtils.showConfirmDialog(
-                                text = String.format(context.resources.getString(R.string.home_screen_dialog_confirm_label_delete), label.value),
-                                annotation = label.value,
-                                annotationStyle = SpanStyle(
-                                    fontWeight = FontWeight.Bold,
-                                ),
-                                onConfirm = {
-                                    // Set selected item back to zero if this deleted label was selected.
-                                    if (selectedId.value == label.id) {
-                                        selectedId.value = -1
-                                        onSelectItem(titleNotes)
-                                        onFilterLabel(null)
-                                    }
-                                    // Close label edit mode if last one was deleted.
-                                    if (labels.size == 1) {
-                                        onLabelEditMode(false)
-                                    }
-                                    onDeleteLabel(label)
-                                }
-                            )
-                        }
-                    )
-                }
-                else {
-                    DrawerItem(
-                        selectedId = selectedId.value,
-                        id = label.id,
-                        icon = Icons.Outlined.Label,
-                        text = label.value,
-                        onClick = {
-                            selectedId.value = label.id
-                            onSelectItem(label.value)
-                            onFilterLabel(label)
-                            onClose()
-                        },
-                    )
-                }
+                DrawerItem(
+                    selectedId = selectedId.value,
+                    id = label.id,
+                    icon = Icons.Outlined.Label,
+                    text = label.value,
+                    onClick = {
+                        selectedId.value = label.id
+                        onSelectItem(label.value)
+                        onFilterLabel(label)
+                        onClose()
+                    },
+                )
             }
         }
     }

@@ -13,7 +13,6 @@ import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Label
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,17 +40,9 @@ fun HomeScreen(appState: AppState) {
     val state = rememberScaffoldState()
     val scope = rememberCoroutineScope()
 
-    LaunchedEffect(state.drawerState.isClosed) {
-        viewModel.labelEditMode = false
-    }
     BackHandler(state.drawerState.isOpen) {
-        if (viewModel.labelEditMode) {
-            viewModel.labelEditMode = false
-        }
-        else {
-            scope.launch {
-                state.drawerState.close()
-            }
+        scope.launch {
+            state.drawerState.close()
         }
     }
 
@@ -62,21 +53,11 @@ fun HomeScreen(appState: AppState) {
         drawerContent = {
             Drawer(
                 labels = viewModel.labels,
-                labelEditMode = viewModel.labelEditMode,
-                onLabelEditMode = {
-                    viewModel.labelEditMode = it
-                },
                 onSelectItem = {
-                    viewModel.selectedName = it
+                    viewModel.drawerSelectedItem = it
                 },
                 onAddLabel = {
                     viewModel.onAddLabel(it)
-                },
-                onUpdateLabel = {
-                    viewModel.onUpdateLabel(it)
-                },
-                onDeleteLabel = {
-                    viewModel.onDeleteLabel(it)
                 },
                 onFilterTrash = {
                     viewModel.onFilterTrash(it)
@@ -87,6 +68,12 @@ fun HomeScreen(appState: AppState) {
                 onClose = {
                     scope.launch {
                         state.drawerState.close()
+                    }
+                },
+                onEditLabels = {
+                    appState.navigation.navigate(Screen.LabelScreen.route) {
+                        // To avoid multiple copies of same destination in backstack.
+                        launchSingleTop = true
                     }
                 }
             )
@@ -100,7 +87,7 @@ fun HomeScreen(appState: AppState) {
                     title = {
                         SearchBar(
                             query = viewModel.query,
-                            placeholder = viewModel.selectedName,
+                            placeholder = viewModel.drawerSelectedItem,
                             onValueChange = {
                                 viewModel.onQuery(it)
                         })

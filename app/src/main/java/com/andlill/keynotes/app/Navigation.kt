@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.andlill.keynotes.app.home.HomeScreen
+import com.andlill.keynotes.app.label.LabelScreen
 import com.andlill.keynotes.app.note.NoteScreen
 
 @Composable
@@ -17,6 +18,12 @@ fun Navigation(appState: AppState) {
         // Root home screen
         composable(Screen.HomeScreen.route) {
             HomeScreen(
+                appState = appState
+            )
+        }
+        // Label editor screen.
+        composable(Screen.LabelScreen.route) {
+            LabelScreen(
                 appState = appState
             )
         }
@@ -43,5 +50,6 @@ sealed class Screen(val route: String, val uri: String = "") {
         private const val baseUri = "https://com.andlill.keynotes"
     }
     object HomeScreen : Screen("home")
+    object LabelScreen : Screen("label")
     object NoteScreen : Screen("note", "$baseUri/note/noteId=%s")
 }

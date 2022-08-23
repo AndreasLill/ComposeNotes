@@ -28,14 +28,11 @@
     <string name="home_screen_placeholder_search">Search %s</string>
     <string name="home_screen_text_trash">Notes in trash will be automatically deleted.</string>
     <string name="home_Screen_button_add_note">Add Note</string>
-    <string name="home_screen_dialog_edit_label_title">Edit Label</string>
-    <string name="home_screen_dialog_edit_label_placeholder">Label</string>
     <string name="home_screen_dialog_create_label_title">New Label</string>
     <string name="home_screen_dialog_create_label_placeholder">Label</string>
     <string name="home_screen_note_text_deletion_today">Deletion today</string>
     <string name="home_screen_note_text_deletion_tomorrow">Deletion tomorrow</string>
     <string name="home_screen_note_text_deletion_days">Deletion in %s days</string>
-    <string name="home_screen_dialog_confirm_label_delete">%s label will be deleted and removed from all notes.</string>
     <string name="home_screen_status_text_empty_trash">Trash is empty</string>
     <string name="home_screen_status_text_empty_label">There are no notes with this label</string>
 
@@ -54,4 +51,10 @@
     <string name="note_screen_message_note_trash">Note was moved to trash.</string>
     <string name="note_screen_message_note_restored">Note was restored from trash.</string>
     <string name="note_screen_message_note_deleted">Note was permanently deleted.</string>
+
+    <!-- Label Screen -->
+    <string name="label_screen_create_label_placeholder">Create new label</string>
+    <string name="label_screen_edit_label_placeholder">Label</string>
+    <string name="label_screen_dialog_confirm_label_delete">%s label will be deleted and removed from all notes.</string>
+
 </resources>
