@@ -10,19 +10,22 @@ import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.andlill.keynotes.R
 import com.andlill.keynotes.app.AppState
 import com.andlill.keynotes.app.label.composables.CreateLabel
 import com.andlill.keynotes.app.label.composables.EditLabel
+import com.andlill.keynotes.app.label.composables.SelectLabel
 import com.andlill.keynotes.model.Label
 import com.andlill.keynotes.ui.shared.button.MenuIconButton
 import com.andlill.keynotes.utils.DialogUtils
 
 @Composable
-fun LabelScreen(appState: AppState) {
-    val viewModel: LabelViewModel = viewModel(factory = LabelViewModel.Factory(LocalContext.current.applicationContext as Application))
+fun LabelScreen(appState: AppState, noteId: Int?) {
+    val viewModel: LabelViewModel = viewModel(factory = LabelViewModel.Factory(LocalContext.current.applicationContext as Application, noteId))
     val context = LocalContext.current
     val state = rememberScaffoldState()
 
@@ -58,22 +61,41 @@ fun LabelScreen(appState: AppState) {
                         item {
                             CreateLabel(
                                 onCreate = {
-                                    viewModel.onCreateLabel(Label(value = it))
+                                    val label = Label(value = it)
+                                    viewModel.onCreateLabel(label)
                                 }
                             )
                         }
                         items(items = viewModel.labels, key = { it.id }) { label ->
-                            EditLabel(
-                                initialText = label.value,
-                                onUpdate = {
-                                    viewModel.onUpdateLabel(label.copy(value = it))
-                                },
-                                onDelete = {
-                                    DialogUtils.showConfirmDialog(String.format(context.resources.getString(R.string.label_screen_dialog_confirm_label_delete), label.value)) {
-                                        viewModel.onDeleteLabel(label)
+                            if (noteId != null) {
+                                SelectLabel(
+                                    text = label.value,
+                                    checked = viewModel.noteLabels.contains(label),
+                                    onClick = {
+                                        viewModel.onToggleNoteLabel(label)
                                     }
-                                }
-                            )
+                                )
+                            }
+                            else {
+                                EditLabel(
+                                    initialText = label.value,
+                                    onUpdate = {
+                                        viewModel.onUpdateLabel(label.copy(value = it))
+                                    },
+                                    onDelete = {
+                                        DialogUtils.showConfirmDialog(
+                                            text = String.format(context.resources.getString(R.string.label_screen_dialog_confirm_label_delete), label.value),
+                                            annotation = label.value,
+                                            annotationStyle = SpanStyle(
+                                                fontWeight = FontWeight.Bold
+                                            ),
+                                            onConfirm = {
+                                                viewModel.onDeleteLabel(label)
+                                            }
+                                        )
+                                    }
+                                )
+                            }
                         }
                     }
                 }

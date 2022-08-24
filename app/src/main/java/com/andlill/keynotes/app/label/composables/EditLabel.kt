@@ -76,7 +76,7 @@ fun EditLabel(initialText: String, onUpdate: (String) -> Unit, onDelete: () -> U
                     }
                 }
                 .fillMaxWidth()
-                .padding(start = 56.dp),
+                .padding(start = 56.dp, end = 56.dp),
             interactionSource = interactionSource,
             keyboardOptions = KeyboardOptions(
                 capitalization = KeyboardCapitalization.Words,
@@ -102,7 +102,7 @@ fun EditLabel(initialText: String, onUpdate: (String) -> Unit, onDelete: () -> U
             decorationBox = { innerTextField ->
                 Box(modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = 4.dp, bottom = 4.dp, end = 56.dp),
+                    .padding(top = 4.dp, bottom = 4.dp),
                     contentAlignment = Alignment.CenterStart) {
                     if (textFieldValue.text.isEmpty()) {
                         Text(

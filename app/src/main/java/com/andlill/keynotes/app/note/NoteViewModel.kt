@@ -10,11 +10,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.andlill.keynotes.R
-import com.andlill.keynotes.data.repository.LabelRepository
 import com.andlill.keynotes.data.repository.NoteRepository
-import com.andlill.keynotes.model.Label
 import com.andlill.keynotes.model.Note
-import com.andlill.keynotes.model.NoteLabelJoin
 import com.andlill.keynotes.utils.TimeUtils.daysBetween
 import com.andlill.keynotes.utils.TimeUtils.toDateString
 import com.andlill.keynotes.utils.TimeUtils.toMilliSeconds
@@ -32,9 +29,7 @@ class NoteViewModel(private val application: Application, private val noteId: In
     private var note = Note()
     private var deleteOnClose = false
 
-    var allLabels by mutableStateOf(emptyList<Label>())
-        private set
-    var noteLabels by mutableStateOf(emptyList<Label>())
+    var id by mutableStateOf(noteId)
         private set
     var titleText by mutableStateOf(TextFieldValue())
         private set
@@ -62,7 +57,6 @@ class NoteViewModel(private val application: Application, private val noteId: In
             NoteRepository.getNote(application, noteId).collectLatest {
                 it?.let {
                     note = it.note.copy()
-                    noteLabels = it.labels
                     isPinned = it.note.pinned
                     reminder = it.note.reminder
                     modified = it.note.modified
@@ -99,11 +93,6 @@ class NoteViewModel(private val application: Application, private val noteId: In
                 }
             }
         }
-        viewModelScope.launch {
-            LabelRepository.getAllLabels(application).collectLatest {
-                allLabels = it.sortedBy { label -> label.value.lowercase(Locale.ROOT) }
-            }
-        }
     }
 
     fun onClose() = viewModelScope.launch {
@@ -133,13 +122,6 @@ class NoteViewModel(private val application: Application, private val noteId: In
             body = bodyText.text.trim(),
             modified = System.currentTimeMillis(),
         ))
-    }
-
-    fun onToggleLabel(label: Label) = viewModelScope.launch {
-        if (noteLabels.contains(label))
-            NoteRepository.deleteNoteLabel(application, NoteLabelJoin(noteId = note.id, labelId = label.id))
-        else
-            NoteRepository.insertNoteLabel(application, NoteLabelJoin(noteId = note.id, labelId = label.id))
     }
 
     fun onChangeTitle(value: TextFieldValue) {

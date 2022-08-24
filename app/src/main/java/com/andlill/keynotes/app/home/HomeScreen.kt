@@ -24,8 +24,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.andlill.keynotes.R
-import com.andlill.keynotes.app.AppState
 import com.andlill.keynotes.app.Screen
+import com.andlill.keynotes.app.AppState
 import com.andlill.keynotes.app.home.composables.Drawer
 import com.andlill.keynotes.app.home.composables.NoteItem
 import com.andlill.keynotes.app.home.composables.SearchBar
@@ -71,7 +71,7 @@ fun HomeScreen(appState: AppState) {
                     }
                 },
                 onEditLabels = {
-                    appState.navigation.navigate(Screen.LabelScreen.route) {
+                    appState.navigation.navigate(Screen.LabelScreen.route()) {
                         // To avoid multiple copies of same destination in backstack.
                         launchSingleTop = true
                     }
@@ -115,7 +115,7 @@ fun HomeScreen(appState: AppState) {
                     contentPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 56.dp)) {
                     items(items = viewModel.notes, key = { it.note.id }) { note ->
                         NoteItem(note) {
-                            appState.navigation.navigate("${Screen.NoteScreen.route}/${note.note.id}") {
+                            appState.navigation.navigate(Screen.NoteScreen.route(noteId = note.note.id)) {
                                 // To avoid multiple copies of same destination in backstack.
                                 launchSingleTop = true
                             }
@@ -172,7 +172,7 @@ fun HomeScreen(appState: AppState) {
                                 // Add label to new note if label is selected.
                                 viewModel.onAddNoteLabel(noteId, label.id)
                             }
-                            appState.navigation.navigate("${Screen.NoteScreen.route}/$noteId") {
+                            appState.navigation.navigate(Screen.NoteScreen.route(noteId = noteId)) {
                                 // To avoid multiple copies of same destination in backstack.
                                 launchSingleTop = true
                             }

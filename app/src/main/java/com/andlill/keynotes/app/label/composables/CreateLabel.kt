@@ -10,7 +10,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.NewLabel
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -113,7 +113,7 @@ fun CreateLabel(onCreate: (String) -> Unit) {
                 },
                 content = {
                     Icon(
-                        imageVector = Icons.Outlined.Add,
+                        imageVector = Icons.Outlined.Check,
                         contentDescription = null,
                         tint = MaterialTheme.colors.primary
                     )

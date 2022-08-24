@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.andlill.keynotes.R
+import com.andlill.keynotes.app.Screen
 import com.andlill.keynotes.app.AppState
 import com.andlill.keynotes.app.note.composables.*
 import com.andlill.keynotes.ui.shared.button.MenuIconButton
@@ -42,7 +43,6 @@ fun NoteScreen(appState: AppState, noteId: Int) {
     val viewModel: NoteViewModel = viewModel(factory = NoteViewModel.Factory(LocalContext.current.applicationContext as Application, noteId))
 
     val colorDialogState = remember { mutableStateOf(false) }
-    val labelDialogState = remember { mutableStateOf(false) }
     val reminderDialogState = remember { mutableStateOf(false) }
     val interactionSource = remember { MutableInteractionSource() }
     val focusRequester = remember { FocusRequester() }
@@ -98,10 +98,10 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                                 viewModel.onUpdateReminder(it)
                             })
                             MenuIconButton(icon = Icons.Outlined.Label, color = MaterialTheme.colors.onSurface, onClick = {
-                                labelDialogState.value = true
-                            })
-                            LabelDialog(state = labelDialogState, noteLabels = viewModel.noteLabels, labels = viewModel.allLabels, onClick = {
-                                viewModel.onToggleLabel(it)
+                                appState.navigation.navigate(Screen.LabelScreen.route(noteId = viewModel.id)) {
+                                    // To avoid multiple copies of same destination in backstack.
+                                    launchSingleTop = true
+                                }
                             })
                             MenuIconButton(icon = Icons.Outlined.Palette, color = MaterialTheme.colors.onSurface, onClick = {
                                 colorDialogState.value = true

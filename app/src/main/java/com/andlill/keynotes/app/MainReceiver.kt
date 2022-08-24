@@ -58,7 +58,7 @@ class MainReceiver : BroadcastReceiver() {
             // Create intent to open note on notification click.
             val resultIntent = Intent(
                 Intent.ACTION_VIEW,
-                String.format(Screen.NoteScreen.uri, id).toUri(),
+                Screen.NoteScreen.deepLink(noteId = id).toUri(),
                 context,
                 MainActivity::class.java)
             val resultPendingIntent: PendingIntent? = TaskStackBuilder.create(context).run {
