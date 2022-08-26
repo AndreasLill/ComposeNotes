@@ -27,10 +27,9 @@ import com.andlill.keynotes.utils.DialogUtils
 fun LabelScreen(appState: AppState, noteId: Int?) {
     val viewModel: LabelViewModel = viewModel(factory = LabelViewModel.Factory(LocalContext.current.applicationContext as Application, noteId))
     val context = LocalContext.current
-    val state = rememberScaffoldState()
 
     Scaffold(
-        scaffoldState = state,
+        scaffoldState = rememberScaffoldState(),
         topBar = {
             TopAppBar(
                 modifier = Modifier.statusBarsPadding(),
@@ -46,6 +45,12 @@ fun LabelScreen(appState: AppState, noteId: Int?) {
                     )
                 },
                 title = {
+                    CreateLabel(
+                        onCreate = {
+                            val label = Label(value = it)
+                            viewModel.onCreateLabel(label)
+                        }
+                    )
                 },
             )
         },
@@ -57,44 +62,39 @@ fun LabelScreen(appState: AppState, noteId: Int?) {
                     .navigationBarsPadding(),
                 color = MaterialTheme.colors.surface,
                 content = {
-                    LazyColumn(modifier = Modifier.fillMaxSize()) {
-                        item {
-                            CreateLabel(
-                                onCreate = {
-                                    val label = Label(value = it)
-                                    viewModel.onCreateLabel(label)
+                    Column {
+                        Divider()
+                        LazyColumn(modifier = Modifier.fillMaxSize()) {
+                            items(items = viewModel.labels, key = { it.id }) { label ->
+                                if (noteId != null) {
+                                    SelectLabel(
+                                        text = label.value,
+                                        checked = viewModel.noteLabels.contains(label),
+                                        onClick = {
+                                            viewModel.onToggleNoteLabel(label)
+                                        }
+                                    )
                                 }
-                            )
-                        }
-                        items(items = viewModel.labels, key = { it.id }) { label ->
-                            if (noteId != null) {
-                                SelectLabel(
-                                    text = label.value,
-                                    checked = viewModel.noteLabels.contains(label),
-                                    onClick = {
-                                        viewModel.onToggleNoteLabel(label)
-                                    }
-                                )
-                            }
-                            else {
-                                EditLabel(
-                                    initialText = label.value,
-                                    onUpdate = {
-                                        viewModel.onUpdateLabel(label.copy(value = it))
-                                    },
-                                    onDelete = {
-                                        DialogUtils.showConfirmDialog(
-                                            text = String.format(context.resources.getString(R.string.label_screen_dialog_confirm_label_delete), label.value),
-                                            annotation = label.value,
-                                            annotationStyle = SpanStyle(
-                                                fontWeight = FontWeight.Bold
-                                            ),
-                                            onConfirm = {
-                                                viewModel.onDeleteLabel(label)
-                                            }
-                                        )
-                                    }
-                                )
+                                else {
+                                    EditLabel(
+                                        initialText = label.value,
+                                        onUpdate = {
+                                            viewModel.onUpdateLabel(label.copy(value = it))
+                                        },
+                                        onDelete = {
+                                            DialogUtils.showConfirmDialog(
+                                                text = String.format(context.resources.getString(R.string.label_screen_dialog_confirm_label_delete), label.value),
+                                                annotation = label.value,
+                                                annotationStyle = SpanStyle(
+                                                    fontWeight = FontWeight.Bold
+                                                ),
+                                                onConfirm = {
+                                                    viewModel.onDeleteLabel(label)
+                                                }
+                                            )
+                                        }
+                                    )
+                                }
                             }
                         }
                     }

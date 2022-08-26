@@ -1,7 +1,10 @@
 package com.andlill.keynotes.app.label.composables
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -10,22 +13,21 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Check
-import androidx.compose.material.icons.outlined.NewLabel
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.andlill.keynotes.R
-import com.andlill.keynotes.ui.shared.modifier.focusIndicatorLine
 import com.andlill.keynotes.ui.shared.util.clearFocusOnKeyboardDismiss
 
 @Composable
@@ -33,29 +35,7 @@ fun CreateLabel(onCreate: (String) -> Unit) {
     var textFieldValue by remember { mutableStateOf(TextFieldValue("")) }
     val interactionSource = remember { MutableInteractionSource() }
 
-    Box(modifier = Modifier
-        .fillMaxWidth()
-        .height(56.dp)
-        .focusIndicatorLine(
-            interactionSource = interactionSource,
-            baseColor = Color.Transparent,
-            focusColor = MaterialTheme.colors.primary,
-            focusWidth = 1.dp
-        )) {
-        IconButton(
-            modifier = Modifier
-                .align(Alignment.CenterStart)
-                .padding(start = 4.dp),
-            enabled = false,
-            onClick = {},
-            content = {
-                Icon(
-                    imageVector = Icons.Outlined.NewLabel,
-                    contentDescription = null,
-                    tint = MaterialTheme.colors.onSurface.copy(0.6f)
-                )
-            }
-        )
+    Box(modifier = Modifier.fillMaxSize()) {
         BasicTextField(
             modifier = Modifier
                 .align(Alignment.Center)
@@ -65,8 +45,7 @@ fun CreateLabel(onCreate: (String) -> Unit) {
                         textFieldValue = textFieldValue.copy(text = "")
                     }
                 }
-                .fillMaxWidth()
-                .padding(start = 56.dp),
+                .fillMaxWidth(),
             interactionSource = interactionSource,
             keyboardOptions = KeyboardOptions(
                 capitalization = KeyboardCapitalization.Words,
@@ -82,6 +61,7 @@ fun CreateLabel(onCreate: (String) -> Unit) {
                 color = MaterialTheme.colors.onSurface,
                 fontSize = 15.sp
             ),
+            cursorBrush = SolidColor(MaterialTheme.colors.primary),
             value = textFieldValue,
             onValueChange = {
                 textFieldValue = it
@@ -95,6 +75,7 @@ fun CreateLabel(onCreate: (String) -> Unit) {
                         Text(
                             text = stringResource(R.string.label_screen_create_label_placeholder),
                             fontSize = 15.sp,
+                            fontWeight = FontWeight.Normal,
                             color = MaterialTheme.colors.onSurface.copy(0.6f)
                         )
                     }
@@ -104,16 +85,14 @@ fun CreateLabel(onCreate: (String) -> Unit) {
         )
         if (textFieldValue.text.isNotEmpty()) {
             IconButton(
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .padding(end = 4.dp),
+                modifier = Modifier.align(Alignment.CenterEnd),
                 onClick = {
                     onCreate(textFieldValue.text)
                     textFieldValue = textFieldValue.copy(text = "")
                 },
                 content = {
                     Icon(
-                        imageVector = Icons.Outlined.Check,
+                        imageVector = Icons.Outlined.Add,
                         contentDescription = null,
                         tint = MaterialTheme.colors.primary
                     )

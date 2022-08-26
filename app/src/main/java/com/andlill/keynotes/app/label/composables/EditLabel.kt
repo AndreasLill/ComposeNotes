@@ -1,8 +1,10 @@
 package com.andlill.keynotes.app.label.composables
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -20,6 +22,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -46,12 +49,7 @@ fun EditLabel(initialText: String, onUpdate: (String) -> Unit, onDelete: () -> U
     Box(modifier = Modifier
         .fillMaxWidth()
         .height(56.dp)
-        .focusIndicatorLine(
-            interactionSource = interactionSource,
-            baseColor = Color.Transparent,
-            focusColor = MaterialTheme.colors.primary,
-            focusWidth = 1.dp
-        )) {
+        .background(color = if (isFocused.value) MaterialTheme.colors.primary.copy(0.1f) else Color.Transparent)) {
         IconButton(
             modifier = Modifier
                 .align(Alignment.CenterStart)
@@ -95,6 +93,7 @@ fun EditLabel(initialText: String, onUpdate: (String) -> Unit, onDelete: () -> U
                 color = MaterialTheme.colors.onSurface,
                 fontSize = 15.sp
             ),
+            cursorBrush = SolidColor(MaterialTheme.colors.primary),
             value = textFieldValue,
             onValueChange = {
                 textFieldValue = it
