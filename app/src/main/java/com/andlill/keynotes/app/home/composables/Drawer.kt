@@ -9,7 +9,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,21 +19,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.andlill.keynotes.R
 import com.andlill.keynotes.model.Label
+import com.andlill.keynotes.model.NoteFilter
 import com.andlill.keynotes.utils.DialogUtils
 
 @Composable
 fun Drawer(
     labels: List<Label>,
-    onSelectItem: (String) -> Unit,
+    onFilter: (NoteFilter) -> Unit,
     onAddLabel: (Label) -> Unit,
-    onFilterTrash: (Boolean) -> Unit,
-    onFilterLabel: (Label?) -> Unit,
-    onClose: () -> Unit,
-    onEditLabels: () -> Unit
+    onEditLabels: () -> Unit,
+    onClose: () -> Unit
 ) {
     val context = LocalContext.current
-    val titleNotes = remember { context.resources.getString(R.string.drawer_item_notes) }
-    val titleTrash = remember { context.resources.getString(R.string.drawer_item_trash) }
     val selectedId = rememberSaveable { mutableStateOf(-1) }
 
     Column(modifier = Modifier
@@ -52,16 +48,28 @@ fun Drawer(
         )
         Spacer(modifier = Modifier.height(16.dp))
         Column {
-            DrawerItem(selectedId = selectedId.value, id = -1, icon = Icons.Outlined.Home, text = titleNotes, onClick = {
+            DrawerItem(selectedId = selectedId.value, id = -1, icon = Icons.Outlined.Notes, text = stringResource(R.string.drawer_item_notes), onClick = {
                 selectedId.value = -1
-                onSelectItem(titleNotes)
-                onFilterTrash(false)
+                onFilter(NoteFilter(
+                    name = context.resources.getString(R.string.drawer_item_notes),
+                    type = NoteFilter.Type.AllNotes
+                ))
                 onClose()
             })
-            DrawerItem(selectedId = selectedId.value, id = -2, icon = Icons.Outlined.Delete, text = titleTrash, onClick = {
+            DrawerItem(selectedId = selectedId.value, id = -2, icon = Icons.Outlined.Alarm, text = stringResource(R.string.drawer_item_reminders), onClick = {
                 selectedId.value = -2
-                onSelectItem(titleTrash)
-                onFilterTrash(true)
+                onFilter(NoteFilter(
+                    name = context.resources.getString(R.string.drawer_item_reminders),
+                    type = NoteFilter.Type.Reminders
+                ))
+                onClose()
+            })
+            DrawerItem(selectedId = selectedId.value, id = -3, icon = Icons.Outlined.Delete, text = stringResource(R.string.drawer_item_trash), onClick = {
+                selectedId.value = -3
+                onFilter(NoteFilter(
+                    name = context.resources.getString(R.string.drawer_item_trash),
+                    type = NoteFilter.Type.Trash
+                ))
                 onClose()
             })
         }
@@ -122,8 +130,11 @@ fun Drawer(
                     text = label.value,
                     onClick = {
                         selectedId.value = label.id
-                        onSelectItem(label.value)
-                        onFilterLabel(label)
+                        onFilter(NoteFilter(
+                            name = label.value,
+                            type = NoteFilter.Type.Label,
+                            label = label
+                        ))
                         onClose()
                     },
                 )

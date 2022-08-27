@@ -18,7 +18,8 @@
     <string name="date_yesterday">Yesterday</string>
 
     <!-- Drawer -->
-    <string name="drawer_item_notes">Notes</string>
+    <string name="drawer_item_notes">All Notes</string>
+    <string name="drawer_item_reminders">Reminders</string>
     <string name="drawer_item_trash">Trash</string>
     <string name="drawer_item_new_label">New Label</string>
     <string name="drawer_item_edit">Edit</string>

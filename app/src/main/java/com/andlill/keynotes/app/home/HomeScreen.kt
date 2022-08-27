@@ -29,6 +29,7 @@ import com.andlill.keynotes.app.Screen
 import com.andlill.keynotes.app.home.composables.Drawer
 import com.andlill.keynotes.app.home.composables.NoteItem
 import com.andlill.keynotes.app.home.composables.SearchBar
+import com.andlill.keynotes.model.NoteFilter
 import com.andlill.keynotes.ui.shared.button.MenuIconButton
 import com.andlill.keynotes.ui.shared.label.NoteLabel
 import kotlinx.coroutines.launch
@@ -52,27 +53,21 @@ fun HomeScreen(appState: AppState) {
         drawerContent = {
             Drawer(
                 labels = viewModel.labels,
-                onSelectItem = {
-                    viewModel.drawerSelectedItem = it
+                onFilter = {
+                    viewModel.onFilter(it)
                 },
                 onAddLabel = {
                     viewModel.onAddLabel(it)
-                },
-                onFilterTrash = {
-                    viewModel.onFilterTrash(it)
-                },
-                onFilterLabel = {
-                    viewModel.onFilterLabel(it)
-                },
-                onClose = {
-                    scope.launch {
-                        state.drawerState.close()
-                    }
                 },
                 onEditLabels = {
                     appState.navigation.navigate(Screen.LabelScreen.route()) {
                         // To avoid multiple copies of same destination in backstack.
                         launchSingleTop = true
+                    }
+                },
+                onClose = {
+                    scope.launch {
+                        state.drawerState.close()
                     }
                 }
             )
@@ -86,7 +81,7 @@ fun HomeScreen(appState: AppState) {
                     title = {
                         SearchBar(
                             query = viewModel.query,
-                            placeholder = viewModel.drawerSelectedItem,
+                            placeholder = viewModel.filter.name,
                             onValueChange = {
                                 viewModel.onQuery(it)
                         })
@@ -124,35 +119,41 @@ fun HomeScreen(appState: AppState) {
                 // Background hint.
                 Column(modifier = Modifier.align(Alignment.Center), horizontalAlignment = Alignment.CenterHorizontally) {
                     if (viewModel.notes.isEmpty()) {
-                        if (viewModel.filterTrash) {
-                            Icon(
-                                modifier = Modifier.size(64.dp),
-                                imageVector = Icons.Outlined.Delete,
-                                contentDescription = null,
-                                tint = MaterialTheme.colors.onSurface.copy(0.2f)
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(
-                                text = stringResource(R.string.home_screen_status_text_empty_trash),
-                                fontSize = 15.sp,
-                                color = MaterialTheme.colors.onSurface.copy(0.7f)
-                            )
-                        }
-                        viewModel.filterLabel?.let { label ->
-                            NoteLabel(modifier = Modifier.scale(1.4f) ,icon = Icons.Outlined.Label, text = label.value, color = MaterialTheme.colors.onSurface.copy(0.08f))
-                            Spacer(modifier = Modifier.height(16.dp))
-                            Text(
-                                text = stringResource(R.string.home_screen_status_text_empty_label),
-                                fontSize = 15.sp,
-                                color = MaterialTheme.colors.onSurface.copy(0.7f)
-                            )
+                        when(viewModel.filter.type) {
+                            NoteFilter.Type.Trash -> {
+                                Icon(
+                                    modifier = Modifier.size(64.dp),
+                                    imageVector = Icons.Outlined.Delete,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colors.onSurface.copy(0.2f)
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    text = stringResource(R.string.home_screen_status_text_empty_trash),
+                                    fontSize = 15.sp,
+                                    color = MaterialTheme.colors.onSurface.copy(0.7f)
+                                )
+                            }
+                            NoteFilter.Type.Label -> {
+                                viewModel.filter.label?.let { label ->
+                                    NoteLabel(modifier = Modifier.scale(1.4f) ,icon = Icons.Outlined.Label, text = label.value, color = MaterialTheme.colors.onSurface.copy(0.08f))
+                                    Spacer(modifier = Modifier.height(16.dp))
+                                    Text(
+                                        text = stringResource(R.string.home_screen_status_text_empty_label),
+                                        fontSize = 15.sp,
+                                        color = MaterialTheme.colors.onSurface.copy(0.7f)
+                                    )
+                                }
+                            }
+                            else -> {
+                            }
                         }
                     }
                 }
             }
         },
         floatingActionButton = {
-            if (!WindowInsets.isImeVisible && !viewModel.filterTrash) {
+            if (!WindowInsets.isImeVisible && viewModel.filter.type != NoteFilter.Type.Trash) {
                 ExtendedFloatingActionButton(
                     modifier = Modifier
                         .navigationBarsPadding()
@@ -168,7 +169,7 @@ fun HomeScreen(appState: AppState) {
                     contentColor = MaterialTheme.colors.primary,
                     onClick = {
                         viewModel.onCreateNote { noteId ->
-                            viewModel.filterLabel?.let { label ->
+                            viewModel.filter.label?.let { label ->
                                 // Add label to new note if label is selected.
                                 viewModel.onAddNoteLabel(noteId, label.id)
                             }
