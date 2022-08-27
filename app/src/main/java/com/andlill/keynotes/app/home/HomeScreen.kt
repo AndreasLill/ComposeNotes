@@ -121,6 +121,7 @@ fun HomeScreen(appState: AppState) {
                         }
                     }
                 }
+                // Background hint.
                 Column(modifier = Modifier.align(Alignment.Center), horizontalAlignment = Alignment.CenterHorizontally) {
                     if (viewModel.notes.isEmpty()) {
                         if (viewModel.filterTrash) {
@@ -154,7 +155,8 @@ fun HomeScreen(appState: AppState) {
             if (!WindowInsets.isImeVisible && !viewModel.filterTrash) {
                 ExtendedFloatingActionButton(
                     modifier = Modifier
-                        .navigationBarsPadding(),
+                        .navigationBarsPadding()
+                        .height(56.dp),
                     shape = RoundedCornerShape(16.dp),
                     elevation = FloatingActionButtonDefaults.elevation(
                         defaultElevation = 4.dp,
