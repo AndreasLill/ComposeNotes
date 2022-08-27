@@ -15,6 +15,7 @@ import com.andlill.keynotes.model.Note
 import com.andlill.keynotes.utils.TimeUtils.daysBetween
 import com.andlill.keynotes.utils.TimeUtils.toDateString
 import com.andlill.keynotes.utils.TimeUtils.toMilliSeconds
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
@@ -28,6 +29,7 @@ class NoteViewModel(private val application: Application, private val noteId: In
 
     private var note = Note()
     private var deleteOnClose = false
+    private var undoLock = false
 
     var id by mutableStateOf(noteId)
         private set
@@ -131,7 +133,16 @@ class NoteViewModel(private val application: Application, private val noteId: In
     fun onChangeBody(value: TextFieldValue) {
         if (bodyText.text != value.text) {
             // Add to undo list if text was changed.
-            undoList = undoList.plus(bodyText)
+            if (!undoLock) {
+                // Lock the undo for a short time to prevent saving too much undo data.
+                undoLock = true
+                undoList = undoList.plus(bodyText)
+                // Unlock undo after a small delay.
+                viewModelScope.launch {
+                    delay(750)
+                    undoLock = false
+                }
+            }
         }
         bodyText = value
     }
