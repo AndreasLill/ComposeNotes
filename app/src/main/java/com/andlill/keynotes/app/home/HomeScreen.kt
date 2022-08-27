@@ -24,8 +24,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.andlill.keynotes.R
-import com.andlill.keynotes.app.Screen
 import com.andlill.keynotes.app.AppState
+import com.andlill.keynotes.app.Screen
 import com.andlill.keynotes.app.home.composables.Drawer
 import com.andlill.keynotes.app.home.composables.NoteItem
 import com.andlill.keynotes.app.home.composables.SearchBar
@@ -48,7 +48,6 @@ fun HomeScreen(appState: AppState) {
 
     Scaffold(
         scaffoldState = state,
-        snackbarHost = { state.snackbarHostState },
         drawerScrimColor = Color.Black.copy(0.32f),
         drawerContent = {
             Drawer(
@@ -153,10 +152,9 @@ fun HomeScreen(appState: AppState) {
         },
         floatingActionButton = {
             if (!WindowInsets.isImeVisible && !viewModel.filterTrash) {
-                FloatingActionButton(
+                ExtendedFloatingActionButton(
                     modifier = Modifier
-                        .navigationBarsPadding()
-                        .size(56.dp),
+                        .navigationBarsPadding(),
                     shape = RoundedCornerShape(16.dp),
                     elevation = FloatingActionButtonDefaults.elevation(
                         defaultElevation = 4.dp,
@@ -178,8 +176,18 @@ fun HomeScreen(appState: AppState) {
                             }
                         }
                     },
-                    content = {
-                        Icon(modifier = Modifier.size(28.dp), imageVector = Icons.Outlined.Add, contentDescription = null)
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Outlined.Add,
+                            contentDescription = null
+                        )
+                    },
+                    text = {
+                        Text(
+                            text = stringResource(R.string.home_Screen_button_add_note),
+                            fontSize = 15.sp,
+                            letterSpacing = 0.sp
+                        )
                     }
                 )
             }
