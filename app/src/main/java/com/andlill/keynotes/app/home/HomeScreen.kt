@@ -10,6 +10,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.Alarm
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Label
 import androidx.compose.runtime.Composable
@@ -120,6 +121,20 @@ fun HomeScreen(appState: AppState) {
                 Column(modifier = Modifier.align(Alignment.Center), horizontalAlignment = Alignment.CenterHorizontally) {
                     if (viewModel.notes.isEmpty()) {
                         when(viewModel.filter.type) {
+                            NoteFilter.Type.Reminders -> {
+                                Icon(
+                                    modifier = Modifier.size(64.dp),
+                                    imageVector = Icons.Outlined.Alarm,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colors.onSurface.copy(0.2f)
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    text = stringResource(R.string.home_screen_status_text_empty_reminders),
+                                    fontSize = 15.sp,
+                                    color = MaterialTheme.colors.onSurface.copy(0.7f)
+                                )
+                            }
                             NoteFilter.Type.Trash -> {
                                 Icon(
                                     modifier = Modifier.size(64.dp),

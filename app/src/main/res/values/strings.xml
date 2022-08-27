@@ -34,7 +34,8 @@
     <string name="home_screen_note_text_deletion_today">Deletion today</string>
     <string name="home_screen_note_text_deletion_tomorrow">Deletion tomorrow</string>
     <string name="home_screen_note_text_deletion_days">Deletion in %s days</string>
-    <string name="home_screen_status_text_empty_trash">Trash is empty</string>
+    <string name="home_screen_status_text_empty_reminders">There are no set reminders</string>
+    <string name="home_screen_status_text_empty_trash">There are no notes in trash</string>
     <string name="home_screen_status_text_empty_label">There are no notes with this label</string>
 
     <!-- Note Screen -->
