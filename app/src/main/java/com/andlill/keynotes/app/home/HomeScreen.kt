@@ -33,7 +33,6 @@ import com.andlill.keynotes.app.home.composables.SearchBar
 import com.andlill.keynotes.model.NoteFilter
 import com.andlill.keynotes.ui.shared.button.MenuIconButton
 import com.andlill.keynotes.ui.shared.label.NoteLabel
-import com.andlill.keynotes.ui.shared.modifier.OrientationPadding
 import com.andlill.keynotes.ui.shared.modifier.orientationModifiers
 import kotlinx.coroutines.launch
 
@@ -107,18 +106,13 @@ fun HomeScreen(appState: AppState) {
         content = { innerPadding ->
             Box(modifier = Modifier
                 .padding(innerPadding)
-                .orientationModifiers(
-                    landscape = Modifier.navigationBarsPadding()
-                )
+                .navigationBarsPadding()
                 .imePadding()
                 .fillMaxSize())  {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
-                    contentPadding = OrientationPadding(
-                        portrait = PaddingValues(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 56.dp),
-                        landscape = PaddingValues(8.dp)
-                    )) {
+                    contentPadding = PaddingValues(8.dp)) {
                     items(items = viewModel.notes, key = { it.note.id }) { note ->
                         NoteItem(note) {
                             appState.navigation.navigate(Screen.NoteScreen.route(noteId = note.note.id)) {
