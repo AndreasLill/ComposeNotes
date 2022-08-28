@@ -33,6 +33,8 @@ import com.andlill.keynotes.app.home.composables.SearchBar
 import com.andlill.keynotes.model.NoteFilter
 import com.andlill.keynotes.ui.shared.button.MenuIconButton
 import com.andlill.keynotes.ui.shared.label.NoteLabel
+import com.andlill.keynotes.ui.shared.modifier.OrientationPadding
+import com.andlill.keynotes.ui.shared.modifier.orientationModifiers
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -74,40 +76,49 @@ fun HomeScreen(appState: AppState) {
             )
         },
         topBar = {
-            Column {
-                Spacer(modifier = Modifier.statusBarsPadding())
-                TopAppBar(
-                    backgroundColor = MaterialTheme.colors.surface,
-                    elevation = 0.dp,
-                    title = {
-                        SearchBar(
-                            query = viewModel.query,
-                            placeholder = viewModel.filter.name,
-                            onValueChange = {
-                                viewModel.onQuery(it)
-                        })
-                    },
-                    navigationIcon = {
-                        MenuIconButton(icon = Icons.Filled.Menu, color = MaterialTheme.colors.onSurface) {
-                            scope.launch {
-                                state.drawerState.open()
-                            }
+            TopAppBar(
+                modifier = Modifier.orientationModifiers(
+                    portrait = Modifier.statusBarsPadding(),
+                    landscape = Modifier
+                        .statusBarsPadding()
+                        .navigationBarsPadding()
+                ),
+                backgroundColor = MaterialTheme.colors.surface,
+                elevation = 0.dp,
+                title = {
+                    SearchBar(
+                        query = viewModel.query,
+                        placeholder = viewModel.filter.name,
+                        onValueChange = {
+                            viewModel.onQuery(it)
+                    })
+                },
+                navigationIcon = {
+                    MenuIconButton(icon = Icons.Filled.Menu, color = MaterialTheme.colors.onSurface) {
+                        scope.launch {
+                            state.drawerState.open()
                         }
-                    },
-                    actions = {
                     }
-                )
-            }
+                },
+                actions = {
+                }
+            )
         },
         content = { innerPadding ->
             Box(modifier = Modifier
                 .padding(innerPadding)
+                .orientationModifiers(
+                    landscape = Modifier.navigationBarsPadding()
+                )
                 .imePadding()
                 .fillMaxSize())  {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
-                    contentPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 56.dp)) {
+                    contentPadding = OrientationPadding(
+                        portrait = PaddingValues(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 56.dp),
+                        landscape = PaddingValues(8.dp)
+                    )) {
                     items(items = viewModel.notes, key = { it.note.id }) { note ->
                         NoteItem(note) {
                             appState.navigation.navigate(Screen.NoteScreen.route(noteId = note.note.id)) {

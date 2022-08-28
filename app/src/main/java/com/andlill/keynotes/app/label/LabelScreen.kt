@@ -21,6 +21,7 @@ import com.andlill.keynotes.app.label.composables.EditLabel
 import com.andlill.keynotes.app.label.composables.SelectLabel
 import com.andlill.keynotes.model.Label
 import com.andlill.keynotes.ui.shared.button.MenuIconButton
+import com.andlill.keynotes.ui.shared.modifier.orientationModifiers
 import com.andlill.keynotes.utils.DialogUtils
 
 @Composable
@@ -32,7 +33,11 @@ fun LabelScreen(appState: AppState, noteId: Int?) {
         scaffoldState = rememberScaffoldState(),
         topBar = {
             TopAppBar(
-                modifier = Modifier.statusBarsPadding(),
+                modifier = Modifier
+                    .orientationModifiers(
+                        portrait = Modifier.statusBarsPadding(),
+                        landscape = Modifier.statusBarsPadding().navigationBarsPadding()
+                    ),
                 backgroundColor = MaterialTheme.colors.surface,
                 elevation = 0.dp,
                 navigationIcon = {
@@ -58,8 +63,8 @@ fun LabelScreen(appState: AppState, noteId: Int?) {
             Surface(
                 modifier = Modifier
                     .padding(innerPadding)
-                    .imePadding()
-                    .navigationBarsPadding(),
+                    .navigationBarsPadding()
+                    .imePadding(),
                 color = MaterialTheme.colors.surface,
                 content = {
                     Column {

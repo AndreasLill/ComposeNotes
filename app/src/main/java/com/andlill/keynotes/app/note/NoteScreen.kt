@@ -33,6 +33,7 @@ import com.andlill.keynotes.app.Screen
 import com.andlill.keynotes.app.AppState
 import com.andlill.keynotes.app.note.composables.*
 import com.andlill.keynotes.ui.shared.button.MenuIconButton
+import com.andlill.keynotes.ui.shared.modifier.orientationModifiers
 import com.andlill.keynotes.ui.shared.util.LifecycleEventHandler
 import com.andlill.keynotes.ui.theme.DarkNoteColors
 import com.andlill.keynotes.ui.theme.LightNoteColors
@@ -74,7 +75,10 @@ fun NoteScreen(appState: AppState, noteId: Int) {
         backgroundColor = noteColor,
         topBar = {
             Column(modifier = Modifier
-                .statusBarsPadding()
+                .orientationModifiers(
+                    portrait = Modifier.statusBarsPadding(),
+                    landscape = Modifier.statusBarsPadding().navigationBarsPadding()
+                )
                 .fillMaxWidth()) {
                 TopAppBar(
                     backgroundColor = Color.Transparent,
