@@ -1,7 +1,7 @@
 package com.andlill.keynotes.app.label.composables
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Label
 import androidx.compose.runtime.Composable
@@ -11,7 +11,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SelectLabel(text: String, checked: Boolean, onClick: () -> Unit) {
     Surface(
@@ -30,7 +30,7 @@ fun SelectLabel(text: String, checked: Boolean, onClick: () -> Unit) {
                     Icon(
                         imageVector = Icons.Outlined.Label,
                         contentDescription = null,
-                        tint = MaterialTheme.colors.onSurface
+                        tint = MaterialTheme.colorScheme.onSurface
                     )
                 }
             )
@@ -42,14 +42,14 @@ fun SelectLabel(text: String, checked: Boolean, onClick: () -> Unit) {
                 textAlign = TextAlign.Start,
                 text = text,
                 fontSize = 15.sp,
-                color = MaterialTheme.colors.onSurface
+                color = MaterialTheme.colorScheme.onSurface
             )
             Checkbox(
                 modifier = Modifier
                     .align(Alignment.CenterEnd)
-                    .padding(end = 4.dp),
+                    .padding(end = 8.dp),
                 colors = CheckboxDefaults.colors(
-                    uncheckedColor = MaterialTheme.colors.onSurface
+                    uncheckedColor = MaterialTheme.colorScheme.onSurface
                 ),
                 checked = checked,
                 onCheckedChange = {

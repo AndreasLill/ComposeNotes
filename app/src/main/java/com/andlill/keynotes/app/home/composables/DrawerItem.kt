@@ -2,7 +2,7 @@ package com.andlill.keynotes.app.home.composables
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -11,13 +11,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DrawerItem(selectedId: Int, id: Int, icon: ImageVector, text: String, onClick: () -> Unit) {
 
     // Color depends on if this item is selected or not.
-    val backgroundColor = if (selectedId == id) MaterialTheme.colors.primary.copy(0.1f) else Color.Transparent
-    val contentColor = if (selectedId == id) MaterialTheme.colors.primary else MaterialTheme.colors.onSurface
+    val backgroundColor = if (selectedId == id) MaterialTheme.colorScheme.primary.copy(0.1f) else Color.Transparent
+    val contentColor = if (selectedId == id) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
 
     Surface(modifier = Modifier
         .fillMaxWidth()

@@ -1,11 +1,11 @@
 package com.andlill.keynotes.ui.theme
 
+import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.darkColors
-import androidx.compose.material.lightColors
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import com.andlill.keynotes.R
 
@@ -62,33 +62,21 @@ private fun setDarkNoteColors(defaultColor: Color) {
 
 @Composable
 fun AppTheme(content: @Composable () -> Unit) {
+    val isDynamicColorScheme = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+    val isDarkTheme = isSystemInDarkTheme()
 
-    // Theme colors.
-    val light = lightColors(
-        primary = colorResource(R.color.light_primary),
-        onPrimary = colorResource(R.color.light_on_primary),
-        background = colorResource(R.color.light_surface),
-        onBackground = colorResource(R.color.light_on_surface),
-        surface = colorResource(R.color.light_surface),
-        onSurface = colorResource(R.color.light_on_surface),
-    )
-    val dark = darkColors(
-        primary = colorResource(R.color.dark_primary),
-        onPrimary = colorResource(R.color.dark_on_primary),
-        background = colorResource(R.color.dark_surface),
-        onBackground = colorResource(R.color.dark_on_surface),
-        surface = colorResource(R.color.dark_surface),
-        onSurface = colorResource(R.color.dark_on_surface),
-    )
-
-    // Note colors.
     setLightNoteColors(colorResource(R.color.light_surface))
     setDarkNoteColors(colorResource(R.color.dark_surface))
 
     MaterialTheme(
-        colors = if (isSystemInDarkTheme()) dark else light,
-        typography = Typography,
-        shapes = Shapes,
+        colorScheme = when {
+            isDynamicColorScheme && isDarkTheme -> dynamicDarkColorScheme(LocalContext.current)
+            isDynamicColorScheme && !isDarkTheme -> dynamicLightColorScheme(LocalContext.current)
+            isDarkTheme -> darkColorScheme()
+            else -> lightColorScheme()
+        },
+        typography = AppTypography,
+        shapes = Shapes(),
         content = content
     )
 }

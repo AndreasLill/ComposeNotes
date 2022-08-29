@@ -3,7 +3,7 @@ package com.andlill.keynotes.app.note.composables
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.runtime.Composable
@@ -24,7 +24,7 @@ fun ThemeDropDown(state: MutableState<Boolean>, selectedColor: Int, onClick: (In
     DropdownMenu(
         expanded = state.value,
         modifier = Modifier
-            .background(MaterialTheme.colors.surface)
+            .background(MaterialTheme.colorScheme.surface)
             .fillMaxWidth(),
         onDismissRequest = { state.value = false }) {
         Column(modifier = Modifier.padding(PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp))) {
@@ -66,11 +66,11 @@ fun ColorSelectButton(color: Color, icon: ImageVector? = null, selected: Boolean
         modifier = Modifier.size(32.dp),
         contentPadding = PaddingValues(0.dp),
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = color,
+            containerColor = color,
         ),
         border = BorderStroke(
             width = if (selected) 2.dp else 1.dp,
-            color = if (selected) MaterialTheme.colors.primary.copy(0.6f) else MaterialTheme.colors.onSurface.copy(0.1f)
+            color = if (selected) MaterialTheme.colorScheme.primary.copy(0.6f) else MaterialTheme.colorScheme.onSurface.copy(0.1f)
         ),
         shape = CircleShape,
         onClick = { onClick() },
@@ -80,7 +80,7 @@ fun ColorSelectButton(color: Color, icon: ImageVector? = null, selected: Boolean
                 modifier = Modifier.size(16.dp),
                 imageVector = icon,
                 contentDescription = null,
-                tint = MaterialTheme.colors.onSurface.copy(0.6f))
+                tint = MaterialTheme.colorScheme.onSurface.copy(0.6f))
         }
     }
 }

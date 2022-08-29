@@ -2,10 +2,7 @@ package com.andlill.keynotes.ui.shared.label
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,8 +23,8 @@ fun NoteLabel(modifier: Modifier = Modifier, icon: ImageVector, text: String, co
             Icon(
                 modifier = Modifier.align(Alignment.CenterVertically).size(16.dp),
                 imageVector = icon,
-                tint = MaterialTheme.colors.onSurface,
-                contentDescription = "Label"
+                tint = MaterialTheme.colorScheme.onSurface,
+                contentDescription = null
             )
             Spacer(modifier = Modifier.width(4.dp))
             Text(
@@ -36,7 +33,7 @@ fun NoteLabel(modifier: Modifier = Modifier, icon: ImageVector, text: String, co
                 fontSize = 11.sp,
                 fontWeight = FontWeight.SemiBold,
                 letterSpacing = 0.sp,
-                color = MaterialTheme.colors.onSurface
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
     }

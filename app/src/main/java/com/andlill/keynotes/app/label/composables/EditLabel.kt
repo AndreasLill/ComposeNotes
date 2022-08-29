@@ -4,18 +4,17 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Label
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -32,7 +31,6 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.andlill.keynotes.R
-import com.andlill.keynotes.ui.shared.modifier.focusIndicatorLine
 import com.andlill.keynotes.ui.shared.util.clearFocusOnKeyboardDismiss
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -49,7 +47,7 @@ fun EditLabel(initialText: String, onUpdate: (String) -> Unit, onDelete: () -> U
     Box(modifier = Modifier
         .fillMaxWidth()
         .height(56.dp)
-        .background(color = if (isFocused.value) MaterialTheme.colors.primary.copy(0.1f) else Color.Transparent)) {
+        .background(color = if (isFocused.value) MaterialTheme.colorScheme.primary.copy(0.1f) else Color.Transparent)) {
         IconButton(
             modifier = Modifier
                 .align(Alignment.CenterStart)
@@ -60,7 +58,7 @@ fun EditLabel(initialText: String, onUpdate: (String) -> Unit, onDelete: () -> U
                 Icon(
                     imageVector = Icons.Outlined.Label,
                     contentDescription = null,
-                    tint = MaterialTheme.colors.onSurface
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
             }
         )
@@ -90,10 +88,10 @@ fun EditLabel(initialText: String, onUpdate: (String) -> Unit, onDelete: () -> U
                 }
             ),
             textStyle = TextStyle(
-                color = MaterialTheme.colors.onSurface,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 15.sp
             ),
-            cursorBrush = SolidColor(MaterialTheme.colors.primary),
+            cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
             value = textFieldValue,
             onValueChange = {
                 textFieldValue = it
@@ -107,7 +105,7 @@ fun EditLabel(initialText: String, onUpdate: (String) -> Unit, onDelete: () -> U
                         Text(
                             text = stringResource(R.string.label_screen_edit_label_placeholder),
                             fontSize = 15.sp,
-                            color = MaterialTheme.colors.onSurface.copy(0.6f)
+                            color = MaterialTheme.colorScheme.onSurface.copy(0.6f)
                         )
                     }
                     innerTextField()
@@ -117,7 +115,7 @@ fun EditLabel(initialText: String, onUpdate: (String) -> Unit, onDelete: () -> U
         IconButton(
             modifier = Modifier
                 .align(Alignment.CenterEnd)
-                .padding(end = 4.dp),
+                .padding(end = 8.dp),
             onClick = {
                 when (isFocused.value) {
                     true -> {
@@ -136,7 +134,7 @@ fun EditLabel(initialText: String, onUpdate: (String) -> Unit, onDelete: () -> U
                 Icon(
                     imageVector = if (isFocused.value) Icons.Outlined.Check else Icons.Outlined.Delete,
                     contentDescription = null,
-                    tint = if (isFocused.value) MaterialTheme.colors.primary else MaterialTheme.colors.onSurface
+                    tint = if (isFocused.value) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                 )
             }
         )

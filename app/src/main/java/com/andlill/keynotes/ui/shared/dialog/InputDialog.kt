@@ -6,15 +6,15 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -28,13 +28,13 @@ import com.andlill.keynotes.ui.shared.text.DialogTitle
 import com.andlill.keynotes.ui.shared.util.clearFocusOnKeyboardDismiss
 import kotlinx.coroutines.delay
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InputDialog(state: Boolean, title: String, placeholder: String, onDismiss: () -> Unit, onConfirm: (String) -> Unit) {
     var textFieldValue by remember { mutableStateOf(TextFieldValue("")) }
     val focusRequester = remember { FocusRequester() }
 
     if (state) {
-
         LaunchedEffect(Unit) {
             // Keyboard doesn't show unless there is a delay. Jetpack Compose bug?
             delay(100)
@@ -63,7 +63,7 @@ fun InputDialog(state: Boolean, title: String, placeholder: String, onDismiss: (
                     modifier = Modifier
                         // Important to align dialog above keyboard.
                         .align(Alignment.Center)
-                        .background(MaterialTheme.colors.surface)
+                        .background(MaterialTheme.colorScheme.surface)
                         .padding(16.dp)
                 ) {
                     DialogTitle(text = title)
@@ -78,7 +78,8 @@ fun InputDialog(state: Boolean, title: String, placeholder: String, onDismiss: (
                         placeholder = {
                             Text(
                                 text = placeholder,
-                                fontSize = 15.sp
+                                fontSize = 15.sp,
+                                color = MaterialTheme.colorScheme.onSurface.copy(0.6f)
                             )
                         },
                         keyboardOptions = KeyboardOptions(
@@ -100,8 +101,8 @@ fun InputDialog(state: Boolean, title: String, placeholder: String, onDismiss: (
                         Row(modifier = Modifier.align(Alignment.CenterEnd)) {
                             DialogButton(
                                 text = stringResource(R.string.button_cancel),
-                                backgroundColor = Color.Transparent,
-                                textColor = MaterialTheme.colors.primary,
+                                backgroundColor = MaterialTheme.colorScheme.surface,
+                                textColor = MaterialTheme.colorScheme.primary,
                                 onClick = {
                                     onDismiss()
                                     textFieldValue = textFieldValue.copy(text = "")
@@ -110,8 +111,8 @@ fun InputDialog(state: Boolean, title: String, placeholder: String, onDismiss: (
                             Spacer(modifier = Modifier.width(8.dp))
                             DialogButton(
                                 text = stringResource(R.string.button_ok),
-                                backgroundColor = MaterialTheme.colors.primary,
-                                textColor = MaterialTheme.colors.onPrimary,
+                                backgroundColor = MaterialTheme.colorScheme.primary,
+                                textColor = MaterialTheme.colorScheme.onPrimary,
                                 onClick = {
                                     onConfirm(textFieldValue.text)
                                     textFieldValue = textFieldValue.copy(text = "")

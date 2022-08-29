@@ -5,10 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.outlined.Close
@@ -32,6 +29,7 @@ import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import java.util.*
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReminderDialog(state: MutableState<Boolean>, reminderTime: Long?, onClick: (Calendar?) -> Unit) {
     if (state.value) {
@@ -78,7 +76,7 @@ fun ReminderDialog(state: MutableState<Boolean>, reminderTime: Long?, onClick: (
         Dialog(
             onDismissRequest = { state.value = false }) {
             Column(modifier = Modifier
-                .background(MaterialTheme.colors.surface)
+                .background(MaterialTheme.colorScheme.surface)
                 .padding(16.dp)) {
                 DialogTitle(text = stringResource(R.string.note_screen_dialog_reminder_title))
                 Spacer(modifier = Modifier.height(16.dp))
@@ -95,9 +93,9 @@ fun ReminderDialog(state: MutableState<Boolean>, reminderTime: Long?, onClick: (
                     singleLine = true,
                     shape = RectangleShape,
                     colors = TextFieldDefaults.outlinedTextFieldColors(
-                        backgroundColor = MaterialTheme.colors.surface,
-                        disabledTextColor = MaterialTheme.colors.onSurface,
-                        disabledTrailingIconColor = MaterialTheme.colors.onSurface,
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        disabledTextColor = MaterialTheme.colorScheme.onSurface,
+                        disabledTrailingIconColor = MaterialTheme.colorScheme.onSurface,
                     ),
                     textStyle = TextStyle(fontSize = 15.sp),
                     trailingIcon = { Icon(Icons.Filled.ArrowDropDown, null) },
@@ -117,9 +115,9 @@ fun ReminderDialog(state: MutableState<Boolean>, reminderTime: Long?, onClick: (
                     singleLine = true,
                     shape = RectangleShape,
                     colors = TextFieldDefaults.outlinedTextFieldColors(
-                        backgroundColor = MaterialTheme.colors.surface,
-                        disabledTextColor = MaterialTheme.colors.onSurface,
-                        disabledTrailingIconColor = MaterialTheme.colors.onSurface,
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        disabledTextColor = MaterialTheme.colorScheme.onSurface,
+                        disabledTrailingIconColor = MaterialTheme.colorScheme.onSurface,
                     ),
                     textStyle = TextStyle(fontSize = 15.sp),
                     trailingIcon = { Icon(Icons.Filled.ArrowDropDown, null) },
@@ -134,7 +132,7 @@ fun ReminderDialog(state: MutableState<Boolean>, reminderTime: Long?, onClick: (
                                 text = stringResource(R.string.button_cancel),
                                 icon = Icons.Outlined.Close,
                                 backgroundColor = Color.Transparent,
-                                textColor = MaterialTheme.colors.error,
+                                textColor = MaterialTheme.colorScheme.error,
                                 onClick = {
                                     onClick(null)
                                     state.value = false
@@ -144,8 +142,8 @@ fun ReminderDialog(state: MutableState<Boolean>, reminderTime: Long?, onClick: (
                         }
                         DialogButton(
                             text = if (reminderTime != null) stringResource(R.string.button_save) else stringResource(R.string.button_create),
-                            backgroundColor = MaterialTheme.colors.primary,
-                            textColor = MaterialTheme.colors.onPrimary,
+                            backgroundColor = MaterialTheme.colorScheme.primary,
+                            textColor = MaterialTheme.colorScheme.onPrimary,
                             onClick = {
                                 onClick(calendar)
                                 state.value = false

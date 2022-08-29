@@ -1,18 +1,19 @@
 package com.andlill.keynotes.app.label
 
 import android.app.Application
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.andlill.keynotes.R
 import com.andlill.keynotes.app.AppState
@@ -21,29 +22,21 @@ import com.andlill.keynotes.app.label.composables.EditLabel
 import com.andlill.keynotes.app.label.composables.SelectLabel
 import com.andlill.keynotes.model.Label
 import com.andlill.keynotes.ui.shared.button.MenuIconButton
-import com.andlill.keynotes.ui.shared.modifier.orientationModifiers
 import com.andlill.keynotes.utils.DialogUtils
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LabelScreen(appState: AppState, noteId: Int?) {
     val viewModel: LabelViewModel = viewModel(factory = LabelViewModel.Factory(LocalContext.current.applicationContext as Application, noteId))
     val context = LocalContext.current
 
     Scaffold(
-        scaffoldState = rememberScaffoldState(),
         topBar = {
-            TopAppBar(
-                modifier = Modifier
-                    .orientationModifiers(
-                        portrait = Modifier.statusBarsPadding(),
-                        landscape = Modifier.statusBarsPadding().navigationBarsPadding()
-                    ),
-                backgroundColor = MaterialTheme.colors.surface,
-                elevation = 0.dp,
+            SmallTopAppBar(
                 navigationIcon = {
                     MenuIconButton(
                         icon = Icons.Outlined.ArrowBack,
-                        color = MaterialTheme.colors.onSurface,
+                        color = MaterialTheme.colorScheme.onSurface,
                         onClick = {
                             appState.navigation.navigateUp()
                         }
@@ -61,11 +54,8 @@ fun LabelScreen(appState: AppState, noteId: Int?) {
         },
         content = { innerPadding ->
             Surface(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .navigationBarsPadding()
-                    .imePadding(),
-                color = MaterialTheme.colors.surface,
+                modifier = Modifier.padding(innerPadding),
+                color = MaterialTheme.colorScheme.surface,
                 content = {
                     Column {
                         Divider()

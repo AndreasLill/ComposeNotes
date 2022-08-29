@@ -6,10 +6,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
@@ -34,7 +31,7 @@ fun SearchBar(query: String, placeholder: String, onValueChange: (String) -> Uni
             .clearFocusOnKeyboardDismiss()
             .padding(end = 4.dp)
             .background(
-                color = MaterialTheme.colors.onSurface.copy(0.1f),
+                color = MaterialTheme.colorScheme.onSurface.copy(0.1f),
                 shape = RoundedCornerShape(32.dp)
             )
             .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp)
@@ -44,10 +41,10 @@ fun SearchBar(query: String, placeholder: String, onValueChange: (String) -> Uni
         onValueChange = onValueChange,
         maxLines = 1,
         singleLine = true,
-        cursorBrush = SolidColor(MaterialTheme.colors.primary),
+        cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
         textStyle = TextStyle(
             fontSize = 16.sp,
-            color = MaterialTheme.colors.onSurface
+            color = MaterialTheme.colorScheme.onSurface
         ),
         keyboardOptions = KeyboardOptions(
             imeAction = ImeAction.Done
@@ -66,7 +63,7 @@ fun SearchBar(query: String, placeholder: String, onValueChange: (String) -> Uni
                         text = String.format(stringResource(R.string.home_screen_placeholder_search), placeholder),
                         style = TextStyle(
                             fontSize = 14.sp,
-                            color = MaterialTheme.colors.onSurface.copy(0.6f)
+                            color = MaterialTheme.colorScheme.onSurface.copy(0.6f)
                         )
                     )
                     Icon(
@@ -75,7 +72,7 @@ fun SearchBar(query: String, placeholder: String, onValueChange: (String) -> Uni
                             .align(Alignment.CenterEnd),
                         imageVector = Icons.Filled.Search,
                         contentDescription = null,
-                        tint = MaterialTheme.colors.onSurface.copy(0.6f)
+                        tint = MaterialTheme.colorScheme.onSurface.copy(0.6f)
                     )
                 }
                 if (query.isNotEmpty()) {
@@ -90,7 +87,7 @@ fun SearchBar(query: String, placeholder: String, onValueChange: (String) -> Uni
                         Icon(
                             imageVector = Icons.Filled.Clear,
                             contentDescription = null,
-                            tint = MaterialTheme.colors.onSurface
+                            tint = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 }

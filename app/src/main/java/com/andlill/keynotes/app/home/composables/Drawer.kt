@@ -1,12 +1,11 @@
 package com.andlill.keynotes.app.home.composables
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -34,17 +33,16 @@ fun Drawer(
     val selectedId = rememberSaveable { mutableStateOf(-1) }
 
     Column(modifier = Modifier
-        .background(MaterialTheme.colors.surface)
         .statusBarsPadding()
         .navigationBarsPadding()
-        .fillMaxSize()) {
+        .fillMaxHeight()) {
         Spacer(modifier = Modifier.height(16.dp))
         Text(
             modifier = Modifier.padding(start = 16.dp),
             text = stringResource(R.string.app_name),
             fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colors.onSurface
+            color = MaterialTheme.colorScheme.onSurface
         )
         Spacer(modifier = Modifier.height(16.dp))
         Column {
@@ -89,17 +87,15 @@ fun Drawer(
                     )
                 }) {
                 Icon(
-                    modifier = Modifier.size(16.dp),
+                    modifier = Modifier.size(18.dp),
                     imageVector = Icons.Outlined.Add,
                     contentDescription = null,
-                    tint = MaterialTheme.colors.primary
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = stringResource(R.string.drawer_item_new_label).uppercase(),
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colors.primary
+                    text = stringResource(R.string.drawer_item_new_label),
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.SemiBold,
                 )
             }
             TextButton(
@@ -107,17 +103,15 @@ fun Drawer(
                 onClick = onEditLabels
             ) {
                 Icon(
-                    modifier = Modifier.size(16.dp),
+                    modifier = Modifier.size(18.dp),
                     imageVector = Icons.Outlined.Edit,
                     contentDescription = null,
-                    tint = MaterialTheme.colors.primary
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = stringResource(R.string.drawer_item_edit).uppercase(),
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colors.primary
+                    text = stringResource(R.string.drawer_item_edit),
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.SemiBold,
                 )
             }
         }

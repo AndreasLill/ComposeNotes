@@ -5,8 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
@@ -33,11 +32,11 @@ fun NoteTitleTextField(placeholder: String, state: TextFieldValue, readOnly: Boo
         value = state,
         onValueChange = onValueChange,
         singleLine = true,
-        cursorBrush = SolidColor(MaterialTheme.colors.primary),
+        cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
         textStyle = TextStyle(
             fontSize = 16.sp,
             fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colors.onSurface,
+            color = MaterialTheme.colorScheme.onSurface,
         ),
         keyboardOptions = KeyboardOptions(
             capitalization = KeyboardCapitalization.Sentences,
@@ -54,7 +53,7 @@ fun NoteTitleTextField(placeholder: String, state: TextFieldValue, readOnly: Boo
                     text = placeholder,
                     style = TextStyle(
                         fontSize = 16.sp,
-                        color = MaterialTheme.colors.onSurface.copy(0.6f)
+                        color = MaterialTheme.colorScheme.onSurface.copy(0.6f)
                     )
                 )
             }

@@ -1,5 +1,6 @@
 package com.andlill.keynotes.app
 
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.job.JobInfo
@@ -12,19 +13,20 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Scaffold
-import androidx.compose.ui.Alignment
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import com.andlill.keynotes.R
-import com.andlill.keynotes.ui.shared.AppSnackbar
 import com.andlill.keynotes.ui.shared.dialog.ConfirmDialog
 import com.andlill.keynotes.ui.shared.dialog.InputDialog
 import com.andlill.keynotes.ui.theme.AppTheme
 import com.andlill.keynotes.utils.DialogUtils
 
 class MainActivity : AppCompatActivity() {
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -38,16 +40,15 @@ class MainActivity : AppCompatActivity() {
             AppTheme {
                 val appState = rememberAppState()
                 Scaffold(
-                    scaffoldState = appState.scaffold,
-                    snackbarHost = { appState.scaffold.snackbarHostState },
-                    content = { innerPadding ->
-                        Box(modifier = Modifier
-                            .padding(innerPadding)
-                            .fillMaxSize()) {
+                    snackbarHost = {
+                        SnackbarHost(
+                            modifier = Modifier.navigationBarsPadding(),
+                            hostState = appState.snackbarHostState
+                        )
+                    },
+                    content = {
+                        Box(modifier = Modifier.fillMaxSize()) {
                             Navigation(appState)
-                            AppSnackbar(state = appState.scaffold.snackbarHostState, modifier = Modifier
-                                .navigationBarsPadding()
-                                .align(Alignment.BottomCenter))
                             ConfirmDialog(
                                 state = DialogUtils.confirmDialogState,
                                 body = DialogUtils.confirmDialogBody,

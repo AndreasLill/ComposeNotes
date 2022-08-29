@@ -8,10 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.runtime.*
@@ -58,10 +55,10 @@ fun CreateLabel(onCreate: (String) -> Unit) {
                 }
             ),
             textStyle = TextStyle(
-                color = MaterialTheme.colors.onSurface,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 15.sp
             ),
-            cursorBrush = SolidColor(MaterialTheme.colors.primary),
+            cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
             value = textFieldValue,
             onValueChange = {
                 textFieldValue = it
@@ -76,7 +73,7 @@ fun CreateLabel(onCreate: (String) -> Unit) {
                             text = stringResource(R.string.label_screen_create_label_placeholder),
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Normal,
-                            color = MaterialTheme.colors.onSurface.copy(0.6f)
+                            color = MaterialTheme.colorScheme.onSurface.copy(0.6f)
                         )
                     }
                     innerTextField()
@@ -94,7 +91,7 @@ fun CreateLabel(onCreate: (String) -> Unit) {
                     Icon(
                         imageVector = Icons.Outlined.Add,
                         contentDescription = null,
-                        tint = MaterialTheme.colors.primary
+                        tint = MaterialTheme.colorScheme.primary
                     )
                 }
             )
