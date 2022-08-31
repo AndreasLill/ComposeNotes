@@ -3,24 +3,24 @@ package com.andlill.keynotes.app.note.composables
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.andlill.keynotes.R
 import com.andlill.keynotes.ui.shared.text.DialogTitle
-import com.andlill.keynotes.ui.theme.DarkNoteColors
-import com.andlill.keynotes.ui.theme.LightNoteColors
+import com.andlill.keynotes.ui.theme.NoteColors
+import com.andlill.keynotes.utils.ColorUtils.darken
 
 @Composable
 fun ThemeDropDown(state: MutableState<Boolean>, selectedColor: Int, onClick: (Int) -> Unit) {
-    val colorList = if (isSystemInDarkTheme()) DarkNoteColors else LightNoteColors
     DropdownMenu(
         expanded = state.value,
         modifier = Modifier
@@ -31,27 +31,33 @@ fun ThemeDropDown(state: MutableState<Boolean>, selectedColor: Int, onClick: (In
             DialogTitle(text = stringResource(R.string.note_screen_dialog_theme_title))
             Spacer(modifier = Modifier.height(16.dp))
             Column(modifier = Modifier.horizontalScroll(rememberScrollState())) {
-                // First default color.
-                ColorSelectButton(color = colorList[0], icon = Icons.Outlined.Close, selected = selectedColor == 0) {
+                // Default color.
+                ColorSelectButton(color = Color.Transparent, icon = Icons.Outlined.Close, selected = selectedColor == 0) {
                     onClick(0)
                 }
                 // First 8 colors
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    colorList.subList(1, 9).forEach { color ->
-                        val index = colorList.indexOf(color)
-                        ColorSelectButton(color = color, selected = selectedColor == index) {
-                            onClick(index)
+                    NoteColors.subList(0, 8).forEach { color ->
+                        val displayColor = when {
+                            isSystemInDarkTheme() -> color.darken()
+                            else -> color
+                        }
+                        ColorSelectButton(color = displayColor, selected = selectedColor == color.toArgb()) {
+                            onClick(color.toArgb())
                         }
                     }
                 }
                 // Remaining 8 colors
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    colorList.subList(9, 17).forEach { color ->
-                        val index = colorList.indexOf(color)
-                        ColorSelectButton(color = color, selected = selectedColor == index) {
-                            onClick(index)
+                    NoteColors.subList(8, 16).forEach { color ->
+                        val displayColor = when {
+                            isSystemInDarkTheme() -> color.darken()
+                            else -> color
+                        }
+                        ColorSelectButton(color = displayColor, selected = selectedColor == color.toArgb()) {
+                            onClick(color.toArgb())
                         }
                     }
                 }

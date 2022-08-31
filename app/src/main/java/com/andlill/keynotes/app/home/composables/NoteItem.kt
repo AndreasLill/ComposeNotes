@@ -1,6 +1,7 @@
 package com.andlill.keynotes.app.home.composables
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -13,8 +14,10 @@ import androidx.compose.material.icons.outlined.Label
 import androidx.compose.material.icons.outlined.PushPin
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -23,17 +26,21 @@ import androidx.compose.ui.unit.sp
 import com.andlill.keynotes.R
 import com.andlill.keynotes.model.NoteWrapper
 import com.andlill.keynotes.ui.shared.label.NoteLabel
-import com.andlill.keynotes.ui.theme.DarkNoteColors
-import com.andlill.keynotes.ui.theme.LightNoteColors
+import com.andlill.keynotes.utils.ColorUtils.darken
 import com.andlill.keynotes.utils.TimeUtils.daysBetween
 import com.andlill.keynotes.utils.TimeUtils.toDateString
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NoteItem(note: NoteWrapper, onClick: () -> Unit) {
-    val noteColor = when {
-        isSystemInDarkTheme() -> DarkNoteColors[note.note.color]
-        else -> LightNoteColors[note.note.color]
+    val surfaceColor = MaterialTheme.colorScheme.surface
+    val isDarkTheme = isSystemInDarkTheme()
+    val noteColor = remember(note.note.color) {
+        when {
+            note.note.color == 0 -> surfaceColor
+            isDarkTheme -> Color(note.note.color).darken()
+            else -> Color(note.note.color)
+        }
     }
 
     Surface(
@@ -41,6 +48,7 @@ fun NoteItem(note: NoteWrapper, onClick: () -> Unit) {
         onClick = onClick,
         color = animateColorAsState(noteColor).value,
         shadowElevation = 1.dp,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(0.1f)),
         content = {
             Column(modifier = Modifier
                 .fillMaxSize()

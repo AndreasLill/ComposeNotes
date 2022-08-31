@@ -13,7 +13,6 @@ import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -37,8 +36,7 @@ import com.andlill.keynotes.app.note.composables.ReminderDialog
 import com.andlill.keynotes.app.note.composables.ThemeDropDown
 import com.andlill.keynotes.ui.shared.button.MenuIconButton
 import com.andlill.keynotes.ui.shared.util.LifecycleEventHandler
-import com.andlill.keynotes.ui.theme.DarkNoteColors
-import com.andlill.keynotes.ui.theme.LightNoteColors
+import com.andlill.keynotes.utils.ColorUtils.darken
 import com.andlill.keynotes.utils.DialogUtils
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -52,15 +50,16 @@ fun NoteScreen(appState: AppState, noteId: Int) {
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
+    val surfaceColor = MaterialTheme.colorScheme.surface
+    val isDarkTheme = isSystemInDarkTheme()
 
-    val pinIcon = if (viewModel.isPinned) Icons.Filled.PushPin else Icons.Outlined.PushPin
-    val reminderIcon = if (viewModel.reminder != null) Icons.Filled.Notifications else Icons.Outlined.Notifications
-    val noteColor by animateColorAsState(
-        if (isSystemInDarkTheme())
-            DarkNoteColors[viewModel.color]
-        else
-            LightNoteColors[viewModel.color]
-    )
+    val noteColor = remember(viewModel.color) {
+        when {
+            viewModel.color == 0 -> surfaceColor
+            isDarkTheme -> Color(viewModel.color).darken()
+            else -> Color(viewModel.color)
+        }
+    }
 
     // Handle lifecycle events.
     LifecycleEventHandler { event ->
@@ -75,7 +74,7 @@ fun NoteScreen(appState: AppState, noteId: Int) {
         }
     }
     Scaffold(
-        containerColor = noteColor,
+        containerColor = animateColorAsState(noteColor).value,
         topBar = {
             SmallTopAppBar(
                 colors = TopAppBarDefaults.smallTopAppBarColors(
@@ -89,10 +88,10 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                 },
                 actions = {
                     if (viewModel.deletion == null) {
-                        MenuIconButton(icon = pinIcon, color = MaterialTheme.colorScheme.onSurface, onClick = {
+                        MenuIconButton(icon = if (viewModel.isPinned) Icons.Filled.PushPin else Icons.Outlined.PushPin, color = MaterialTheme.colorScheme.onSurface, onClick = {
                             viewModel.onTogglePin()
                         })
-                        MenuIconButton(icon = reminderIcon, color = MaterialTheme.colorScheme.onSurface, onClick = {
+                        MenuIconButton(icon = if (viewModel.reminder != null) Icons.Filled.Notifications else Icons.Outlined.Notifications, color = MaterialTheme.colorScheme.onSurface, onClick = {
                             reminderDialogState.value = true
                         })
                         ReminderDialog(state = reminderDialogState, reminderTime = viewModel.reminder, onClick = {
