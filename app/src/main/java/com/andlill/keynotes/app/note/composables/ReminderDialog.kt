@@ -97,6 +97,9 @@ fun ReminderDialog(state: MutableState<Boolean>, reminderTime: Long?, onClick: (
                         disabledTextColor = MaterialTheme.colorScheme.onSurface,
                         disabledTrailingIconColor = MaterialTheme.colorScheme.onSurface,
                     ),
+                    label = {
+                        Text(stringResource(R.string.note_screen_dialog_reminder_label_date))
+                    },
                     textStyle = TextStyle(fontSize = 15.sp),
                     trailingIcon = { Icon(Icons.Filled.ArrowDropDown, null) },
                     value = selectedDate.value,
@@ -119,6 +122,9 @@ fun ReminderDialog(state: MutableState<Boolean>, reminderTime: Long?, onClick: (
                         disabledTextColor = MaterialTheme.colorScheme.onSurface,
                         disabledTrailingIconColor = MaterialTheme.colorScheme.onSurface,
                     ),
+                    label = {
+                        Text(stringResource(R.string.note_screen_dialog_reminder_label_time))
+                    },
                     textStyle = TextStyle(fontSize = 15.sp),
                     trailingIcon = { Icon(Icons.Filled.ArrowDropDown, null) },
                     value = selectedTime.value,

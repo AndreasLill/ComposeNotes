@@ -25,12 +25,12 @@ fun ConfirmDialog(state: Boolean, body: String, annotation: String, annotationSt
                 .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.surface)
                 .padding(16.dp)) {
-                DialogTitle(text = stringResource(R.string.dialog_confirm_title), color = MaterialTheme.colorScheme.error)
+                DialogTitle(text = stringResource(R.string.dialog_confirm_title))
                 Spacer(modifier = Modifier.height(16.dp))
                 AnnotatedText(
                     text = body,
                     textStyle = TextStyle(
-                        fontSize = 14.sp,
+                        fontSize = 15.sp,
                         color = MaterialTheme.colorScheme.onSurface
                     ),
                     annotation = annotation,

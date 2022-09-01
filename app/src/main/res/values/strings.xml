@@ -40,10 +40,10 @@
     <!-- Note Screen -->
     <string name="note_screen_placeholder_title">No Title</string>
     <string name="note_screen_placeholder_body">Empty</string>
-    <string name="note_screen_dialog_theme_title">Colors</string>
+    <string name="note_screen_dialog_color_title">Note Color</string>
     <string name="note_screen_dialog_reminder_title">Reminder</string>
-    <string name="note_screen_dialog_reminder_button_add">Add Reminder</string>
-    <string name="note_screen_dialog_reminder_button_cancel">Cancel Reminder</string>
+    <string name="note_screen_dialog_reminder_label_date">Date</string>
+    <string name="note_screen_dialog_reminder_label_time">Time</string>
     <string name="note_screen_dialog_confirm_note_delete">This note will be permanently deleted.</string>
     <string name="note_screen_status_text_deletion_today">Scheduled for deletion today.</string>
     <string name="note_screen_status_text_deletion_tomorrow">Scheduled for deletion tomorrow.</string>

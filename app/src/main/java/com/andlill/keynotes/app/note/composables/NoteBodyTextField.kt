@@ -30,7 +30,7 @@ fun NoteBodyTextField(placeholder: String, state: TextFieldValue, readOnly: Bool
         onValueChange = onValueChange,
         cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
         textStyle = TextStyle(
-            fontSize = 15.sp,
+            fontSize = 16.sp,
             color = MaterialTheme.colorScheme.onSurface,
         ),
         keyboardOptions = KeyboardOptions(

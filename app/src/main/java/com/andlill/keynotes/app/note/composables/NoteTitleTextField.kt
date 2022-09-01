@@ -34,7 +34,7 @@ fun NoteTitleTextField(placeholder: String, state: TextFieldValue, readOnly: Boo
         singleLine = true,
         cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
         textStyle = TextStyle(
-            fontSize = 16.sp,
+            fontSize = 18.sp,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onSurface,
         ),
@@ -52,7 +52,7 @@ fun NoteTitleTextField(placeholder: String, state: TextFieldValue, readOnly: Boo
                 Text(
                     text = placeholder,
                     style = TextStyle(
-                        fontSize = 16.sp,
+                        fontSize = 18.sp,
                         color = MaterialTheme.colorScheme.onSurface.copy(0.6f)
                     )
                 )

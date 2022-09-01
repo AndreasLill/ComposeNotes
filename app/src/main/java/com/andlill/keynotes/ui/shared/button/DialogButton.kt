@@ -24,7 +24,8 @@ fun DialogButton(modifier: Modifier = Modifier, text: String, icon: ImageVector?
             focusedElevation = 0.dp
         ),
         colors = ButtonDefaults.buttonColors(
-            containerColor = backgroundColor
+            containerColor = backgroundColor,
+            contentColor = textColor
         ),
         onClick = onClick) {
         icon?.let { 
@@ -32,15 +33,13 @@ fun DialogButton(modifier: Modifier = Modifier, text: String, icon: ImageVector?
                 modifier = Modifier.size(16.dp),
                 imageVector = icon,
                 contentDescription = null,
-                tint = textColor
             )
             Spacer(modifier = Modifier.width(4.dp))
         }
         Text(
-            text = text.uppercase(),
-            fontSize = 13.sp,
+            text = text,
+            fontSize = 15.sp,
             fontWeight = FontWeight.SemiBold,
-            color = textColor
         )
     }
 }

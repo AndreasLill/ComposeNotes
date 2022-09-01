@@ -28,7 +28,7 @@ fun ThemeDropDown(state: MutableState<Boolean>, selectedColor: Int, onClick: (In
             .fillMaxWidth(),
         onDismissRequest = { state.value = false }) {
         Column(modifier = Modifier.padding(PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp))) {
-            DialogTitle(text = stringResource(R.string.note_screen_dialog_theme_title))
+            DialogTitle(text = stringResource(R.string.note_screen_dialog_color_title))
             Spacer(modifier = Modifier.height(16.dp))
             Column(modifier = Modifier.horizontalScroll(rememberScrollState())) {
                 // Default color.
