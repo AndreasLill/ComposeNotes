@@ -8,7 +8,7 @@ android {
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.andlill.keynotes"
+        applicationId "com.andlill.composenotes"
         minSdk 26
         targetSdk 33
         versionCode 1

@@ -1,6 +1,6 @@
 <resources>
     <!-- Global -->
-    <string name="app_name">KeyNotes</string>
+    <string name="app_name">Compose Notes</string>
 
     <!-- Notification -->
     <string name="notification_reminder_name">Reminders</string>

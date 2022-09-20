@@ -11,4 +11,6 @@
     <color name="dark_on_primary">#FFFFFF</color>
     <color name="dark_surface">#13191C</color>
     <color name="dark_on_surface">#FFFFFF</color>
+
+    <color name="ic_launcher_background">#FFC400</color>
 </resources>
