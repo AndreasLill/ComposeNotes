@@ -82,7 +82,7 @@ fun NoteItem(note: NoteWrapper, onClick: () -> Unit) {
                     Text(
                         modifier = Modifier.fillMaxWidth(),
                         text = note.note.body,
-                        fontSize = 14.sp,
+                        fontSize = 15.sp,
                         fontWeight = FontWeight.Normal,
                         lineHeight = 16.sp,
                         letterSpacing = 0.sp,
