@@ -74,7 +74,7 @@ fun HomeScreen(appState: AppState) {
         content = {
             Scaffold(
                 topBar = {
-                    SmallTopAppBar(
+                    TopAppBar(
                         title = {
                             SearchBar(
                                 query = viewModel.query,
@@ -162,7 +162,6 @@ fun HomeScreen(appState: AppState) {
                 floatingActionButton = {
                     if (viewModel.filter.type != NoteFilter.Type.Trash) {
                         ExtendedFloatingActionButton(
-                            modifier = Modifier.navigationBarsPadding(),
                             onClick = {
                                 viewModel.onCreateNote { noteId ->
                                     viewModel.filter.label?.let { label ->

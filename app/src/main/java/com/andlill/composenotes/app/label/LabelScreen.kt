@@ -32,7 +32,7 @@ fun LabelScreen(appState: AppState, noteId: Int?) {
 
     Scaffold(
         topBar = {
-            SmallTopAppBar(
+            TopAppBar(
                 navigationIcon = {
                     MenuIconButton(
                         icon = Icons.Outlined.ArrowBack,

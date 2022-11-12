@@ -76,7 +76,7 @@ fun NoteScreen(appState: AppState, noteId: Int) {
     Scaffold(
         containerColor = animateColorAsState(noteColor).value,
         topBar = {
-            SmallTopAppBar(
+            TopAppBar(
                 colors = TopAppBarDefaults.smallTopAppBarColors(
                     containerColor = Color.Transparent
                 ),
