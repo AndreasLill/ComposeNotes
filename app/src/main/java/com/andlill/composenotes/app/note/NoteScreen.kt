@@ -2,10 +2,13 @@ package com.andlill.composenotes.app.note
 
 import android.app.Application
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Notifications
@@ -15,8 +18,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -30,16 +35,15 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.andlill.composenotes.R
 import com.andlill.composenotes.app.AppState
 import com.andlill.composenotes.app.Screen
-import com.andlill.composenotes.app.note.composables.NoteBodyTextField
-import com.andlill.composenotes.app.note.composables.NoteTitleTextField
-import com.andlill.composenotes.app.note.composables.ReminderDialog
-import com.andlill.composenotes.app.note.composables.ThemeDropDown
+import com.andlill.composenotes.app.note.composables.*
 import com.andlill.composenotes.ui.shared.button.MenuIconButton
 import com.andlill.composenotes.ui.shared.util.LifecycleEventHandler
 import com.andlill.composenotes.utils.ColorUtils.darken
 import com.andlill.composenotes.utils.DialogUtils
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun NoteScreen(appState: AppState, noteId: Int) {
     val viewModel: NoteViewModel = viewModel(factory = NoteViewModel.Factory(LocalContext.current.applicationContext as Application, noteId))
@@ -50,6 +54,7 @@ fun NoteScreen(appState: AppState, noteId: Int) {
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val surfaceColor = MaterialTheme.colorScheme.surface
     val isDarkTheme = isSystemInDarkTheme()
 
@@ -73,6 +78,7 @@ fun NoteScreen(appState: AppState, noteId: Int) {
             else -> {}
         }
     }
+
     Scaffold(
         containerColor = animateColorAsState(noteColor).value,
         topBar = {
@@ -88,6 +94,9 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                 },
                 actions = {
                     if (viewModel.deletion == null) {
+                        MenuIconButton(icon = Icons.Outlined.CheckBox, color = MaterialTheme.colorScheme.onSurface, onClick = {
+                            viewModel.onConvertCheckBoxes()
+                        })
                         MenuIconButton(icon = if (viewModel.isPinned) Icons.Filled.PushPin else Icons.Outlined.PushPin, color = MaterialTheme.colorScheme.onSurface, onClick = {
                             viewModel.onTogglePin()
                         })
@@ -138,12 +147,18 @@ fun NoteScreen(appState: AppState, noteId: Int) {
         content = { innerPadding ->
             Box(modifier = Modifier
                 .padding(innerPadding)
+                .consumedWindowInsets(innerPadding)
                 .fillMaxSize()
                 .clickable(interactionSource = interactionSource, indication = null) {
-                    viewModel.setBodySelectionEnd()
-                    focusRequester.requestFocus()
+                    if (viewModel.checkBoxes.isEmpty()) {
+                        viewModel.setBodySelectionEnd()
+                        focusRequester.requestFocus()
+                    }
+                    else {
+                        // TODO: Focus last checkbox text field.
+                    }
                 }) {
-                Column {
+                Column(modifier = Modifier.imePadding()) {
                     NoteTitleTextField(
                         placeholder = stringResource(R.string.note_screen_placeholder_title),
                         state = viewModel.titleText,
@@ -152,29 +167,67 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                             viewModel.onChangeTitle(it)
                         }
                     )
-                    NoteBodyTextField(
-                        placeholder = stringResource(R.string.note_screen_placeholder_body),
-                        state = viewModel.bodyText,
-                        readOnly = (viewModel.deletion != null),
-                        focusRequester = focusRequester,
-                        onValueChange = {
-                            viewModel.onChangeBody(it)
+                    if (viewModel.checkBoxes.isEmpty()) {
+                        NoteBodyTextField(
+                            placeholder = stringResource(R.string.note_screen_placeholder_body),
+                            state = viewModel.bodyText,
+                            readOnly = (viewModel.deletion != null),
+                            focusRequester = focusRequester,
+                            onValueChange = {
+                                viewModel.onChangeBody(it)
+                            }
+                        )
+                    }
+                    else {
+                        // Bugged with no work around yet: https://issuetracker.google.com/issues/179203700
+                        LazyColumn(modifier = Modifier
+                            .fillMaxSize()
+                            .padding(8.dp)) {
+                            itemsIndexed(items = viewModel.checkBoxes, key = { _, checkBox -> checkBox.id }) { index, checkBox ->
+                                NoteCheckBoxItem(
+                                    modifier = Modifier.animateItemPlacement(),
+                                    checkBox = checkBox,
+                                    onUpdate = { check, text ->
+                                        viewModel.onEditCheckBox(checkBox.id, check, text)
+                                    },
+                                    onDelete = {
+                                        if (index > 0) {
+                                            focusManager.moveFocus(FocusDirection.Up)
+                                            viewModel.onDeleteCheckBox(checkBox)
+                                        }
+                                    },
+                                    onKeyboardNext = {
+                                        // Create a new checkbox if this is the last item.
+                                        if (index == viewModel.checkBoxes.size - 1) {
+                                            viewModel.onCreateCheckBox(onDone = {
+                                                scope.launch {
+                                                    delay(50)
+                                                    focusManager.moveFocus(FocusDirection.Down)
+                                                }
+                                            })
+                                        }
+                                        else {
+                                            focusManager.moveFocus(FocusDirection.Down)
+                                        }
+                                    },
+                                )
+                            }
                         }
-                    )
+                    }
                 }
                 Box(modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 4.dp, end = 4.dp)
+                    .height(32.dp)
                     .align(Alignment.BottomCenter)) {
                     Text(
-                        modifier = Modifier
-                            .padding(4.dp)
-                            .align(Alignment.BottomCenter),
+                        modifier = Modifier.align(Alignment.Center),
                         color = MaterialTheme.colorScheme.onSurface.copy(0.6f),
                         fontSize = 12.sp,
                         fontWeight = FontWeight.SemiBold,
                         text = viewModel.statusText,
                     )
+                    // TODO: Add undo/redo for body and check boxes.
+                    /*
                     TextButton(
                         modifier = Modifier.align(Alignment.CenterStart),
                         enabled = viewModel.undoList.isNotEmpty(),
@@ -205,6 +258,7 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                             contentDescription = null,
                         )
                     }
+                     */
                 }
             }
         }

@@ -6,13 +6,20 @@ import androidx.room.*
 data class NoteWrapper(
     @Embedded
     val note: Note = Note(),
+
     @Relation(
         parentColumn = "id",
         entityColumn = "id",
         entity = Label::class,
         associateBy = Junction(NoteLabelJoin::class, parentColumn = "noteId", entityColumn = "labelId")
     )
-    val labels: List<Label> = emptyList()
+    val labels: List<Label> = emptyList(),
+
+    @Relation(
+        parentColumn = "id",
+        entityColumn = "noteId",
+    )
+    val checkBoxes: List<NoteCheckBox> = emptyList()
 )
 
 // "onDelete = ForeignKey.CASCADE" will not work correctly with "OnConflictStrategy.REPLACE".

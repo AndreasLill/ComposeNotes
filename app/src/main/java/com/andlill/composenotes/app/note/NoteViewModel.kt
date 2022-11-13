@@ -12,10 +12,10 @@ import androidx.lifecycle.viewModelScope
 import com.andlill.composenotes.R
 import com.andlill.composenotes.data.repository.NoteRepository
 import com.andlill.composenotes.model.Note
+import com.andlill.composenotes.model.NoteCheckBox
 import com.andlill.composenotes.utils.TimeUtils.daysBetween
 import com.andlill.composenotes.utils.TimeUtils.toDateString
 import com.andlill.composenotes.utils.TimeUtils.toMilliSeconds
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
@@ -29,7 +29,7 @@ class NoteViewModel(private val application: Application, private val noteId: In
 
     private var note = Note()
     private var deleteOnClose = false
-    private var undoLock = false
+    //private var undoLock = false
 
     var id by mutableStateOf(noteId)
         private set
@@ -49,9 +49,7 @@ class NoteViewModel(private val application: Application, private val noteId: In
         private set
     var statusText by mutableStateOf("")
         private set
-    var undoList by mutableStateOf(emptyList<TextFieldValue>())
-        private set
-    var redoList by mutableStateOf(emptyList<TextFieldValue>())
+    var checkBoxes by mutableStateOf(emptyList<NoteCheckBox>())
         private set
 
     init {
@@ -64,11 +62,9 @@ class NoteViewModel(private val application: Application, private val noteId: In
                     modified = it.note.modified
                     deletion = it.note.deletion
                     color = it.note.color
-
-                    if (titleText.text.isEmpty())
-                        titleText = titleText.copy(text = it.note.title)
-                    if (bodyText.text.isEmpty())
-                        bodyText = bodyText.copy(text = it.note.body)
+                    checkBoxes = it.checkBoxes.sortedBy { box -> box.checked }
+                    titleText = titleText.copy(text = it.note.title)
+                    bodyText = bodyText.copy(text = it.note.body)
 
                     if (deletion != null) {
                         // Set status text days until deletion.
@@ -131,6 +127,7 @@ class NoteViewModel(private val application: Application, private val noteId: In
     }
 
     fun onChangeBody(value: TextFieldValue) {
+        /*
         if (bodyText.text != value.text) {
             // Add to undo list if text was changed.
             if (!undoLock) {
@@ -144,6 +141,7 @@ class NoteViewModel(private val application: Application, private val noteId: In
                 }
             }
         }
+        */
         bodyText = value
     }
 
@@ -185,6 +183,52 @@ class NoteViewModel(private val application: Application, private val noteId: In
         NoteRepository.updateNote(application, note.copy(deletion = null))
     }
 
+    fun onConvertCheckBoxes() = viewModelScope.launch {
+        if (checkBoxes.isEmpty()) {
+            // Convert body string to check boxes.
+            val list = ArrayList<NoteCheckBox>()
+            bodyText.text.lines().forEach { line ->
+                if (line.isBlank())
+                    return@forEach
+                list.add(NoteCheckBox(noteId = note.id, text = line))
+            }
+            NoteRepository.insertNoteCheckBoxes(application, list)
+            NoteRepository.updateNote(application, note.copy(body = "", modified = System.currentTimeMillis()))
+        }
+        else {
+            // Convert check boxes to body string.
+            var bodyStr = ""
+            checkBoxes.forEach { checkBox ->
+                if (checkBox.text.isBlank())
+                    return@forEach
+                bodyStr += checkBox.text.plus(System.lineSeparator())
+            }
+            NoteRepository.deleteAllNoteCheckBoxes(application, note.id)
+            NoteRepository.updateNote(application, note.copy(body = bodyStr, modified = System.currentTimeMillis()))
+        }
+    }
+
+    fun onCreateCheckBox(onDone: () -> Unit) = viewModelScope.launch {
+        NoteRepository.insertNoteCheckBox(application, NoteCheckBox(noteId = note.id))
+        onDone()
+    }
+
+    fun onDeleteCheckBox(item: NoteCheckBox) = viewModelScope.launch {
+        NoteRepository.deleteNoteCheckBox(application, item)
+    }
+
+    fun onEditCheckBox(id: Int, checked: Boolean, text: String) = viewModelScope.launch {
+        // Ignore if contents are the same.
+        val checkBox = checkBoxes.find { it.id == id }
+        checkBox?.let {
+            if (checked == it.checked && text == it.text)
+                return@launch
+            NoteRepository.insertNoteCheckBox(application, it.copy(checked = checked, text = text))
+        }
+    }
+
+    /*
+    // TODO: Add undo/redo for body and check boxes.
     fun onUndo() {
         // Undo and move action to redo list.
         val undo = undoList.last()
@@ -200,4 +244,5 @@ class NoteViewModel(private val application: Application, private val noteId: In
         redoList = redoList.minus(redo)
         bodyText = redo
     }
+     */
 }

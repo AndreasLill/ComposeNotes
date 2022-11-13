@@ -2,6 +2,7 @@ package com.andlill.composenotes.data.database
 
 import androidx.room.*
 import com.andlill.composenotes.model.Note
+import com.andlill.composenotes.model.NoteCheckBox
 import com.andlill.composenotes.model.NoteLabelJoin
 import com.andlill.composenotes.model.NoteWrapper
 import kotlinx.coroutines.flow.Flow
@@ -31,4 +32,17 @@ interface NoteDao {
 
     @Delete
     suspend fun deleteNoteLabel(item: NoteLabelJoin)
+    
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertNoteCheckBox(item: NoteCheckBox): Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertNoteCheckBoxes(items: List<NoteCheckBox>)
+
+    @Delete
+    suspend fun deleteNoteCheckBox(item: NoteCheckBox)
+
+    @Transaction
+    @Query("DELETE FROM NoteCheckBox WHERE noteId = :noteId")
+    suspend fun deleteAllNoteCheckBoxes(noteId: Int)
 }
