@@ -32,7 +32,7 @@ import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun NoteCheckBoxItem(modifier: Modifier = Modifier, checkBox: NoteCheckBox, onUpdate: (Boolean, String) -> Unit, onDelete: () -> Unit, onKeyboardNext: () -> Unit) {
+fun NoteCheckBoxItem(modifier: Modifier, checkBox: NoteCheckBox, onUpdate: (NoteCheckBox, Boolean, String) -> Unit, onDelete: () -> Unit, onKeyboardNext: () -> Unit) {
     // Local checkbox and text field value state.
     var textFieldValue by remember { mutableStateOf(TextFieldValue(checkBox.text)) }
     var checkBoxValue by remember { mutableStateOf(checkBox.checked) }
@@ -40,13 +40,13 @@ fun NoteCheckBoxItem(modifier: Modifier = Modifier, checkBox: NoteCheckBox, onUp
     // Send update on life cycle stop.
     LifecycleEventHandler { event ->
         if (event == Lifecycle.Event.ON_STOP) {
-            onUpdate(checkBoxValue, textFieldValue.text)
+            onUpdate(checkBox, checkBoxValue, textFieldValue.text)
         }
     }
     // Send update with a delay of 1500ms when user stops typing.
     LaunchedEffect(textFieldValue.text) {
         delay(1500)
-        onUpdate(checkBoxValue, textFieldValue.text)
+        onUpdate(checkBox, checkBoxValue, textFieldValue.text)
     }
 
     Row(modifier = modifier.fillMaxWidth(),
@@ -59,7 +59,7 @@ fun NoteCheckBoxItem(modifier: Modifier = Modifier, checkBox: NoteCheckBox, onUp
             checked = checkBoxValue,
             onCheckedChange = {
                 checkBoxValue = it
-                onUpdate(checkBoxValue, textFieldValue.text)
+                onUpdate(checkBox, checkBoxValue, textFieldValue.text)
             }
         )
         BasicTextField(

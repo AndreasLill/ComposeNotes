@@ -26,7 +26,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -160,22 +159,16 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                 }) {
                 Column(modifier = Modifier.imePadding()) {
                     NoteTitleTextField(
-                        placeholder = stringResource(R.string.note_screen_placeholder_title),
                         state = viewModel.titleText,
                         readOnly = (viewModel.deletion != null),
-                        onValueChange = {
-                            viewModel.onChangeTitle(it)
-                        }
+                        onValueChange = viewModel::onChangeTitle
                     )
                     if (viewModel.checkBoxes.isEmpty()) {
                         NoteBodyTextField(
-                            placeholder = stringResource(R.string.note_screen_placeholder_body),
                             state = viewModel.bodyText,
                             readOnly = (viewModel.deletion != null),
                             focusRequester = focusRequester,
-                            onValueChange = {
-                                viewModel.onChangeBody(it)
-                            }
+                            onValueChange = viewModel::onChangeBody
                         )
                     }
                     else {
@@ -187,9 +180,7 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                                 NoteCheckBoxItem(
                                     modifier = Modifier.animateItemPlacement(),
                                     checkBox = checkBox,
-                                    onUpdate = { check, text ->
-                                        viewModel.onEditCheckBox(checkBox.id, check, text)
-                                    },
+                                    onUpdate = viewModel::onEditCheckBox,
                                     onDelete = {
                                         if (index > 0) {
                                             focusManager.moveFocus(FocusDirection.Up)

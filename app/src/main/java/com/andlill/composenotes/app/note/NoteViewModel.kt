@@ -217,14 +217,11 @@ class NoteViewModel(private val application: Application, private val noteId: In
         NoteRepository.deleteNoteCheckBox(application, item)
     }
 
-    fun onEditCheckBox(id: Int, checked: Boolean, text: String) = viewModelScope.launch {
+    fun onEditCheckBox(checkBox: NoteCheckBox, checked: Boolean, text: String) = viewModelScope.launch {
         // Ignore if contents are the same.
-        val checkBox = checkBoxes.find { it.id == id }
-        checkBox?.let {
-            if (checked == it.checked && text == it.text)
-                return@launch
-            NoteRepository.insertNoteCheckBox(application, it.copy(checked = checked, text = text))
-        }
+        if (checked == checkBox.checked && text == checkBox.text)
+            return@launch
+        NoteRepository.insertNoteCheckBox(application, checkBox.copy(checked = checked, text = text))
     }
 
     /*

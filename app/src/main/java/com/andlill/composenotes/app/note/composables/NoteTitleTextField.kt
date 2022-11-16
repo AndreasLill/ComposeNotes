@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -18,10 +19,11 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.andlill.composenotes.R
 import com.andlill.composenotes.ui.shared.util.clearFocusOnKeyboardDismiss
 
 @Composable
-fun NoteTitleTextField(placeholder: String, state: TextFieldValue, readOnly: Boolean, onValueChange: (TextFieldValue) -> Unit) {
+fun NoteTitleTextField(state: TextFieldValue, readOnly: Boolean, onValueChange: (TextFieldValue) -> Unit) {
     val focusManager = LocalFocusManager.current
     BasicTextField(
         modifier = Modifier
@@ -50,7 +52,7 @@ fun NoteTitleTextField(placeholder: String, state: TextFieldValue, readOnly: Boo
         decorationBox = { innerTextField ->
             if (state.text.isEmpty()) {
                 Text(
-                    text = placeholder,
+                    text = stringResource(R.string.note_screen_placeholder_title),
                     style = TextStyle(
                         fontSize = 18.sp,
                         color = MaterialTheme.colorScheme.onSurface.copy(0.6f)
