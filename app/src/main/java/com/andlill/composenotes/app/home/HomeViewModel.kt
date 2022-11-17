@@ -62,7 +62,7 @@ class HomeViewModel(private val application: Application) : ViewModel() {
                 filterList.filter { it.note.deletion != null }.sortedByDescending { it.note.deletion }
             }
             NoteFilter.Type.Label -> {
-                filterList.filter { it.labels.contains(filter.label) }
+                filterList.filter { it.labels.contains(filter.label) && it.note.deletion == null }
             }
         }
 
@@ -76,18 +76,16 @@ class HomeViewModel(private val application: Application) : ViewModel() {
 
     fun onCreateNote(callback: (Int) -> Unit) = viewModelScope.launch {
         // Create a new note and callback the note id.
-        val noteId = NoteRepository.insertNote(application, Note(
-            created = System.currentTimeMillis(),
-        ))
+        val noteId = NoteRepository.insertNote(application, Note(created = System.currentTimeMillis()))
+        filter.label?.let { label ->
+            // Add label to new note if label is selected.
+            NoteRepository.insertNoteLabel(application, NoteLabelJoin(noteId = noteId, labelId = label.id))
+        }
         callback(noteId)
     }
 
-    fun onAddNoteLabel(noteId: Int, labelId: Int) = viewModelScope.launch {
-        NoteRepository.insertNoteLabel(application, NoteLabelJoin(noteId = noteId, labelId = labelId))
-    }
-
-    fun onAddLabel(label: Label) = viewModelScope.launch {
-        LabelRepository.insertLabel(application, label)
+    fun onAddLabel(value: String) = viewModelScope.launch {
+        LabelRepository.insertLabel(application, Label(value = value))
     }
 
     fun onQuery(value: String) = viewModelScope.launch {

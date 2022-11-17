@@ -25,7 +25,7 @@ import com.andlill.composenotes.utils.DialogUtils
 fun Drawer(
     labels: List<Label>,
     onFilter: (NoteFilter) -> Unit,
-    onAddLabel: (Label) -> Unit,
+    onAddLabel: (String) -> Unit,
     onEditLabels: () -> Unit,
     onClose: () -> Unit
 ) {
@@ -81,9 +81,7 @@ fun Drawer(
                     DialogUtils.showInputDialog(
                         title = context.resources.getString(R.string.home_screen_dialog_create_label_title),
                         placeholder = context.resources.getString(R.string.home_screen_dialog_create_label_placeholder),
-                        onConfirm = {
-                            onAddLabel(Label(value = it))
-                        }
+                        onConfirm = onAddLabel
                     )
                 }) {
                 Icon(

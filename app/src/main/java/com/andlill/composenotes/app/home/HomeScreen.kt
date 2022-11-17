@@ -50,12 +50,8 @@ fun HomeScreen(appState: AppState) {
                 content = {
                     Drawer(
                         labels = viewModel.labels,
-                        onFilter = {
-                            viewModel.onFilter(it)
-                        },
-                        onAddLabel = {
-                            viewModel.onAddLabel(it)
-                        },
+                        onFilter = viewModel::onFilter,
+                        onAddLabel = viewModel::onAddLabel,
                         onEditLabels = {
                             appState.navigation.navigate(Screen.LabelScreen.route()) {
                                 // To avoid multiple copies of same destination in backstack.
@@ -79,16 +75,18 @@ fun HomeScreen(appState: AppState) {
                             SearchBar(
                                 query = viewModel.query,
                                 placeholder = viewModel.filter.name,
-                                onValueChange = {
-                                    viewModel.onQuery(it)
-                                })
+                                onValueChange = viewModel::onQuery
+                            )
                         },
                         navigationIcon = {
-                            MenuIconButton(icon = Icons.Outlined.Menu, color = MaterialTheme.colorScheme.onSurface) {
-                                scope.launch {
-                                    drawerState.open()
+                            MenuIconButton(
+                                icon = Icons.Outlined.Menu,
+                                onClick = {
+                                    scope.launch {
+                                        drawerState.open()
+                                    }
                                 }
-                            }
+                            )
                         }
                     )
                 },
@@ -152,8 +150,7 @@ fun HomeScreen(appState: AppState) {
                                             )
                                         }
                                     }
-                                    else -> {
-                                    }
+                                    else -> Unit
                                 }
                             }
                         }
@@ -164,10 +161,6 @@ fun HomeScreen(appState: AppState) {
                         ExtendedFloatingActionButton(
                             onClick = {
                                 viewModel.onCreateNote { noteId ->
-                                    viewModel.filter.label?.let { label ->
-                                        // Add label to new note if label is selected.
-                                        viewModel.onAddNoteLabel(noteId, label.id)
-                                    }
                                     appState.navigation.navigate(Screen.NoteScreen.route(noteId = noteId)) {
                                         // To avoid multiple copies of same destination in backstack.
                                         launchSingleTop = true
