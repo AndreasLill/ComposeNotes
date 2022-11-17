@@ -50,8 +50,8 @@ class LabelViewModel(private val application: Application, private val noteId: I
         LabelRepository.deleteLabel(application, label)
     }
 
-    fun onCreateLabel(label: Label) = viewModelScope.launch {
-        LabelRepository.insertLabel(application, label)
+    fun onCreateLabel(value: String) = viewModelScope.launch {
+        LabelRepository.insertLabel(application, Label(value = value))
     }
 
     fun onToggleNoteLabel(label: Label) = viewModelScope.launch {

@@ -15,14 +15,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.andlill.composenotes.R
 import com.andlill.composenotes.app.AppState
 import com.andlill.composenotes.app.label.composables.CreateLabel
 import com.andlill.composenotes.app.label.composables.EditLabel
 import com.andlill.composenotes.app.label.composables.SelectLabel
-import com.andlill.composenotes.model.Label
 import com.andlill.composenotes.ui.shared.button.MenuIconButton
 import com.andlill.composenotes.utils.DialogUtils
-import com.andlill.composenotes.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,7 +35,6 @@ fun LabelScreen(appState: AppState, noteId: Int?) {
                 navigationIcon = {
                     MenuIconButton(
                         icon = Icons.Outlined.ArrowBack,
-                        color = MaterialTheme.colorScheme.onSurface,
                         onClick = {
                             appState.navigation.navigateUp()
                         }
@@ -44,10 +42,7 @@ fun LabelScreen(appState: AppState, noteId: Int?) {
                 },
                 title = {
                     CreateLabel(
-                        onCreate = {
-                            val label = Label(value = it)
-                            viewModel.onCreateLabel(label)
-                        }
+                        onCreate = viewModel::onCreateLabel
                     )
                 },
             )
@@ -63,11 +58,9 @@ fun LabelScreen(appState: AppState, noteId: Int?) {
                             items(items = viewModel.labels, key = { it.id }) { label ->
                                 if (noteId != null) {
                                     SelectLabel(
-                                        text = label.value,
+                                        label = label,
                                         checked = viewModel.noteLabels.contains(label),
-                                        onClick = {
-                                            viewModel.onToggleNoteLabel(label)
-                                        }
+                                        onClick = viewModel::onToggleNoteLabel
                                     )
                                 }
                                 else {

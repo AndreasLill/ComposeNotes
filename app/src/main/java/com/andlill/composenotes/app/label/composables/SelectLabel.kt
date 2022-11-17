@@ -10,15 +10,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.andlill.composenotes.model.Label
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SelectLabel(text: String, checked: Boolean, onClick: () -> Unit) {
+fun SelectLabel(label: Label, checked: Boolean, onClick: (Label) -> Unit) {
     Surface(
         modifier = Modifier
             .fillMaxWidth()
             .height(56.dp),
-        onClick = onClick) {
+        onClick = {
+            onClick(label)
+        }) {
         Box {
             IconButton(
                 modifier = Modifier
@@ -40,7 +43,7 @@ fun SelectLabel(text: String, checked: Boolean, onClick: () -> Unit) {
                     .fillMaxWidth()
                     .padding(start = 56.dp, end = 56.dp),
                 textAlign = TextAlign.Start,
-                text = text,
+                text = label.value,
                 fontSize = 15.sp,
                 color = MaterialTheme.colorScheme.onSurface
             )
@@ -53,7 +56,7 @@ fun SelectLabel(text: String, checked: Boolean, onClick: () -> Unit) {
                 ),
                 checked = checked,
                 onCheckedChange = {
-                    onClick()
+                    onClick(label)
                 }
             )
         }
