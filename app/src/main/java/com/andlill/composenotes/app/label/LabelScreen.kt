@@ -10,6 +10,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
@@ -28,6 +30,12 @@ import com.andlill.composenotes.utils.DialogUtils
 fun LabelScreen(appState: AppState, noteId: Int?) {
     val viewModel: LabelViewModel = viewModel(factory = LabelViewModel.Factory(LocalContext.current.applicationContext as Application, noteId))
     val context = LocalContext.current
+
+    val sortedLabels = remember {
+        derivedStateOf {
+            viewModel.labels.sortedBy { it.value.lowercase() }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -55,7 +63,7 @@ fun LabelScreen(appState: AppState, noteId: Int?) {
                     Column {
                         Divider()
                         LazyColumn(modifier = Modifier.fillMaxSize()) {
-                            items(items = viewModel.labels, key = { it.id }) { label ->
+                            items(items = sortedLabels.value, key = { it.id }) { label ->
                                 if (noteId != null) {
                                     SelectLabel(
                                         label = label,
@@ -65,10 +73,8 @@ fun LabelScreen(appState: AppState, noteId: Int?) {
                                 }
                                 else {
                                     EditLabel(
-                                        initialText = label.value,
-                                        onUpdate = {
-                                            viewModel.onUpdateLabel(label.copy(value = it))
-                                        },
+                                        label = label,
+                                        onUpdate = viewModel::onUpdateLabel,
                                         onDelete = {
                                             DialogUtils.showConfirmDialog(
                                                 text = String.format(context.resources.getString(R.string.label_screen_dialog_confirm_label_delete), label.value),

@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.input.key.*
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -31,14 +32,15 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.andlill.composenotes.R
+import com.andlill.composenotes.model.Label
 import com.andlill.composenotes.ui.shared.util.clearFocusOnKeyboardDismiss
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun EditLabel(initialText: String, onUpdate: (String) -> Unit, onDelete: () -> Unit) {
-    var textFieldValue by remember { mutableStateOf(TextFieldValue(initialText)) }
+fun EditLabel(label: Label, onUpdate: (Label, String) -> Unit, onDelete: () -> Unit) {
+    var textFieldValue by remember { mutableStateOf(TextFieldValue(label.value)) }
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused = interactionSource.collectIsFocusedAsState()
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -66,9 +68,20 @@ fun EditLabel(initialText: String, onUpdate: (String) -> Unit, onDelete: () -> U
             modifier = Modifier
                 .align(Alignment.Center)
                 .clearFocusOnKeyboardDismiss()
+                .onKeyEvent { event ->
+                    if (event.type == KeyEventType.KeyUp && event.key == Key.Enter && textFieldValue.text.isNotBlank()) {
+                        onUpdate(label, textFieldValue.text)
+                        scope.launch {
+                            delay(50)
+                            keyboardController?.hide()
+                        }
+                        return@onKeyEvent true
+                    }
+                    return@onKeyEvent false
+                }
                 .onFocusChanged {
                     if (!it.isFocused) {
-                        textFieldValue = textFieldValue.copy(text = initialText)
+                        textFieldValue = textFieldValue.copy(text = label.value)
                     }
                 }
                 .fillMaxWidth()
@@ -80,7 +93,7 @@ fun EditLabel(initialText: String, onUpdate: (String) -> Unit, onDelete: () -> U
             ),
             keyboardActions = KeyboardActions(
                 onDone = {
-                    onUpdate(textFieldValue.text)
+                    onUpdate(label, textFieldValue.text)
                     scope.launch {
                         delay(50)
                         keyboardController?.hide()
@@ -94,6 +107,8 @@ fun EditLabel(initialText: String, onUpdate: (String) -> Unit, onDelete: () -> U
             cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
             value = textFieldValue,
             onValueChange = {
+                if (it.text.endsWith("\n"))
+                    return@BasicTextField
                 textFieldValue = it
             },
             decorationBox = { innerTextField ->
@@ -119,7 +134,7 @@ fun EditLabel(initialText: String, onUpdate: (String) -> Unit, onDelete: () -> U
             onClick = {
                 when (isFocused.value) {
                     true -> {
-                        onUpdate(textFieldValue.text)
+                        onUpdate(label, textFieldValue.text)
                         scope.launch {
                             delay(50)
                             keyboardController?.hide()

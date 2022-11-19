@@ -8,14 +8,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.Check
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.input.key.*
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -27,6 +32,7 @@ import androidx.compose.ui.unit.sp
 import com.andlill.composenotes.R
 import com.andlill.composenotes.ui.shared.util.clearFocusOnKeyboardDismiss
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun CreateLabel(onCreate: (String) -> Unit) {
     var textFieldValue by remember { mutableStateOf(TextFieldValue("")) }
@@ -37,6 +43,14 @@ fun CreateLabel(onCreate: (String) -> Unit) {
             modifier = Modifier
                 .align(Alignment.Center)
                 .clearFocusOnKeyboardDismiss()
+                .onKeyEvent { event ->
+                    if (event.type == KeyEventType.KeyUp && event.key == Key.Enter && textFieldValue.text.isNotBlank()) {
+                        onCreate(textFieldValue.text)
+                        textFieldValue = textFieldValue.copy(text = "")
+                        return@onKeyEvent true
+                    }
+                    return@onKeyEvent false
+                }
                 .onFocusChanged {
                     if (!it.isFocused) {
                         textFieldValue = textFieldValue.copy(text = "")
@@ -61,6 +75,8 @@ fun CreateLabel(onCreate: (String) -> Unit) {
             cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
             value = textFieldValue,
             onValueChange = {
+                if (it.text.endsWith("\n"))
+                    return@BasicTextField
                 textFieldValue = it
             },
             decorationBox = { innerTextField ->
@@ -89,7 +105,7 @@ fun CreateLabel(onCreate: (String) -> Unit) {
                 },
                 content = {
                     Icon(
-                        imageVector = Icons.Outlined.Add,
+                        imageVector = Icons.Outlined.Check,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary
                     )

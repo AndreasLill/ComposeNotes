@@ -1,9 +1,7 @@
 package com.andlill.composenotes.app.label
 
 import android.app.Application
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -20,30 +18,32 @@ class LabelViewModel(private val application: Application, private val noteId: I
         override fun <T : ViewModel> create(modelClass: Class<T>): T = LabelViewModel(application, noteId) as T
     }
 
-    var labels by mutableStateOf(emptyList<Label>())
+    var labels = mutableStateListOf<Label>()
         private set
-    var noteLabels by mutableStateOf(emptyList<Label>())
+    var noteLabels = mutableStateListOf<Label>()
         private set
 
     init {
         viewModelScope.launch {
             LabelRepository.getAllLabels(application).collectLatest {
-                labels = it.sortedBy { label -> label.value.lowercase() }
+                labels.clear()
+                labels.addAll(it)
             }
         }
         viewModelScope.launch {
             noteId?.let {
                 NoteRepository.getNote(application, noteId).collectLatest {
                     it?.let {
-                        noteLabels = it.labels
+                        noteLabels.clear()
+                        noteLabels.addAll(it.labels)
                     }
                 }
             }
         }
     }
 
-    fun onUpdateLabel(label: Label) = viewModelScope.launch {
-        LabelRepository.updateLabel(application, label)
+    fun onUpdateLabel(label: Label, value: String) = viewModelScope.launch {
+        LabelRepository.updateLabel(application, label.copy(value = value))
     }
 
     fun onDeleteLabel(label: Label) = viewModelScope.launch {
