@@ -1,9 +1,7 @@
 package com.andlill.composenotes.app.home
 
 import android.app.Application
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -20,12 +18,9 @@ class HomeViewModel(private val application: Application) : ViewModel() {
         override fun <T : ViewModel> create(modelClass: Class<T>): T = HomeViewModel(application) as T
     }
 
-    // Contains all notes unfiltered.
-    private var _notes = emptyList<NoteWrapper>()
-
-    var notes by mutableStateOf(emptyList<NoteWrapper>())
+    var notes = mutableStateListOf<NoteWrapper>()
         private set
-    var labels by mutableStateOf(emptyList<Label>())
+    var labels = mutableStateListOf<Label>()
         private set
     var filter by mutableStateOf(NoteFilter(application.resources.getString(R.string.drawer_item_notes), NoteFilter.Type.AllNotes))
         private set
@@ -35,43 +30,21 @@ class HomeViewModel(private val application: Application) : ViewModel() {
     init {
         viewModelScope.launch {
             NoteRepository.getAllNotes(application).collectLatest { note ->
-                _notes = note.sortedWith(compareByDescending<NoteWrapper> { it.note.pinned }.thenByDescending { it.note.created })
-                filterNotes(filter)
+                // Sort and filter unmodified notes.
+                notes = note
+                    .sortedWith(compareByDescending<NoteWrapper> { it.note.pinned }.thenByDescending { it.note.created })
+                    .filter { it.note.modified != null }
+                    .toMutableStateList()
             }
         }
         viewModelScope.launch {
             LabelRepository.getAllLabels(application).collectLatest {
-                labels = it.sortedBy { label -> label.value.lowercase() }
+                // Sort labels.
+                labels = it
+                    .sortedBy { label -> label.value.lowercase() }
+                    .toMutableStateList()
             }
         }
-    }
-
-    private fun filterNotes(filter: NoteFilter) {
-        // Filter notes on modified value. (Modified 'null' notes are temporary created but unsaved notes.)
-        var filterList = _notes.filter { it.note.modified != null }
-
-        // Filter notes.
-        filterList = when (filter.type) {
-            NoteFilter.Type.AllNotes -> {
-                filterList.filter { it.note.deletion == null }
-            }
-            NoteFilter.Type.Reminders -> {
-                filterList.filter { it.note.reminder != null }.sortedBy { it.note.reminder }
-            }
-            NoteFilter.Type.Trash -> {
-                filterList.filter { it.note.deletion != null }.sortedByDescending { it.note.deletion }
-            }
-            NoteFilter.Type.Label -> {
-                filterList.filter { it.labels.contains(filter.label) && it.note.deletion == null }
-            }
-        }
-
-        // Also filter notes on query.
-        if (query.isNotEmpty()) {
-            filterList = filterList.filter { it.note.title.contains(query, ignoreCase = true) || it.note.body.contains(query, ignoreCase = true) }
-        }
-
-        notes = filterList
     }
 
     fun onCreateNote(callback: (Int) -> Unit) = viewModelScope.launch {
@@ -88,13 +61,11 @@ class HomeViewModel(private val application: Application) : ViewModel() {
         LabelRepository.insertLabel(application, Label(value = value))
     }
 
-    fun onQuery(value: String) = viewModelScope.launch {
+    fun onQuery(value: String) {
         query = value
-        filterNotes(filter)
     }
 
-    fun onFilter(value: NoteFilter) = viewModelScope.launch {
+    fun onFilter(value: NoteFilter) {
         filter = value
-        filterNotes(filter)
     }
 }

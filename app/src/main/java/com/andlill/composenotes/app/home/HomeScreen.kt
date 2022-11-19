@@ -9,6 +9,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,6 +37,33 @@ fun HomeScreen(appState: AppState) {
     val viewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory(LocalContext.current.applicationContext as Application))
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+
+    val notesFiltered = remember(viewModel.notes, viewModel.filter, viewModel.query) {
+        derivedStateOf {
+            // First filter using the note filter.
+            val notes = when(viewModel.filter.type) {
+                NoteFilter.Type.AllNotes -> {
+                    viewModel.notes.filter { it.note.deletion == null }
+                }
+                NoteFilter.Type.Reminders -> {
+                    viewModel.notes.filter { it.note.reminder != null }.sortedBy { it.note.reminder }
+                }
+                NoteFilter.Type.Trash -> {
+                    viewModel.notes.filter { it.note.deletion != null }.sortedByDescending { it.note.deletion }
+                }
+                NoteFilter.Type.Label -> {
+                    viewModel.notes.filter { it.labels.contains(viewModel.filter.label) && it.note.deletion == null }
+                }
+            }
+            // Then filter using query if any.
+            notes.filter {
+                if (viewModel.query.isNotBlank())
+                    it.note.title.contains(viewModel.query, ignoreCase = true) || it.note.body.contains(viewModel.query, ignoreCase = true)
+                else
+                    true
+            }
+        }
+    }
 
     BackHandler(drawerState.isOpen) {
         scope.launch {
@@ -98,7 +127,7 @@ fun HomeScreen(appState: AppState) {
                             modifier = Modifier.fillMaxSize(),
                             verticalArrangement = Arrangement.spacedBy(8.dp),
                             contentPadding = PaddingValues(8.dp)) {
-                            items(items = viewModel.notes, key = { it.note.id }) { note ->
+                            items(items = notesFiltered.value, key = { it.note.id }) { note ->
                                 NoteItem(note) {
                                     appState.navigation.navigate(Screen.NoteScreen.route(noteId = note.note.id)) {
                                         // To avoid multiple copies of same destination in backstack.
