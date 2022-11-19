@@ -20,6 +20,10 @@ interface NoteDao {
     suspend fun deleteNote(note: Note)
 
     @Transaction
+    @Query("DELETE FROM Note WHERE id = :id")
+    suspend fun deleteNote(id: Int)
+
+    @Transaction
     @Query("SELECT * FROM Note WHERE id = :id")
     fun getNote(id: Int): Flow<NoteWrapper?>
 
@@ -32,17 +36,11 @@ interface NoteDao {
 
     @Delete
     suspend fun deleteNoteLabel(item: NoteLabelJoin)
-    
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertNoteCheckBox(item: NoteCheckBox): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertNoteCheckBoxes(items: List<NoteCheckBox>)
 
-    @Delete
-    suspend fun deleteNoteCheckBox(item: NoteCheckBox)
-
     @Transaction
     @Query("DELETE FROM NoteCheckBox WHERE noteId = :noteId")
-    suspend fun deleteAllNoteCheckBoxes(noteId: Int)
+    suspend fun deleteNoteCheckBoxes(noteId: Int)
 }

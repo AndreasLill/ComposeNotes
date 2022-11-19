@@ -15,10 +15,7 @@ import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
@@ -35,6 +32,7 @@ import com.andlill.composenotes.R
 import com.andlill.composenotes.app.AppState
 import com.andlill.composenotes.app.Screen
 import com.andlill.composenotes.app.note.composables.*
+import com.andlill.composenotes.model.NoteCheckBox
 import com.andlill.composenotes.ui.shared.button.MenuIconButton
 import com.andlill.composenotes.ui.shared.util.LifecycleEventHandler
 import com.andlill.composenotes.utils.ColorUtils.darken
@@ -56,6 +54,12 @@ fun NoteScreen(appState: AppState, noteId: Int) {
     val scope = rememberCoroutineScope()
     val surfaceColor = MaterialTheme.colorScheme.surface
     val isDarkTheme = isSystemInDarkTheme()
+
+    val sortedList = remember(viewModel.checkBoxes) {
+        derivedStateOf {
+            viewModel.checkBoxes.sortedWith(compareBy<NoteCheckBox> { it.checked }.thenBy { it.order })
+        }
+    }
 
     val noteColor = remember(viewModel.color) {
         when {
@@ -99,7 +103,7 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                             onClick = viewModel::onConvertCheckBoxes
                         )
                         MenuIconButton(
-                            icon = if (viewModel.isPinned) Icons.Filled.PushPin else Icons.Outlined.PushPin,
+                            icon = if (viewModel.pinned) Icons.Filled.PushPin else Icons.Outlined.PushPin,
                             onClick = viewModel::onTogglePin
                         )
                         MenuIconButton(
@@ -177,20 +181,19 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                     if (viewModel.checkBoxes.isEmpty()) {
                         viewModel.setBodySelectionEnd()
                         focusRequester.requestFocus()
-                    }
-                    else {
+                    } else {
                         // TODO: Focus last checkbox text field.
                     }
                 }) {
                 Column(modifier = Modifier.imePadding()) {
                     NoteTitleTextField(
-                        state = viewModel.titleText,
+                        state = viewModel.title,
                         readOnly = (viewModel.deletion != null),
                         onValueChange = viewModel::onChangeTitle
                     )
                     if (viewModel.checkBoxes.isEmpty()) {
                         NoteBodyTextField(
-                            state = viewModel.bodyText,
+                            state = viewModel.body,
                             readOnly = (viewModel.deletion != null),
                             focusRequester = focusRequester,
                             onValueChange = viewModel::onChangeBody
@@ -201,7 +204,7 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                         LazyColumn(modifier = Modifier
                             .fillMaxSize()
                             .padding(8.dp)) {
-                            itemsIndexed(items = viewModel.checkBoxes, key = { _, checkBox -> checkBox.id }) { index, checkBox ->
+                            itemsIndexed(items = sortedList.value, key = { _, checkBox -> checkBox.id }) { index, checkBox ->
                                 NoteCheckBoxItem(
                                     modifier = Modifier.animateItemPlacement(),
                                     checkBox = checkBox,
@@ -209,18 +212,17 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                                     onDelete = {
                                         if (index > 0) {
                                             focusManager.moveFocus(FocusDirection.Up)
-                                            viewModel.onDeleteCheckBox(checkBox)
+                                            viewModel.onDeleteCheckBox(checkBox.id)
                                         }
                                     },
                                     onKeyboardNext = {
                                         // Create a new checkbox if this is the last item.
                                         if (index == viewModel.checkBoxes.size - 1) {
-                                            viewModel.onCreateCheckBox(onDone = {
-                                                scope.launch {
-                                                    delay(50)
-                                                    focusManager.moveFocus(FocusDirection.Down)
-                                                }
-                                            })
+                                            viewModel.onCreateCheckBox()
+                                            scope.launch {
+                                                delay(100)
+                                                focusManager.moveFocus(FocusDirection.Down)
+                                            }
                                         }
                                         else {
                                             focusManager.moveFocus(FocusDirection.Down)
@@ -242,39 +244,6 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                         fontWeight = FontWeight.SemiBold,
                         text = viewModel.statusText,
                     )
-                    // TODO: Add undo/redo for body and check boxes.
-                    /*
-                    TextButton(
-                        modifier = Modifier.align(Alignment.CenterStart),
-                        enabled = viewModel.undoList.isNotEmpty(),
-                        colors = ButtonDefaults.textButtonColors(
-                            contentColor = MaterialTheme.colorScheme.onSurface,
-                            disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(0.4f)
-                        ),
-                        onClick = {
-                            viewModel.onUndo()
-                        }) {
-                        Icon(
-                            imageVector = Icons.Outlined.Undo,
-                            contentDescription = null,
-                        )
-                    }
-                    TextButton(
-                        modifier = Modifier.align(Alignment.CenterEnd),
-                        enabled = viewModel.redoList.isNotEmpty(),
-                        colors = ButtonDefaults.textButtonColors(
-                            contentColor = MaterialTheme.colorScheme.onSurface,
-                            disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(0.4f)
-                        ),
-                        onClick = {
-                            viewModel.onRedo()
-                        }) {
-                        Icon(
-                            imageVector = Icons.Outlined.Redo,
-                            contentDescription = null,
-                        )
-                    }
-                     */
                 }
             }
         }

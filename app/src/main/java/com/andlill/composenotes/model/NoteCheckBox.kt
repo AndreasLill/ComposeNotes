@@ -1,9 +1,6 @@
 package com.andlill.composenotes.model
 
-import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.Index
-import androidx.room.PrimaryKey
+import androidx.room.*
 
 @Entity(
     foreignKeys = [
@@ -23,6 +20,7 @@ data class NoteCheckBox(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val noteId: Int = 0,
+    val order: Int = 0,
     val text: String = "",
     val checked: Boolean = false,
 )

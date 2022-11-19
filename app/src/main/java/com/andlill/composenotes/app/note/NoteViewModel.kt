@@ -1,9 +1,7 @@
 package com.andlill.composenotes.app.note
 
 import android.app.Application
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
@@ -16,10 +14,12 @@ import com.andlill.composenotes.model.NoteCheckBox
 import com.andlill.composenotes.utils.TimeUtils.daysBetween
 import com.andlill.composenotes.utils.TimeUtils.toDateString
 import com.andlill.composenotes.utils.TimeUtils.toMilliSeconds
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
-import java.util.*
+import java.util.Calendar
+import kotlin.collections.ArrayList
+import kotlin.random.Random
 
 class NoteViewModel(private val application: Application, private val noteId: Int) : ViewModel() {
     class Factory(private val application: Application, private val noteId: Int) : ViewModelProvider.NewInstanceFactory() {
@@ -27,173 +27,157 @@ class NoteViewModel(private val application: Application, private val noteId: In
         override fun <T : ViewModel> create(modelClass: Class<T>): T = NoteViewModel(application, noteId) as T
     }
 
-    private var note = Note()
     private var deleteOnClose = false
-    //private var undoLock = false
 
     var id by mutableStateOf(noteId)
         private set
-    var titleText by mutableStateOf(TextFieldValue())
+    var color by mutableStateOf(0)
         private set
-    var bodyText by mutableStateOf(TextFieldValue())
+    var title by mutableStateOf(TextFieldValue())
         private set
-    var isPinned by mutableStateOf(false)
+    var body by mutableStateOf(TextFieldValue())
         private set
-    var reminder by mutableStateOf<Long?>(null)
+    var created by mutableStateOf<Long?>(null)
         private set
     var modified by mutableStateOf<Long?>(null)
         private set
+    var reminder by mutableStateOf<Long?>(null)
+        private set
     var deletion by mutableStateOf<Long?>(null)
         private set
-    var color by mutableStateOf(0)
+    var pinned by mutableStateOf(false)
+        private set
+    var checkBoxes = mutableStateListOf<NoteCheckBox>()
         private set
     var statusText by mutableStateOf("")
-        private set
-    var checkBoxes by mutableStateOf(emptyList<NoteCheckBox>())
         private set
 
     init {
         viewModelScope.launch {
-            NoteRepository.getNote(application, noteId).collectLatest {
-                it?.let {
-                    note = it.note.copy()
-                    isPinned = it.note.pinned
-                    reminder = it.note.reminder
-                    modified = it.note.modified
-                    deletion = it.note.deletion
-                    color = it.note.color
-                    checkBoxes = it.checkBoxes.sortedBy { box -> box.checked }
-                    titleText = titleText.copy(text = it.note.title)
-                    bodyText = bodyText.copy(text = it.note.body)
+            NoteRepository.getNote(application, noteId).firstOrNull()?.let {
+                color = it.note.color
+                title = title.copy(text = it.note.title)
+                body = body.copy(text = it.note.body)
+                created = it.note.created
+                modified = it.note.modified
+                reminder = it.note.reminder
+                deletion = it.note.deletion
+                pinned = it.note.pinned
+                checkBoxes = it.checkBoxes.toMutableStateList()
 
-                    if (deletion != null) {
-                        // Set status text days until deletion.
-                        deletion?.let { value ->
-                            statusText = when (value.daysBetween()) {
-                                0 -> application.resources.getString(R.string.note_screen_status_text_deletion_today)
-                                1 -> application.resources.getString(R.string.note_screen_status_text_deletion_tomorrow)
-                                else -> String.format(application.resources.getString(R.string.note_screen_status_text_deletion_days), value.daysBetween())
-                            }
+                if (deletion != null) {
+                    // Set status text days until deletion.
+                    deletion?.let { value ->
+                        statusText = when (value.daysBetween()) {
+                            0 -> application.resources.getString(R.string.note_screen_status_text_deletion_today)
+                            1 -> application.resources.getString(R.string.note_screen_status_text_deletion_tomorrow)
+                            else -> String.format(application.resources.getString(R.string.note_screen_status_text_deletion_days), value.daysBetween())
                         }
                     }
-                    else {
-                        // Set status text days since modified.
-                        modified?.let { value ->
-                            val days = value.daysBetween()
-                            statusText = when {
-                                days == 0 -> String.format("%s, %s", application.resources.getString(R.string.date_today), value.toDateString("HH:mm"))
-                                days == -1 -> String.format("%s, %s", application.resources.getString(R.string.date_yesterday), value.toDateString("HH:mm"))
-                                days < -365 -> value.toDateString("d MMM YYYY, HH:mm")
-                                else -> value.toDateString("d MMM, HH:mm")
-                            }
+                }
+                else {
+                    // Set status text days since modified.
+                    modified?.let { value ->
+                        val days = value.daysBetween()
+                        statusText = when {
+                            days == 0 -> String.format("%s, %s", application.resources.getString(R.string.date_today), value.toDateString("HH:mm"))
+                            days == -1 -> String.format("%s, %s", application.resources.getString(R.string.date_yesterday), value.toDateString("HH:mm"))
+                            days < -365 -> value.toDateString("d MMM YYYY, HH:mm")
+                            else -> value.toDateString("d MMM, HH:mm")
                         }
                     }
                 }
             }
+
         }
     }
 
     fun onClose() = viewModelScope.launch {
         // Delete note with null created date.
         if (deleteOnClose) {
-            NoteBroadcaster.cancelReminder(application, note.id)
-            NoteRepository.deleteNote(application, note)
+            NoteBroadcaster.cancelReminder(application, id)
+            NoteRepository.deleteNote(application, id)
             return@launch
         }
-
-        // Delete new note without any modifications.
-        if (modified == null && titleText.text.trim().isEmpty() && bodyText.text.trim().isEmpty()) {
-            NoteBroadcaster.cancelReminder(application, note.id)
-            NoteRepository.deleteNote(application, note)
-            return@launch
+        else {
+            NoteRepository.updateNote(application, Note(
+                id = id,
+                color = color,
+                title = title.text.trim(),
+                body = body.text.trim(),
+                created = created,
+                modified = System.currentTimeMillis(),
+                reminder = reminder,
+                deletion = deletion,
+                pinned = pinned
+            ))
+            NoteRepository.deleteNoteCheckBoxes(application, id)
+            NoteRepository.insertNoteCheckBoxes(application, checkBoxes.map { it.copy(id = 0) })
         }
-
-        // Don't save note without changes.
-        if (titleText.text.trim() == note.title.trim() &&
-            bodyText.text.trim() == note.body.trim()) {
-            return@launch
-        }
-
-        // Save note.
-        NoteRepository.updateNote(application, note.copy(
-            title = titleText.text.trim(),
-            body = bodyText.text.trim(),
-            modified = System.currentTimeMillis(),
-        ))
     }
 
     fun onChangeTitle(value: TextFieldValue) {
-        titleText = value
+        title = value
     }
 
     fun onChangeBody(value: TextFieldValue) {
-        /*
-        if (bodyText.text != value.text) {
-            // Add to undo list if text was changed.
-            if (!undoLock) {
-                // Lock the undo for a short time to prevent saving too much undo data.
-                undoLock = true
-                undoList = undoList.plus(bodyText)
-                // Unlock undo after a small delay.
-                viewModelScope.launch {
-                    delay(750)
-                    undoLock = false
-                }
-            }
-        }
-        */
-        bodyText = value
+        body = value
     }
 
     fun setBodySelectionEnd() {
-        bodyText = bodyText.copy(selection = TextRange(bodyText.text.length))
+        body = body.copy(selection = TextRange(body.text.length))
     }
 
     fun onDeletePermanently() {
         deleteOnClose = true
     }
 
-    fun onUpdateReminder(calendar: Calendar?) = viewModelScope.launch {
+    fun onUpdateReminder(calendar: Calendar?) {
         if (calendar != null) {
-            NoteRepository.updateNote(application, note.copy(reminder = calendar.timeInMillis))
-            NoteBroadcaster.setReminder(application, calendar.timeInMillis, note.id)
+            reminder = calendar.timeInMillis
+            NoteBroadcaster.setReminder(application, calendar.timeInMillis, id)
         }
         else {
-            NoteRepository.updateNote(application, note.copy(reminder = null))
-            NoteBroadcaster.cancelReminder(application, note.id)
+            reminder = null
+            NoteBroadcaster.cancelReminder(application, id)
         }
     }
 
-    fun onTogglePin() = viewModelScope.launch {
-        NoteRepository.updateNote(application, note.copy(pinned = !note.pinned))
+    fun onTogglePin() {
+        pinned = !pinned
     }
 
-    fun onChangeColor(value: Int) = viewModelScope.launch {
-        NoteRepository.updateNote(application, note.copy(color = value))
+    fun onChangeColor(value: Int) {
+        color = value
     }
 
-    fun onDeleteNote() = viewModelScope.launch {
+    fun onDeleteNote() {
         // Set deletion date to 7 days from now and move to "trash".
         val deletionTime = LocalDateTime.now().plusDays(7).toMilliSeconds()
-        NoteRepository.updateNote(application, note.copy(reminder = null, deletion = deletionTime))
-        NoteBroadcaster.cancelReminder(application, note.id)
+        reminder = null
+        deletion = deletionTime
+        NoteBroadcaster.cancelReminder(application, id)
     }
 
-    fun onRestore() = viewModelScope.launch {
-        NoteRepository.updateNote(application, note.copy(deletion = null))
+    fun onRestore() {
+        deletion = null
     }
 
     fun onConvertCheckBoxes() = viewModelScope.launch {
         if (checkBoxes.isEmpty()) {
             // Convert body string to check boxes.
             val list = ArrayList<NoteCheckBox>()
-            bodyText.text.lines().forEach { line ->
+            body.text.lines().forEachIndexed { index, line ->
                 if (line.isBlank())
-                    return@forEach
-                list.add(NoteCheckBox(noteId = note.id, text = line))
+                    return@forEachIndexed
+                list.add(NoteCheckBox(id = Random.nextInt(), noteId = id, text = line, order = index + 1))
             }
-            NoteRepository.insertNoteCheckBoxes(application, list)
-            NoteRepository.updateNote(application, note.copy(body = "", modified = System.currentTimeMillis()))
+            // Add blank checkbox if list is empty.
+            if (list.isEmpty())
+                list.add(NoteCheckBox(id = Random.nextInt(), noteId = id, order = 1))
+
+            body = body.copy(text = "")
+            checkBoxes.addAll(list)
         }
         else {
             // Convert check boxes to body string.
@@ -203,43 +187,33 @@ class NoteViewModel(private val application: Application, private val noteId: In
                     return@forEach
                 bodyStr += checkBox.text.plus(System.lineSeparator())
             }
-            NoteRepository.deleteAllNoteCheckBoxes(application, note.id)
-            NoteRepository.updateNote(application, note.copy(body = bodyStr, modified = System.currentTimeMillis()))
+            body = body.copy(text = bodyStr)
+            checkBoxes.clear()
         }
     }
 
-    fun onCreateCheckBox(onDone: () -> Unit) = viewModelScope.launch {
-        NoteRepository.insertNoteCheckBox(application, NoteCheckBox(noteId = note.id))
-        onDone()
+    fun onCreateCheckBox() {
+        // Assign random temporary id to use as stable key in lazy column.
+        checkBoxes.add(NoteCheckBox(id = Random.nextInt(), noteId = id, order = checkBoxes.size + 1))
     }
 
-    fun onDeleteCheckBox(item: NoteCheckBox) = viewModelScope.launch {
-        NoteRepository.deleteNoteCheckBox(application, item)
+    fun onDeleteCheckBox(id: Int) {
+        val item = checkBoxes.firstOrNull { it.id == id }
+        item?.let {
+            checkBoxes.remove(it)
+        }
+
+        // Reset order after removing.
+        checkBoxes = checkBoxes.mapIndexed { index, checkBox ->
+            checkBox.copy(order = index + 1)
+        }.toMutableStateList()
     }
 
-    fun onEditCheckBox(checkBox: NoteCheckBox, checked: Boolean, text: String) = viewModelScope.launch {
-        // Ignore if contents are the same.
-        if (checked == checkBox.checked && text == checkBox.text)
-            return@launch
-        NoteRepository.insertNoteCheckBox(application, checkBox.copy(checked = checked, text = text))
+    fun onEditCheckBox(id: Int, checked: Boolean, text: String) {
+        val item = checkBoxes.firstOrNull { it.id == id }
+        item?.let {
+            val index = checkBoxes.indexOf(it)
+            checkBoxes[index] = checkBoxes[index].copy(checked = checked, text = text)
+        }
     }
-
-    /*
-    // TODO: Add undo/redo for body and check boxes.
-    fun onUndo() {
-        // Undo and move action to redo list.
-        val undo = undoList.last()
-        redoList = redoList.plus(bodyText)
-        undoList = undoList.minus(undo)
-        bodyText = undo
-    }
-
-    fun onRedo() {
-        // Redo and move action to undo list.
-        val redo = redoList.last()
-        undoList = undoList.plus(bodyText)
-        redoList = redoList.minus(redo)
-        bodyText = redo
-    }
-     */
 }

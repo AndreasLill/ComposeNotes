@@ -24,30 +24,24 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.Lifecycle
 import com.andlill.composenotes.model.NoteCheckBox
-import com.andlill.composenotes.ui.shared.util.LifecycleEventHandler
 import com.andlill.composenotes.ui.shared.util.clearFocusOnKeyboardDismiss
-import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun NoteCheckBoxItem(modifier: Modifier, checkBox: NoteCheckBox, onUpdate: (NoteCheckBox, Boolean, String) -> Unit, onDelete: () -> Unit, onKeyboardNext: () -> Unit) {
+fun NoteCheckBoxItem(modifier: Modifier, checkBox: NoteCheckBox, onUpdate: (Int, Boolean, String) -> Unit, onDelete: () -> Unit, onKeyboardNext: () -> Unit) {
     // Local checkbox and text field value state.
     var textFieldValue by remember { mutableStateOf(TextFieldValue(checkBox.text)) }
     var checkBoxValue by remember { mutableStateOf(checkBox.checked) }
+    var deleteOnNextBackspace by remember { mutableStateOf(false) }
 
-    // Send update on life cycle stop.
-    LifecycleEventHandler { event ->
-        if (event == Lifecycle.Event.ON_STOP) {
-            onUpdate(checkBox, checkBoxValue, textFieldValue.text)
-        }
-    }
+    /* Disabled
     // Send update with a delay of 1500ms when user stops typing.
     LaunchedEffect(textFieldValue.text) {
         delay(1500)
         onUpdate(checkBox, checkBoxValue, textFieldValue.text)
     }
+     */
 
     Row(modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically) {
@@ -59,7 +53,7 @@ fun NoteCheckBoxItem(modifier: Modifier, checkBox: NoteCheckBox, onUpdate: (Note
             checked = checkBoxValue,
             onCheckedChange = {
                 checkBoxValue = it
-                onUpdate(checkBox, checkBoxValue, textFieldValue.text)
+                onUpdate(checkBox.id, checkBoxValue, textFieldValue.text)
             }
         )
         BasicTextField(
@@ -68,10 +62,15 @@ fun NoteCheckBoxItem(modifier: Modifier, checkBox: NoteCheckBox, onUpdate: (Note
                 .clearFocusOnKeyboardDismiss()
                 .onKeyEvent { event ->
                     if (event.type == KeyEventType.KeyUp && event.key == Key.Backspace && textFieldValue.text.isEmpty()) {
-                        onDelete()
+                        if (!deleteOnNextBackspace) {
+                            deleteOnNextBackspace = true
+                        }
+                        else {
+                            onDelete()
+                        }
                         return@onKeyEvent true
                     }
-                    if (event.type == KeyEventType.KeyUp && event.key == Key.Enter) {
+                    if (event.type == KeyEventType.KeyUp && event.key == Key.Enter && textFieldValue.text.isNotBlank()) {
                         onKeyboardNext()
                         return@onKeyEvent true
                     }
@@ -89,7 +88,9 @@ fun NoteCheckBoxItem(modifier: Modifier, checkBox: NoteCheckBox, onUpdate: (Note
             ),
             keyboardActions = KeyboardActions(
                 onNext = {
-                    onKeyboardNext()
+                    if (textFieldValue.text.isNotBlank()) {
+                        onKeyboardNext()
+                    }
                 }
             ),
             value = textFieldValue,
@@ -98,6 +99,7 @@ fun NoteCheckBoxItem(modifier: Modifier, checkBox: NoteCheckBox, onUpdate: (Note
                 if (it.text.endsWith("\n"))
                     return@BasicTextField
                 textFieldValue = it
+                onUpdate(checkBox.id, checkBoxValue, textFieldValue.text)
             },
             textStyle = TextStyle(
                 color = MaterialTheme.colorScheme.onSurface,

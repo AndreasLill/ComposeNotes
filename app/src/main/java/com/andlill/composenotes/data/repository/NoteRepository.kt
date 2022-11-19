@@ -25,6 +25,10 @@ object NoteRepository {
         AppDatabase.get(context).noteDao.deleteNote(note)
     }
 
+    suspend fun deleteNote(context: Context, id: Int) = withContext(Dispatchers.IO) {
+        AppDatabase.get(context).noteDao.deleteNote(id)
+    }
+
     fun getNote(context: Context, id: Int): Flow<NoteWrapper?> {
         return AppDatabase.get(context).noteDao.getNote(id).flowOn(Dispatchers.IO)
     }
@@ -41,19 +45,11 @@ object NoteRepository {
         AppDatabase.get(context).noteDao.deleteNoteLabel(item)
     }
 
-    suspend fun insertNoteCheckBox(context: Context, item: NoteCheckBox) = withContext(Dispatchers.IO) {
-        return@withContext AppDatabase.get(context).noteDao.insertNoteCheckBox(item).toInt()
-    }
-
     suspend fun insertNoteCheckBoxes(context: Context, items: List<NoteCheckBox>) = withContext(Dispatchers.IO) {
         AppDatabase.get(context).noteDao.insertNoteCheckBoxes(items)
     }
 
-    suspend fun deleteNoteCheckBox(context: Context, item: NoteCheckBox) = withContext(Dispatchers.IO) {
-        AppDatabase.get(context).noteDao.deleteNoteCheckBox(item)
-    }
-
-    suspend fun deleteAllNoteCheckBoxes(context: Context, noteId: Int) = withContext(Dispatchers.IO) {
-        AppDatabase.get(context).noteDao.deleteAllNoteCheckBoxes(noteId)
+    suspend fun deleteNoteCheckBoxes(context: Context, noteId: Int) = withContext(Dispatchers.IO) {
+        AppDatabase.get(context).noteDao.deleteNoteCheckBoxes(noteId)
     }
 }
