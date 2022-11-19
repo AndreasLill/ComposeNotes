@@ -63,7 +63,9 @@ class NoteViewModel(private val application: Application, private val noteId: In
                 reminder = it.note.reminder
                 deletion = it.note.deletion
                 pinned = it.note.pinned
-                checkBoxes = it.checkBoxes.toMutableStateList()
+
+                checkBoxes.clear()
+                checkBoxes.addAll(it.checkBoxes)
 
                 if (deletion != null) {
                     // Set status text days until deletion.
@@ -204,9 +206,9 @@ class NoteViewModel(private val application: Application, private val noteId: In
         }
 
         // Reset order after removing.
-        checkBoxes = checkBoxes.mapIndexed { index, checkBox ->
-            checkBox.copy(order = index + 1)
-        }.toMutableStateList()
+        val list = checkBoxes.mapIndexed { index, checkBox -> checkBox.copy(order = index + 1) }
+        checkBoxes.clear()
+        checkBoxes.addAll(list)
     }
 
     fun onEditCheckBox(id: Int, checked: Boolean, text: String) {
