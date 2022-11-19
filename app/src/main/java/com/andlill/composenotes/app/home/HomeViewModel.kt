@@ -29,20 +29,17 @@ class HomeViewModel(private val application: Application) : ViewModel() {
 
     init {
         viewModelScope.launch {
-            NoteRepository.getAllNotes(application).collectLatest { note ->
-                // Sort and filter unmodified notes.
-                notes = note
-                    .sortedWith(compareByDescending<NoteWrapper> { it.note.pinned }.thenByDescending { it.note.created })
-                    .filter { it.note.modified != null }
-                    .toMutableStateList()
+            NoteRepository.getAllNotes(application).collectLatest { items ->
+                if (notes.size > 0)
+                    notes.clear()
+                notes.addAll(items)
             }
         }
         viewModelScope.launch {
-            LabelRepository.getAllLabels(application).collectLatest {
-                // Sort labels.
-                labels = it
-                    .sortedBy { label -> label.value.lowercase() }
-                    .toMutableStateList()
+            LabelRepository.getAllLabels(application).collectLatest { items ->
+                if (labels.size > 0)
+                    labels.clear()
+                labels.addAll(items)
             }
         }
     }

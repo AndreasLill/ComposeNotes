@@ -55,7 +55,7 @@ fun NoteScreen(appState: AppState, noteId: Int) {
     val surfaceColor = MaterialTheme.colorScheme.surface
     val isDarkTheme = isSystemInDarkTheme()
 
-    val sortedList = remember(viewModel.checkBoxes) {
+    val sortedList = remember {
         derivedStateOf {
             viewModel.checkBoxes.sortedWith(compareBy<NoteCheckBox> { it.checked }.thenBy { it.order })
         }

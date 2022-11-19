@@ -27,6 +27,7 @@ import com.andlill.composenotes.app.home.composables.Drawer
 import com.andlill.composenotes.app.home.composables.NoteItem
 import com.andlill.composenotes.app.home.composables.SearchBar
 import com.andlill.composenotes.model.NoteFilter
+import com.andlill.composenotes.model.NoteWrapper
 import com.andlill.composenotes.ui.shared.button.MenuIconButton
 import com.andlill.composenotes.ui.shared.label.NoteLabel
 import kotlinx.coroutines.launch
@@ -38,21 +39,29 @@ fun HomeScreen(appState: AppState) {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
-    val notesFiltered = remember(viewModel.notes, viewModel.filter, viewModel.query) {
+    val notesFiltered = remember {
         derivedStateOf {
             // First filter using the note filter.
             val notes = when(viewModel.filter.type) {
                 NoteFilter.Type.AllNotes -> {
-                    viewModel.notes.filter { it.note.deletion == null }
+                    viewModel.notes
+                        .filter { it.note.deletion == null && it.note.modified != null }
+                        .sortedWith(compareByDescending<NoteWrapper> { it.note.pinned }.thenByDescending { it.note.created })
                 }
                 NoteFilter.Type.Reminders -> {
-                    viewModel.notes.filter { it.note.reminder != null }.sortedBy { it.note.reminder }
+                    viewModel.notes
+                        .filter { it.note.reminder != null && it.note.modified != null }
+                        .sortedWith(compareBy { it.note.reminder })
                 }
                 NoteFilter.Type.Trash -> {
-                    viewModel.notes.filter { it.note.deletion != null }.sortedByDescending { it.note.deletion }
+                    viewModel.notes
+                        .filter { it.note.deletion != null && it.note.modified != null }
+                        .sortedWith(compareByDescending { it.note.deletion })
                 }
                 NoteFilter.Type.Label -> {
-                    viewModel.notes.filter { it.labels.contains(viewModel.filter.label) && it.note.deletion == null }
+                    viewModel.notes
+                        .filter { it.labels.contains(viewModel.filter.label) && it.note.deletion == null && it.note.modified != null }
+                        .sortedWith(compareByDescending<NoteWrapper> { it.note.pinned }.thenByDescending { it.note.created })
                 }
             }
             // Then filter using query if any.
@@ -62,6 +71,12 @@ fun HomeScreen(appState: AppState) {
                 else
                     true
             }
+        }
+    }
+
+    val labelsSorted = remember {
+        derivedStateOf {
+            viewModel.labels.sortedBy { it.value.lowercase() }
         }
     }
 
@@ -78,7 +93,7 @@ fun HomeScreen(appState: AppState) {
                 drawerContainerColor = MaterialTheme.colorScheme.surface,
                 content = {
                     Drawer(
-                        labels = viewModel.labels,
+                        labels = labelsSorted.value,
                         onFilter = viewModel::onFilter,
                         onAddLabel = viewModel::onAddLabel,
                         onEditLabels = {
