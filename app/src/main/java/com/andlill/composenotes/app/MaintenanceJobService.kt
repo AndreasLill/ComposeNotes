@@ -5,10 +5,12 @@ import android.app.job.JobService
 import android.util.Log
 import com.andlill.composenotes.data.repository.NoteRepository
 import com.andlill.composenotes.utils.TimeUtils.daysBetween
+import com.andlill.composenotes.utils.TimeUtils.toLocalDateTime
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 
 // Responsible for scheduled background maintenance such as deleting notes scheduled for deletion.
 // Run once every 6 hours.
@@ -32,7 +34,8 @@ class MaintenanceJobService : JobService() {
     private fun deleteScheduledNotes() = CoroutineScope(Dispatchers.Default).launch {
         NoteRepository.getAllNotes(this@MaintenanceJobService).firstOrNull()?.filter { it.note.deletion != null }?.forEach { note ->
             note.note.deletion?.let {
-                if (it.daysBetween() <= 0) {
+                val deletion = it.toLocalDateTime()
+                if (deletion.daysBetween(LocalDateTime.now()) <= 0) {
                     NoteRepository.deleteNote(this@MaintenanceJobService, note.note)
                     Log.d("MaintenanceJobService", "Scheduled deletion of note: ${note.note.id}")
                 }

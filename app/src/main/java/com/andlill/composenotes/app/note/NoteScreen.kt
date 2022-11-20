@@ -39,8 +39,12 @@ import com.andlill.composenotes.ui.shared.button.MenuIconButton
 import com.andlill.composenotes.ui.shared.util.LifecycleEventHandler
 import com.andlill.composenotes.utils.ColorUtils.darken
 import com.andlill.composenotes.utils.DialogUtils
+import com.andlill.composenotes.utils.TimeUtils.daysBetween
+import com.andlill.composenotes.utils.TimeUtils.toDateString
+import com.andlill.composenotes.utils.TimeUtils.toLocalDateTime
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class, ExperimentalFoundationApi::class)
 @Composable
@@ -62,6 +66,48 @@ fun NoteScreen(appState: AppState, noteId: Int) {
     val checkBoxesSortedList = remember {
         derivedStateOf {
             viewModel.checkBoxes.sortedWith(compareBy<NoteCheckBox> { it.checked }.thenBy { it.order })
+        }
+    }
+
+    val statusText = remember {
+        derivedStateOf {
+            var text = ""
+            viewModel.modified?.let {
+                val modified = it.toLocalDateTime()
+                val current = LocalDateTime.now()
+                text = when (modified.daysBetween(current)) {
+                    0 -> {
+                        String.format("%s, %s", context.getString(R.string.date_today), modified.toDateString("HH:mm"))
+                    }
+                    -1 -> {
+                        String.format("%s, %s", context.getString(R.string.date_yesterday), modified.toDateString("HH:mm"))
+                    }
+                    else -> {
+                        if (modified.year != current.year) {
+                            modified.toDateString("d MMM YYYY, HH:mm")
+                        }
+                        else {
+                            modified.toDateString("d MMM, HH:mm")
+                        }
+                    }
+                }
+            }
+            viewModel.deletion?.let {
+                val deletion = it.toLocalDateTime()
+                val current = LocalDateTime.now()
+                text = when (deletion.daysBetween(current)) {
+                    0 -> {
+                        context.getString(R.string.note_screen_status_text_deletion_today)
+                    }
+                    1 -> {
+                        context.getString(R.string.note_screen_status_text_deletion_tomorrow)
+                    }
+                    else -> {
+                        String.format(context.getString(R.string.note_screen_status_text_deletion_days), deletion.daysBetween(current))
+                    }
+                }
+            }
+            text
         }
     }
 
@@ -269,7 +315,7 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                         color = MaterialTheme.colorScheme.onSurface.copy(0.6f),
                         fontSize = 12.sp,
                         fontWeight = FontWeight.SemiBold,
-                        text = viewModel.statusText,
+                        text = statusText.value,
                     )
                 }
             }

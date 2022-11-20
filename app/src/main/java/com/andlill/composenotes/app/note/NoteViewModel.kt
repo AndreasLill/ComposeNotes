@@ -7,18 +7,14 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.andlill.composenotes.R
 import com.andlill.composenotes.data.repository.NoteRepository
 import com.andlill.composenotes.model.Note
 import com.andlill.composenotes.model.NoteCheckBox
-import com.andlill.composenotes.utils.TimeUtils.daysBetween
-import com.andlill.composenotes.utils.TimeUtils.toDateString
 import com.andlill.composenotes.utils.TimeUtils.toMilliSeconds
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
-import java.util.Calendar
-import kotlin.collections.ArrayList
+import java.util.*
 import kotlin.random.Random
 
 class NoteViewModel(private val application: Application, private val noteId: Int) : ViewModel() {
@@ -49,8 +45,6 @@ class NoteViewModel(private val application: Application, private val noteId: In
         private set
     var checkBoxes = mutableStateListOf<NoteCheckBox>()
         private set
-    var statusText by mutableStateOf("")
-        private set
 
     init {
         viewModelScope.launch {
@@ -66,29 +60,6 @@ class NoteViewModel(private val application: Application, private val noteId: In
 
                 checkBoxes.clear()
                 checkBoxes.addAll(it.checkBoxes)
-
-                if (deletion != null) {
-                    // Set status text days until deletion.
-                    deletion?.let { value ->
-                        statusText = when (value.daysBetween()) {
-                            0 -> application.resources.getString(R.string.note_screen_status_text_deletion_today)
-                            1 -> application.resources.getString(R.string.note_screen_status_text_deletion_tomorrow)
-                            else -> String.format(application.resources.getString(R.string.note_screen_status_text_deletion_days), value.daysBetween())
-                        }
-                    }
-                }
-                else {
-                    // Set status text days since modified.
-                    modified?.let { value ->
-                        val days = value.daysBetween()
-                        statusText = when {
-                            days == 0 -> String.format("%s, %s", application.resources.getString(R.string.date_today), value.toDateString("HH:mm"))
-                            days == -1 -> String.format("%s, %s", application.resources.getString(R.string.date_yesterday), value.toDateString("HH:mm"))
-                            days < -365 -> value.toDateString("d MMM YYYY, HH:mm")
-                            else -> value.toDateString("d MMM, HH:mm")
-                        }
-                    }
-                }
             }
 
         }

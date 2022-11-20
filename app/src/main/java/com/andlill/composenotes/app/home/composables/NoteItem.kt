@@ -27,6 +27,8 @@ import com.andlill.composenotes.ui.shared.label.NoteLabel
 import com.andlill.composenotes.utils.ColorUtils.darken
 import com.andlill.composenotes.utils.TimeUtils.daysBetween
 import com.andlill.composenotes.utils.TimeUtils.toDateString
+import com.andlill.composenotes.utils.TimeUtils.toLocalDateTime
+import java.time.LocalDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -138,12 +140,19 @@ fun NoteItem(note: NoteWrapper, onClick: () -> Unit) {
                 }
                 note.note.reminder?.let {
                     val height = if (note.labels.isEmpty()) 16.dp else 12.dp
-                    val daysBetween = note.note.reminder.daysBetween()
-                    val reminderText = when {
-                        daysBetween == 0 -> String.format("%s, %s", stringResource(R.string.date_today), note.note.reminder.toDateString("HH:mm"))
-                        daysBetween == 1 -> String.format("%s, %s", stringResource(R.string.date_tomorrow), note.note.reminder.toDateString("HH:mm"))
-                        daysBetween > 365 -> note.note.reminder.toDateString("d MMM YYYY, HH:mm")
-                        else -> note.note.reminder.toDateString("d MMM, HH:mm")
+                    val modified = it.toLocalDateTime()
+                    val current = LocalDateTime.now()
+                    val reminderText = when (modified.daysBetween(current)) {
+                        0 -> String.format("%s, %s", stringResource(R.string.date_today), modified.toDateString("HH:mm"))
+                        1 -> String.format("%s, %s", stringResource(R.string.date_yesterday), modified.toDateString("HH:mm"))
+                        else -> {
+                            if (modified.year != current.year) {
+                                modified.toDateString("d MMM YYYY, HH:mm")
+                            }
+                            else {
+                                modified.toDateString("d MMM, HH:mm")
+                            }
+                        }
                     }
                     Spacer(modifier = Modifier.height(height))
                     NoteLabel(
@@ -155,11 +164,12 @@ fun NoteItem(note: NoteWrapper, onClick: () -> Unit) {
 
                 note.note.deletion?.let {
                     val height = if (note.labels.isEmpty()) 16.dp else 12.dp
-                    val daysBetween = note.note.deletion.daysBetween()
-                    val deletionText = when {
-                        daysBetween <= 0 -> stringResource(R.string.home_screen_note_text_deletion_today)
-                        daysBetween == 1 -> stringResource(R.string.home_screen_note_text_deletion_tomorrow)
-                        else -> String.format(stringResource(R.string.home_screen_note_text_deletion_days), daysBetween)
+                    val deletion = it.toLocalDateTime()
+                    val current = LocalDateTime.now()
+                    val deletionText = when (deletion.daysBetween(current)) {
+                        0 -> stringResource(R.string.home_screen_note_text_deletion_today)
+                        1 -> stringResource(R.string.home_screen_note_text_deletion_tomorrow)
+                        else -> String.format(stringResource(R.string.home_screen_note_text_deletion_days), deletion.daysBetween(current))
                     }
                     Spacer(modifier = Modifier.height(height))
                     NoteLabel(
