@@ -107,6 +107,7 @@ fun NoteCheckBoxItem(modifier: Modifier, focusRequester: FocusRequester? = null,
                 if (it.text.endsWith("\n"))
                     return@BasicTextField
                 textFieldValue = it
+                deleteOnNextBackspace = false
                 onUpdate(checkBox.id, checkBoxValue, textFieldValue.text)
             },
             textStyle = TextStyle(
