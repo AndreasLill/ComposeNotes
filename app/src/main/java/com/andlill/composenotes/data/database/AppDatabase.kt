@@ -25,7 +25,7 @@ abstract class AppDatabase : RoomDatabase(){
         fun get(context: Context): AppDatabase {
             synchronized(this) {
                 if (!this::instance.isInitialized) {
-                    instance = Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, "database").fallbackToDestructiveMigrationOnDowngrade().build()
+                    instance = Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, "database").fallbackToDestructiveMigration().build()
                 }
 
                 return instance
