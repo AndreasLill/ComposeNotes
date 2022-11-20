@@ -108,7 +108,7 @@ fun NoteItem(note: NoteWrapper, onClick: () -> Unit) {
                                     checked = item.checked,
                                     onClick = {  }
                                 )
-                                Spacer(modifier = Modifier.width(6.dp))
+                                Spacer(modifier = Modifier.width(8.dp))
                                 Text(
                                     text = item.text,
                                     fontSize = 15.sp,
