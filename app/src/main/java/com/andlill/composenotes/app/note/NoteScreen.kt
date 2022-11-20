@@ -48,14 +48,15 @@ fun NoteScreen(appState: AppState, noteId: Int) {
     val colorDialogState = remember { mutableStateOf(false) }
     val reminderDialogState = remember { mutableStateOf(false) }
     val interactionSource = remember { MutableInteractionSource() }
-    val focusRequester = remember { FocusRequester() }
+    val focusRequesterBody = remember { FocusRequester() }
+    val focusRequesterCheckBox = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val surfaceColor = MaterialTheme.colorScheme.surface
     val isDarkTheme = isSystemInDarkTheme()
 
-    val sortedList = remember {
+    val checkBoxesSortedList = remember {
         derivedStateOf {
             viewModel.checkBoxes.sortedWith(compareBy<NoteCheckBox> { it.checked }.thenBy { it.order })
         }
@@ -100,7 +101,13 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                     if (viewModel.deletion == null) {
                         MenuIconButton(
                             icon = Icons.Outlined.CheckBox,
-                            onClick = viewModel::onConvertCheckBoxes
+                            onClick = {
+                                viewModel.onConvertCheckBoxes()
+                                scope.launch {
+                                    delay(50)
+                                    focusRequesterCheckBox.requestFocus()
+                                }
+                            }
                         )
                         MenuIconButton(
                             icon = if (viewModel.pinned) Icons.Filled.PushPin else Icons.Outlined.PushPin,
@@ -179,10 +186,12 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                 .fillMaxSize()
                 .clickable(interactionSource = interactionSource, indication = null) {
                     if (viewModel.checkBoxes.isEmpty()) {
+                        // Request focus on text body.
                         viewModel.setBodySelectionEnd()
-                        focusRequester.requestFocus()
+                        focusRequesterBody.requestFocus()
                     } else {
-                        // TODO: Focus last checkbox text field.
+                        // Request focus on check box.
+                        focusRequesterCheckBox.requestFocus()
                     }
                 }) {
                 Column(modifier = Modifier.imePadding()) {
@@ -195,7 +204,7 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                         NoteBodyTextField(
                             state = viewModel.body,
                             readOnly = (viewModel.deletion != null),
-                            focusRequester = focusRequester,
+                            focusRequester = focusRequesterBody,
                             onValueChange = viewModel::onChangeBody
                         )
                     }
@@ -204,9 +213,10 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                         LazyColumn(modifier = Modifier
                             .fillMaxSize()
                             .padding(8.dp)) {
-                            itemsIndexed(items = sortedList.value, key = { _, checkBox -> checkBox.id }) { index, checkBox ->
+                            itemsIndexed(items = checkBoxesSortedList.value, key = { _, checkBox -> checkBox.id }) { index, checkBox ->
                                 NoteCheckBoxItem(
                                     modifier = Modifier.animateItemPlacement(),
+                                    focusRequester = if (checkBoxesSortedList.value.size == index + 1) focusRequesterCheckBox else null,
                                     checkBox = checkBox,
                                     onUpdate = viewModel::onEditCheckBox,
                                     onDelete = {
@@ -217,10 +227,10 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                                     },
                                     onKeyboardNext = {
                                         // Create a new checkbox if this is the last item.
-                                        if (index == viewModel.checkBoxes.size - 1) {
+                                        if (checkBoxesSortedList.value.size == index + 1) {
                                             viewModel.onCreateCheckBox()
                                             scope.launch {
-                                                delay(100)
+                                                delay(50)
                                                 focusManager.moveFocus(FocusDirection.Down)
                                             }
                                         }

@@ -14,6 +14,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
@@ -29,7 +31,7 @@ import com.andlill.composenotes.ui.shared.util.clearFocusOnKeyboardDismiss
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun NoteCheckBoxItem(modifier: Modifier, checkBox: NoteCheckBox, onUpdate: (Int, Boolean, String) -> Unit, onDelete: () -> Unit, onKeyboardNext: () -> Unit) {
+fun NoteCheckBoxItem(modifier: Modifier, focusRequester: FocusRequester? = null, checkBox: NoteCheckBox, onUpdate: (Int, Boolean, String) -> Unit, onDelete: () -> Unit, onKeyboardNext: () -> Unit) {
     // Local checkbox and text field value state.
     var textFieldValue by remember { mutableStateOf(TextFieldValue(checkBox.text)) }
     var checkBoxValue by remember { mutableStateOf(checkBox.checked) }
@@ -60,6 +62,12 @@ fun NoteCheckBoxItem(modifier: Modifier, checkBox: NoteCheckBox, onUpdate: (Int,
             modifier = Modifier
                 .fillMaxSize()
                 .clearFocusOnKeyboardDismiss()
+                .then(
+                    if (focusRequester != null)
+                        Modifier.focusRequester(focusRequester)
+                    else
+                        Modifier
+                )
                 .onKeyEvent { event ->
                     if (event.type == KeyEventType.KeyUp && event.key == Key.Backspace && textFieldValue.text.isEmpty()) {
                         if (!deleteOnNextBackspace) {
