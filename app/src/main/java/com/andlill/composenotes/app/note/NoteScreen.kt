@@ -42,6 +42,7 @@ import com.andlill.composenotes.utils.DialogUtils
 import com.andlill.composenotes.utils.TimeUtils.daysBetween
 import com.andlill.composenotes.utils.TimeUtils.toDateString
 import com.andlill.composenotes.utils.TimeUtils.toLocalDateTime
+import com.andlill.composenotes.utils.TimeUtils.toMilliSeconds
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
@@ -201,6 +202,7 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                                             }
                                         }
                                         NoteOption.Labels -> {
+                                            viewModel.onChangeModified(LocalDateTime.now().toMilliSeconds())
                                             appState.navigation.navigate(Screen.LabelScreen.route(noteId = viewModel.id)) {
                                                 // To avoid multiple copies of same destination in backstack.
                                                 launchSingleTop = true

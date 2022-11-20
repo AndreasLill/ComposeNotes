@@ -66,7 +66,13 @@ class NoteViewModel(private val application: Application, private val noteId: In
     }
 
     fun onClose() = viewModelScope.launch {
-        // Delete note with null created date.
+        // Delete unmodified empty note on close.
+        if (modified == null && checkBoxes.isEmpty() && body.text.isEmpty() && title.text.isEmpty()) {
+            NoteBroadcaster.cancelReminder(application, id)
+            NoteRepository.deleteNote(application, id)
+            return@launch
+        }
+
         if (deleteOnClose) {
             NoteBroadcaster.cancelReminder(application, id)
             NoteRepository.deleteNote(application, id)
@@ -95,6 +101,10 @@ class NoteViewModel(private val application: Application, private val noteId: In
 
     fun onChangeBody(value: TextFieldValue) {
         body = value
+    }
+
+    fun onChangeModified(value: Long) {
+        modified = value
     }
 
     fun setBodySelectionEnd() {
