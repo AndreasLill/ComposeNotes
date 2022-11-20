@@ -52,7 +52,7 @@ fun NoteItem(note: NoteWrapper, onClick: () -> Unit) {
         onClick = onClick,
         color = animateColorAsState(noteColor).value,
         shadowElevation = 2.dp,
-        border = if (note.note.color == 0) BorderStroke(width = 0.5.dp, color = MaterialTheme.colorScheme.onSurface.copy(0.1f)) else null,
+        border = if (note.note.color == 0) BorderStroke(width = 0.5.dp, color = MaterialTheme.colorScheme.onSurface.copy(0.2f)) else null,
         content = {
             Column(modifier = Modifier
                 .fillMaxSize()
