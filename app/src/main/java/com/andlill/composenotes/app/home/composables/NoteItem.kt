@@ -1,6 +1,7 @@
 package com.andlill.composenotes.app.home.composables
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -51,6 +52,7 @@ fun NoteItem(note: NoteWrapper, onClick: () -> Unit) {
         onClick = onClick,
         color = animateColorAsState(noteColor).value,
         shadowElevation = 2.dp,
+        border = if (note.note.color == 0) BorderStroke(width = 0.5.dp, color = MaterialTheme.colorScheme.onSurface.copy(0.1f)) else null,
         content = {
             Column(modifier = Modifier
                 .fillMaxSize()
