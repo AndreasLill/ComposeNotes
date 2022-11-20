@@ -51,6 +51,10 @@
     <string name="note_screen_message_note_trash">Note was moved to trash.</string>
     <string name="note_screen_message_note_restored">Note was restored from trash.</string>
     <string name="note_screen_message_note_deleted">Note was permanently deleted.</string>
+    <string name="note_screen_menu_checkboxes">Checkboxes</string>
+    <string name="note_screen_menu_checkboxes_hide">Hide Checkboxes</string>
+    <string name="note_screen_menu_labels">Labels</string>
+    <string name="note_screen_menu_trash">Move to Trash</string>
 
     <!-- Label Screen -->
     <string name="label_screen_create_label_placeholder">Create new label</string>

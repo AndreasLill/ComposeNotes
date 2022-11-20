@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material.icons.outlined.*
@@ -46,6 +47,7 @@ import kotlinx.coroutines.launch
 fun NoteScreen(appState: AppState, noteId: Int) {
     val viewModel: NoteViewModel = viewModel(factory = NoteViewModel.Factory(LocalContext.current.applicationContext as Application, noteId))
 
+    val optionsDropDownState = remember { mutableStateOf(false) }
     val colorDialogState = remember { mutableStateOf(false) }
     val reminderDialogState = remember { mutableStateOf(false) }
     val interactionSource = remember { MutableInteractionSource() }
@@ -100,59 +102,73 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                 },
                 actions = {
                     if (viewModel.deletion == null) {
-                        MenuIconButton(
-                            icon = Icons.Outlined.CheckBox,
-                            onClick = {
-                                viewModel.onConvertCheckBoxes()
-                                scope.launch {
-                                    delay(50)
-                                    focusRequesterCheckBox.requestFocus()
+                        Box {
+                            MenuIconButton(
+                                icon = if (viewModel.pinned) Icons.Filled.PushPin else Icons.Outlined.PushPin,
+                                onClick = viewModel::onTogglePin
+                            )
+                        }
+                        Box {
+                            MenuIconButton(
+                                icon = if (viewModel.reminder != null) Icons.Filled.Notifications else Icons.Outlined.Notifications,
+                                onClick = {
+                                    reminderDialogState.value = true
                                 }
-                            }
-                        )
-                        MenuIconButton(
-                            icon = if (viewModel.pinned) Icons.Filled.PushPin else Icons.Outlined.PushPin,
-                            onClick = viewModel::onTogglePin
-                        )
-                        MenuIconButton(
-                            icon = if (viewModel.reminder != null) Icons.Filled.Notifications else Icons.Outlined.Notifications,
-                            onClick = {
-                                reminderDialogState.value = true
-                            }
-                        )
-                        ReminderDialog(
-                            state = reminderDialogState,
-                            reminderTime = viewModel.reminder,
-                            onClick = viewModel::onUpdateReminder
-                        )
-                        MenuIconButton(
-                            icon = Icons.Outlined.Label,
-                            onClick = {
-                                appState.navigation.navigate(Screen.LabelScreen.route(noteId = viewModel.id)) {
-                                    // To avoid multiple copies of same destination in backstack.
-                                    launchSingleTop = true
+                            )
+                            ReminderDialog(
+                                state = reminderDialogState,
+                                reminderTime = viewModel.reminder,
+                                onClick = viewModel::onUpdateReminder
+                            )
+                        }
+                        Box {
+                            MenuIconButton(
+                                icon = Icons.Outlined.Palette,
+                                onClick = {
+                                    colorDialogState.value = true
                                 }
-                            }
-                        )
-                        MenuIconButton(
-                            icon = Icons.Outlined.Palette,
-                            onClick = {
-                                colorDialogState.value = true
-                            }
-                        )
-                        MenuIconButton(
-                            icon = Icons.Outlined.Delete,
-                            onClick = {
-                                viewModel.onDeleteNote()
-                                appState.showSnackbar(context.resources.getString(R.string.note_screen_message_note_trash), SnackbarDuration.Short)
-                                appState.navigation.navigateUp()
-                            }
-                        )
-                        ThemeDropDown(
-                            state = colorDialogState,
-                            selectedColor = viewModel.color,
-                            onClick = viewModel::onChangeColor
-                        )
+                            )
+                            ColorDialog(
+                                state = colorDialogState,
+                                selectedColor = viewModel.color,
+                                onClick = viewModel::onChangeColor
+                            )
+                        }
+                        Box {
+                            MenuIconButton(
+                                icon = Icons.Filled.MoreVert,
+                                onClick = {
+                                    optionsDropDownState.value = true
+                                }
+                            )
+                            OptionsDropDownMenu(
+                                state = optionsDropDownState,
+                                isCheckBoxesEmpty = viewModel.checkBoxes.isEmpty(),
+                                onClick = {
+                                    optionsDropDownState.value = false
+                                    when (it) {
+                                        NoteOption.Checkboxes -> {
+                                            viewModel.onConvertCheckBoxes()
+                                            scope.launch {
+                                                delay(50)
+                                                focusRequesterCheckBox.requestFocus()
+                                            }
+                                        }
+                                        NoteOption.Labels -> {
+                                            appState.navigation.navigate(Screen.LabelScreen.route(noteId = viewModel.id)) {
+                                                // To avoid multiple copies of same destination in backstack.
+                                                launchSingleTop = true
+                                            }
+                                        }
+                                        NoteOption.Delete -> {
+                                            viewModel.onDeleteNote()
+                                            appState.showSnackbar(context.resources.getString(R.string.note_screen_message_note_trash), SnackbarDuration.Short)
+                                            appState.navigation.navigateUp()
+                                        }
+                                    }
+                                }
+                            )
+                        }
                     }
                     else {
                         MenuIconButton(

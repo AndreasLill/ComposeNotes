@@ -114,7 +114,7 @@ class NoteViewModel(private val application: Application, private val noteId: In
                 pinned = pinned
             ))
             NoteRepository.deleteNoteCheckBoxes(application, id)
-            NoteRepository.insertNoteCheckBoxes(application, checkBoxes.map { it.copy(id = 0) })
+            NoteRepository.insertNoteCheckBoxes(application, checkBoxes.map { it.copy(id = 0, text = it.text.trim()) })
         }
     }
 

@@ -20,7 +20,7 @@ import com.andlill.composenotes.ui.theme.NoteColors
 import com.andlill.composenotes.utils.ColorUtils.darken
 
 @Composable
-fun ThemeDropDown(state: MutableState<Boolean>, selectedColor: Int, onClick: (Int) -> Unit) {
+fun ColorDialog(state: MutableState<Boolean>, selectedColor: Int, onClick: (Int) -> Unit) {
     DropdownMenu(
         expanded = state.value,
         modifier = Modifier
