@@ -141,7 +141,7 @@ fun HomeScreen(appState: AppState) {
                         },
                         actions = {
                             MenuIconButton(
-                                icon = if (viewModel.isGridView) Icons.Outlined.GridView else Icons.Outlined.ViewAgenda,
+                                icon = if (viewModel.userPreferences.isGridView) Icons.Outlined.GridView else Icons.Outlined.ViewAgenda,
                                 onClick = {
                                     viewModel.onChangeView()
                                 }
@@ -153,7 +153,7 @@ fun HomeScreen(appState: AppState) {
                     Box(modifier = Modifier
                         .padding(innerPadding)
                         .fillMaxSize())  {
-                        if (viewModel.isGridView) {
+                        if (viewModel.userPreferences.isGridView) {
                             LazyVerticalStaggeredGrid(
                                 modifier = Modifier.fillMaxSize(),
                                 verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -161,7 +161,7 @@ fun HomeScreen(appState: AppState) {
                                 columns = StaggeredGridCells.Fixed(2),
                                 contentPadding = PaddingValues(8.dp)) {
                                 items(items = notesFiltered.value, key = { it.note.id }) { note ->
-                                    NoteItem(note, viewModel.noteMaxLines) {
+                                    NoteItem(note, viewModel.userPreferences.notePreviewMaxLines) {
                                         appState.navigation.navigate(Screen.NoteScreen.route(noteId = note.note.id)) {
                                             // To avoid multiple copies of same destination in backstack.
                                             launchSingleTop = true
@@ -176,7 +176,7 @@ fun HomeScreen(appState: AppState) {
                                 verticalArrangement = Arrangement.spacedBy(8.dp),
                                 contentPadding = PaddingValues(8.dp)) {
                                 items(items = notesFiltered.value, key = { it.note.id }) { note ->
-                                    NoteItem(note, viewModel.noteMaxLines) {
+                                    NoteItem(note, viewModel.userPreferences.notePreviewMaxLines) {
                                         appState.navigation.navigate(Screen.NoteScreen.route(noteId = note.note.id)) {
                                             // To avoid multiple copies of same destination in backstack.
                                             launchSingleTop = true
