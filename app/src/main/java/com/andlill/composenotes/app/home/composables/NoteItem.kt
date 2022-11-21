@@ -4,8 +4,6 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
@@ -31,6 +29,7 @@ import com.andlill.composenotes.utils.ColorUtils.darken
 import com.andlill.composenotes.utils.TimeUtils.daysBetween
 import com.andlill.composenotes.utils.TimeUtils.toLocalDateTime
 import com.andlill.composenotes.utils.TimeUtils.toSimpleDateString
+import com.google.accompanist.flowlayout.FlowRow
 import java.time.LocalDateTime
 import kotlin.text.Typography.ellipsis
 
@@ -49,6 +48,9 @@ fun NoteItem(noteWrapper: NoteWrapper, maxLines: Int, onClick: () -> Unit) {
     }
     val checkBoxesSorted = remember(noteWrapper.checkBoxes) {
         noteWrapper.checkBoxes.sortedWith(compareBy<NoteCheckBox> { it.checked }.thenBy { it.order })
+    }
+    val labelsSorted = remember(noteWrapper.labels) {
+        noteWrapper.labels.sortedBy { it.value.lowercase() }
     }
 
     Surface(
@@ -161,22 +163,23 @@ fun NoteItem(noteWrapper: NoteWrapper, maxLines: Int, onClick: () -> Unit) {
                         }
                     }
                 }
-                if (noteWrapper.labels.isNotEmpty()) {
+                if (labelsSorted.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(12.dp))
-                    LazyRow(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        items(noteWrapper.labels) { label ->
+                    FlowRow(
+                        mainAxisSpacing = 4.dp,
+                        crossAxisSpacing = 8.dp,
+                    ) {
+                        labelsSorted.forEach {
                             NoteLabel(
                                 icon = Icons.Outlined.Label,
-                                text = label.value,
+                                text = it.value,
                                 color = if (noteWrapper.note.color == 0) MaterialTheme.colorScheme.onSurface.copy(0.08f) else MaterialTheme.colorScheme.surface.copy(0.5f)
                             )
                         }
                     }
                 }
                 noteWrapper.note.reminder?.let {
-                    val height = if (noteWrapper.labels.isEmpty()) 16.dp else 12.dp
+                    val height = if (noteWrapper.labels.isEmpty()) 16.dp else 8.dp
                     val reminderText = it.toLocalDateTime().toSimpleDateString(context)
                     Spacer(modifier = Modifier.height(height))
                     NoteLabel(
@@ -187,7 +190,7 @@ fun NoteItem(noteWrapper: NoteWrapper, maxLines: Int, onClick: () -> Unit) {
                 }
 
                 noteWrapper.note.deletion?.let {
-                    val height = if (noteWrapper.labels.isEmpty()) 16.dp else 12.dp
+                    val height = if (noteWrapper.labels.isEmpty()) 16.dp else 8.dp
                     val deletion = it.toLocalDateTime()
                     val current = LocalDateTime.now()
                     val deletionText = when (deletion.daysBetween(current)) {
