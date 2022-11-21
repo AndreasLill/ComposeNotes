@@ -167,7 +167,7 @@ fun NoteItem(noteWrapper: NoteWrapper, maxLines: Int, onClick: () -> Unit) {
                     Spacer(modifier = Modifier.height(12.dp))
                     FlowRow(
                         mainAxisSpacing = 4.dp,
-                        crossAxisSpacing = 8.dp,
+                        crossAxisSpacing = 4.dp,
                     ) {
                         labelsSorted.forEach {
                             NoteLabel(
@@ -179,7 +179,7 @@ fun NoteItem(noteWrapper: NoteWrapper, maxLines: Int, onClick: () -> Unit) {
                     }
                 }
                 noteWrapper.note.reminder?.let {
-                    val height = if (noteWrapper.labels.isEmpty()) 16.dp else 8.dp
+                    val height = if (noteWrapper.labels.isEmpty()) 16.dp else 4.dp
                     val reminderText = it.toLocalDateTime().toSimpleDateString(context)
                     Spacer(modifier = Modifier.height(height))
                     NoteLabel(
@@ -188,9 +188,8 @@ fun NoteItem(noteWrapper: NoteWrapper, maxLines: Int, onClick: () -> Unit) {
                         color = if (noteWrapper.note.color == 0) MaterialTheme.colorScheme.onSurface.copy(0.08f) else MaterialTheme.colorScheme.surface.copy(0.5f)
                     )
                 }
-
                 noteWrapper.note.deletion?.let {
-                    val height = if (noteWrapper.labels.isEmpty()) 16.dp else 8.dp
+                    val height = if (noteWrapper.labels.isEmpty()) 16.dp else 4.dp
                     val deletion = it.toLocalDateTime()
                     val current = LocalDateTime.now()
                     val deletionText = when (deletion.daysBetween(current)) {
