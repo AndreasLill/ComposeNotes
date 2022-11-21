@@ -34,7 +34,7 @@ fun NoteLabel(modifier: Modifier = Modifier, icon: ImageVector, text: String, co
             Text(
                 text = text,
                 fontSize = 11.sp,
-                fontWeight = FontWeight.Normal,
+                fontWeight = FontWeight.SemiBold,
                 letterSpacing = 0.sp,
                 color = MaterialTheme.colorScheme.onSurface
             )

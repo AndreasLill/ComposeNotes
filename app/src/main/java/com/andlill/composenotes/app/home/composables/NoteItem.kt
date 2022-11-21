@@ -183,7 +183,7 @@ fun NoteItem(noteWrapper: NoteWrapper, maxLines: Int, onClick: () -> Unit) {
                     val reminderText = it.toLocalDateTime().toSimpleDateString(context)
                     Spacer(modifier = Modifier.height(height))
                     NoteLabel(
-                        icon = Icons.Outlined.Alarm,
+                        icon = Icons.Outlined.NotificationsActive,
                         text = reminderText,
                         color = if (noteWrapper.note.color == 0) MaterialTheme.colorScheme.onSurface.copy(0.08f) else MaterialTheme.colorScheme.surface.copy(0.5f)
                     )
