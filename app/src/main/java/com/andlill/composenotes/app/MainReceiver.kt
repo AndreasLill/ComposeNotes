@@ -66,11 +66,25 @@ class MainReceiver : BroadcastReceiver() {
                 getPendingIntent(Random.nextInt(), PendingIntent.FLAG_IMMUTABLE)
             }
 
+            var body = context.resources.getString(R.string.notification_reminder_empty)
+            if (note.checkBoxes.isNotEmpty()) {
+                var bodyStr = ""
+                note.checkBoxes.forEach { checkBox ->
+                    if (checkBox.text.isBlank())
+                        return@forEach
+                    bodyStr += checkBox.text.plus(System.lineSeparator())
+                }
+                body = bodyStr
+            }
+            if (note.note.body.isNotBlank()) {
+                body = note.note.body
+            }
+
             // Build the notification.
             val notification = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_baseline_notifications_active)
                 .setContentTitle(note.note.title)
-                .setContentText(note.note.body)
+                .setContentText(body)
                 .setStyle(NotificationCompat.BigTextStyle().bigText(note.note.body))
                 .setContentIntent(resultPendingIntent)
                 .setAutoCancel(true)

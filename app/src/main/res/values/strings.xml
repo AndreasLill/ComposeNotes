@@ -5,6 +5,7 @@
     <!-- Notification -->
     <string name="notification_reminder_name">Reminders</string>
     <string name="notification_reminder_description">Displays scheduled note reminders.</string>
+    <string name="notification_reminder_empty">Empty</string>
 
     <!-- Shared -->
     <string name="dialog_confirm_title">Warning</string>
