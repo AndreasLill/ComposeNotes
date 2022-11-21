@@ -15,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -28,14 +29,15 @@ import com.andlill.composenotes.ui.shared.button.CheckBoxButton
 import com.andlill.composenotes.ui.shared.label.NoteLabel
 import com.andlill.composenotes.utils.ColorUtils.darken
 import com.andlill.composenotes.utils.TimeUtils.daysBetween
-import com.andlill.composenotes.utils.TimeUtils.toDateString
 import com.andlill.composenotes.utils.TimeUtils.toLocalDateTime
+import com.andlill.composenotes.utils.TimeUtils.toSimpleDateString
 import java.time.LocalDateTime
 import kotlin.text.Typography.ellipsis
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NoteItem(noteWrapper: NoteWrapper, maxLines: Int, onClick: () -> Unit) {
+    val context = LocalContext.current
     val surfaceColor = MaterialTheme.colorScheme.surface
     val isDarkTheme = isSystemInDarkTheme()
     val noteColor = remember(noteWrapper.note.color) {
@@ -175,20 +177,7 @@ fun NoteItem(noteWrapper: NoteWrapper, maxLines: Int, onClick: () -> Unit) {
                 }
                 noteWrapper.note.reminder?.let {
                     val height = if (noteWrapper.labels.isEmpty()) 16.dp else 12.dp
-                    val modified = it.toLocalDateTime()
-                    val current = LocalDateTime.now()
-                    val reminderText = when (modified.daysBetween(current)) {
-                        0 -> String.format("%s, %s", stringResource(R.string.date_today), modified.toDateString("HH:mm"))
-                        1 -> String.format("%s, %s", stringResource(R.string.date_yesterday), modified.toDateString("HH:mm"))
-                        else -> {
-                            if (modified.year != current.year) {
-                                modified.toDateString("d MMM YYYY, HH:mm")
-                            }
-                            else {
-                                modified.toDateString("d MMM, HH:mm")
-                            }
-                        }
-                    }
+                    val reminderText = it.toLocalDateTime().toSimpleDateString(context)
                     Spacer(modifier = Modifier.height(height))
                     NoteLabel(
                         icon = Icons.Outlined.Alarm,

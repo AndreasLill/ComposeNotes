@@ -104,15 +104,14 @@ class NoteViewModel(private val application: Application, private val noteId: In
         deleteOnClose = true
     }
 
-    fun onUpdateReminder(calendar: Calendar?) {
-        if (calendar != null) {
-            reminder = calendar.timeInMillis
-            NoteBroadcaster.setReminder(application, calendar.timeInMillis, id)
-        }
-        else {
-            reminder = null
-            NoteBroadcaster.cancelReminder(application, id)
-        }
+    fun onSetReminder(calendar: Calendar) {
+        reminder = calendar.timeInMillis
+        NoteBroadcaster.setReminder(application, calendar.timeInMillis, id)
+    }
+
+    fun onCancelReminder() {
+        reminder = null
+        NoteBroadcaster.cancelReminder(application, id)
     }
 
     fun onTogglePin() {

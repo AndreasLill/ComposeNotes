@@ -40,8 +40,8 @@ import com.andlill.composenotes.ui.shared.util.LifecycleEventHandler
 import com.andlill.composenotes.utils.ColorUtils.darken
 import com.andlill.composenotes.utils.DialogUtils
 import com.andlill.composenotes.utils.TimeUtils.daysBetween
-import com.andlill.composenotes.utils.TimeUtils.toDateString
 import com.andlill.composenotes.utils.TimeUtils.toLocalDateTime
+import com.andlill.composenotes.utils.TimeUtils.toSimpleDateString
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
@@ -73,24 +73,7 @@ fun NoteScreen(appState: AppState, noteId: Int) {
         derivedStateOf {
             var text = ""
             viewModel.modified?.let {
-                val modified = it.toLocalDateTime()
-                val current = LocalDateTime.now()
-                text = when (modified.daysBetween(current)) {
-                    0 -> {
-                        String.format("%s, %s", context.getString(R.string.date_today), modified.toDateString("HH:mm"))
-                    }
-                    -1 -> {
-                        String.format("%s, %s", context.getString(R.string.date_yesterday), modified.toDateString("HH:mm"))
-                    }
-                    else -> {
-                        if (modified.year != current.year) {
-                            modified.toDateString("d MMM YYYY, HH:mm")
-                        }
-                        else {
-                            modified.toDateString("d MMM, HH:mm")
-                        }
-                    }
-                }
+                text = it.toLocalDateTime().toSimpleDateString(context)
             }
             viewModel.deletion?.let {
                 val deletion = it.toLocalDateTime()
@@ -164,7 +147,17 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                             ReminderDialog(
                                 state = reminderDialogState,
                                 reminderTime = viewModel.reminder,
-                                onClick = viewModel::onUpdateReminder
+                                onClick = {
+                                    if (it != null) {
+                                        val dateStr = it.timeInMillis.toLocalDateTime().toSimpleDateString(context)
+                                        viewModel.onSetReminder(it)
+                                        appState.showSnackbar(String.format(context.resources.getString(R.string.note_screen_message_reminder_set), dateStr), SnackbarDuration.Short)
+                                    }
+                                    else {
+                                        viewModel.onCancelReminder()
+                                        appState.showSnackbar(context.resources.getString(R.string.note_screen_message_reminder_cancel), SnackbarDuration.Short)
+                                    }
+                                }
                             )
                         }
                         Box {
