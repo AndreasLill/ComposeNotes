@@ -30,6 +30,7 @@
     <string name="home_Screen_button_add_note">Note</string>
     <string name="home_screen_dialog_create_label_title">New Label</string>
     <string name="home_screen_dialog_create_label_placeholder">Label</string>
+    <string name="home_screen_note_empty">Empty note</string>
     <string name="home_screen_note_text_deletion_today">Deletion today</string>
     <string name="home_screen_note_text_deletion_tomorrow">Deletion tomorrow</string>
     <string name="home_screen_note_text_deletion_days">Deletion in %s days</string>

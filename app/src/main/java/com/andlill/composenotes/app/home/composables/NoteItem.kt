@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -58,7 +59,18 @@ fun NoteItem(noteWrapper: NoteWrapper, maxLines: Int, onClick: () -> Unit) {
             Column(modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)) {
-                if (noteWrapper.note.title.isNotEmpty()) {
+                if (noteWrapper.note.title.isBlank() && noteWrapper.note.body.isBlank() && noteWrapper.checkBoxes.isEmpty()) {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = stringResource(R.string.home_screen_note_empty),
+                        color = MaterialTheme.colorScheme.onSurface.copy(0.6f),
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Normal,
+                        fontStyle = FontStyle.Italic,
+                        letterSpacing = 0.sp,
+                    )
+                }
+                if (noteWrapper.note.title.isNotBlank()) {
                     Box(modifier = Modifier.fillMaxWidth()) {
                         Text(
                             modifier = Modifier.padding(end = 24.dp),
@@ -80,7 +92,7 @@ fun NoteItem(noteWrapper: NoteWrapper, maxLines: Int, onClick: () -> Unit) {
                         }
                     }
                 }
-                if (noteWrapper.note.body.isNotEmpty()) {
+                if (noteWrapper.note.body.isNotBlank()) {
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
                         modifier = Modifier.fillMaxWidth(),
