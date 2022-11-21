@@ -30,45 +30,46 @@ import com.andlill.composenotes.utils.TimeUtils.daysBetween
 import com.andlill.composenotes.utils.TimeUtils.toDateString
 import com.andlill.composenotes.utils.TimeUtils.toLocalDateTime
 import java.time.LocalDateTime
+import kotlin.text.Typography.ellipsis
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NoteItem(note: NoteWrapper, onClick: () -> Unit) {
+fun NoteItem(noteWrapper: NoteWrapper, maxLines: Int, onClick: () -> Unit) {
     val surfaceColor = MaterialTheme.colorScheme.surface
     val isDarkTheme = isSystemInDarkTheme()
-    val noteColor = remember(note.note.color) {
+    val noteColor = remember(noteWrapper.note.color) {
         when {
-            note.note.color == 0 -> surfaceColor
-            isDarkTheme -> Color(note.note.color).darken()
-            else -> Color(note.note.color)
+            noteWrapper.note.color == 0 -> surfaceColor
+            isDarkTheme -> Color(noteWrapper.note.color).darken()
+            else -> Color(noteWrapper.note.color)
         }
     }
-    val checkBoxesSorted = remember(note.checkBoxes) {
-        note.checkBoxes.sortedWith(compareBy<NoteCheckBox> { it.checked }.thenBy { it.order })
+    val checkBoxesSorted = remember(noteWrapper.checkBoxes) {
+        noteWrapper.checkBoxes.sortedWith(compareBy<NoteCheckBox> { it.checked }.thenBy { it.order })
     }
 
     Surface(
         shape = RoundedCornerShape(16.dp),
         onClick = onClick,
         color = animateColorAsState(noteColor).value,
-        shadowElevation = 2.dp,
-        border = if (note.note.color == 0) BorderStroke(width = 0.5.dp, color = MaterialTheme.colorScheme.onSurface.copy(0.2f)) else null,
+        shadowElevation = 1.dp,
+        border = if (noteWrapper.note.color == 0) BorderStroke(width = 0.5.dp, color = MaterialTheme.colorScheme.onSurface.copy(0.2f)) else null,
         content = {
             Column(modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)) {
-                if (note.note.title.isNotEmpty()) {
+                if (noteWrapper.note.title.isNotEmpty()) {
                     Box(modifier = Modifier.fillMaxWidth()) {
                         Text(
                             modifier = Modifier.padding(end = 24.dp),
-                            text = note.note.title,
+                            text = noteWrapper.note.title,
                             fontSize = 16.sp,
                             fontWeight = FontWeight.SemiBold,
                             letterSpacing = 0.sp,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
-                        if (note.note.pinned) {
+                        if (noteWrapper.note.pinned) {
                             Icon(
                                 modifier = Modifier
                                     .size(16.dp)
@@ -79,25 +80,45 @@ fun NoteItem(note: NoteWrapper, onClick: () -> Unit) {
                         }
                     }
                 }
-                if (note.note.body.isNotEmpty()) {
+                if (noteWrapper.note.body.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
                         modifier = Modifier.fillMaxWidth(),
-                        text = note.note.body,
+                        text = noteWrapper.note.body,
                         fontSize = 15.sp,
                         fontWeight = FontWeight.Normal,
                         lineHeight = 16.sp,
                         letterSpacing = 0.sp,
-                        maxLines = 8,
-                        overflow = TextOverflow.Ellipsis
+                        maxLines = maxLines,
+                        overflow = TextOverflow.Clip
                     )
+                    if (noteWrapper.note.body.lines().size >= maxLines) {
+                        Text(
+                            text = ellipsis.toString(),
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Normal,
+                            lineHeight = 16.sp,
+                            letterSpacing = 0.sp,
+                        )
+                    }
                 }
                 if (checkBoxesSorted.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(12.dp))
                     Column(
                         modifier = Modifier.fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                        checkBoxesSorted.forEach { item ->
+                        checkBoxesSorted.forEachIndexed { index, item ->
+                            if (index >= maxLines) {
+                                if (index == checkBoxesSorted.size - 1)
+                                    Text(
+                                        text = ellipsis.toString(),
+                                        fontSize = 15.sp,
+                                        fontWeight = FontWeight.Normal,
+                                        lineHeight = 16.sp,
+                                        letterSpacing = 0.sp,
+                                    )
+                                return@forEachIndexed
+                            }
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically) {
@@ -126,22 +147,22 @@ fun NoteItem(note: NoteWrapper, onClick: () -> Unit) {
                         }
                     }
                 }
-                if (note.labels.isNotEmpty()) {
+                if (noteWrapper.labels.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(12.dp))
                     LazyRow(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        items(note.labels) { label ->
+                        items(noteWrapper.labels) { label ->
                             NoteLabel(
                                 icon = Icons.Outlined.Label,
                                 text = label.value,
-                                color = if (note.note.color == 0) MaterialTheme.colorScheme.onSurface.copy(0.08f) else MaterialTheme.colorScheme.surface.copy(0.5f)
+                                color = if (noteWrapper.note.color == 0) MaterialTheme.colorScheme.onSurface.copy(0.08f) else MaterialTheme.colorScheme.surface.copy(0.5f)
                             )
                         }
                     }
                 }
-                note.note.reminder?.let {
-                    val height = if (note.labels.isEmpty()) 16.dp else 12.dp
+                noteWrapper.note.reminder?.let {
+                    val height = if (noteWrapper.labels.isEmpty()) 16.dp else 12.dp
                     val modified = it.toLocalDateTime()
                     val current = LocalDateTime.now()
                     val reminderText = when (modified.daysBetween(current)) {
@@ -160,12 +181,12 @@ fun NoteItem(note: NoteWrapper, onClick: () -> Unit) {
                     NoteLabel(
                         icon = Icons.Outlined.Alarm,
                         text = reminderText,
-                        color = if (note.note.color == 0) MaterialTheme.colorScheme.onSurface.copy(0.08f) else MaterialTheme.colorScheme.surface.copy(0.5f)
+                        color = if (noteWrapper.note.color == 0) MaterialTheme.colorScheme.onSurface.copy(0.08f) else MaterialTheme.colorScheme.surface.copy(0.5f)
                     )
                 }
 
-                note.note.deletion?.let {
-                    val height = if (note.labels.isEmpty()) 16.dp else 12.dp
+                noteWrapper.note.deletion?.let {
+                    val height = if (noteWrapper.labels.isEmpty()) 16.dp else 12.dp
                     val deletion = it.toLocalDateTime()
                     val current = LocalDateTime.now()
                     val deletionText = when (deletion.daysBetween(current)) {
@@ -177,7 +198,7 @@ fun NoteItem(note: NoteWrapper, onClick: () -> Unit) {
                     NoteLabel(
                         icon = Icons.Outlined.AutoDelete,
                         text = deletionText,
-                        color = if (note.note.color == 0) MaterialTheme.colorScheme.onSurface.copy(0.08f) else MaterialTheme.colorScheme.surface.copy(0.5f))
+                        color = if (noteWrapper.note.color == 0) MaterialTheme.colorScheme.onSurface.copy(0.08f) else MaterialTheme.colorScheme.surface.copy(0.5f))
                 }
             }
         }

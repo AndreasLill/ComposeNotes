@@ -2,9 +2,13 @@ package com.andlill.composenotes.app.home
 
 import android.app.Application
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
@@ -30,7 +34,7 @@ import com.andlill.composenotes.ui.shared.button.MenuIconButton
 import com.andlill.composenotes.ui.shared.label.NoteLabel
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(appState: AppState) {
     val viewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory(LocalContext.current.applicationContext as Application))
@@ -134,6 +138,14 @@ fun HomeScreen(appState: AppState) {
                                     }
                                 }
                             )
+                        },
+                        actions = {
+                            MenuIconButton(
+                                icon = if (viewModel.isGridView) Icons.Outlined.GridView else Icons.Outlined.ViewAgenda,
+                                onClick = {
+                                    viewModel.onChangeView()
+                                }
+                            )
                         }
                     )
                 },
@@ -141,15 +153,34 @@ fun HomeScreen(appState: AppState) {
                     Box(modifier = Modifier
                         .padding(innerPadding)
                         .fillMaxSize())  {
-                        LazyColumn(
-                            modifier = Modifier.fillMaxSize(),
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                            contentPadding = PaddingValues(8.dp)) {
-                            items(items = notesFiltered.value, key = { it.note.id }) { note ->
-                                NoteItem(note) {
-                                    appState.navigation.navigate(Screen.NoteScreen.route(noteId = note.note.id)) {
-                                        // To avoid multiple copies of same destination in backstack.
-                                        launchSingleTop = true
+                        if (viewModel.isGridView) {
+                            LazyVerticalStaggeredGrid(
+                                modifier = Modifier.fillMaxSize(),
+                                verticalArrangement = Arrangement.spacedBy(8.dp),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                columns = StaggeredGridCells.Fixed(2),
+                                contentPadding = PaddingValues(8.dp)) {
+                                items(items = notesFiltered.value, key = { it.note.id }) { note ->
+                                    NoteItem(note, viewModel.noteMaxLines) {
+                                        appState.navigation.navigate(Screen.NoteScreen.route(noteId = note.note.id)) {
+                                            // To avoid multiple copies of same destination in backstack.
+                                            launchSingleTop = true
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        else {
+                            LazyColumn(
+                                modifier = Modifier.fillMaxSize(),
+                                verticalArrangement = Arrangement.spacedBy(8.dp),
+                                contentPadding = PaddingValues(8.dp)) {
+                                items(items = notesFiltered.value, key = { it.note.id }) { note ->
+                                    NoteItem(note, viewModel.noteMaxLines) {
+                                        appState.navigation.navigate(Screen.NoteScreen.route(noteId = note.note.id)) {
+                                            // To avoid multiple copies of same destination in backstack.
+                                            launchSingleTop = true
+                                        }
                                     }
                                 }
                             }

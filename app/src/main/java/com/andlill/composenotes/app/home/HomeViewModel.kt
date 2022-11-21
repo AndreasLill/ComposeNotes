@@ -26,6 +26,10 @@ class HomeViewModel(private val application: Application) : ViewModel() {
         private set
     var query by mutableStateOf("")
         private set
+    var isGridView by mutableStateOf(true)
+        private set
+    var noteMaxLines by mutableStateOf(10)
+        private set
 
     init {
         viewModelScope.launch {
@@ -64,5 +68,9 @@ class HomeViewModel(private val application: Application) : ViewModel() {
 
     fun onFilter(value: NoteFilter) {
         filter = value
+    }
+
+    fun onChangeView() {
+        isGridView = !isGridView
     }
 }
