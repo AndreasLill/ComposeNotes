@@ -182,16 +182,12 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                             )
                             OptionsDropDownMenu(
                                 state = optionsDropDownState,
-                                isCheckBoxesEmpty = viewModel.checkBoxes.isEmpty(),
+                                isCheckBoxesEmpty = checkBoxesSortedList.value.isEmpty(),
                                 onClick = {
                                     optionsDropDownState.value = false
                                     when (it) {
                                         NoteOption.Checkboxes -> {
                                             viewModel.onConvertCheckBoxes()
-                                            scope.launch {
-                                                delay(50)
-                                                focusRequesterCheckBox.requestFocus()
-                                            }
                                         }
                                         NoteOption.Labels -> {
                                             appState.navigation.navigate(Screen.LabelScreen.route(noteId = viewModel.id)) {

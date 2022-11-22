@@ -187,12 +187,12 @@ fun HomeScreen(appState: AppState) {
                         }
                         // Background hint.
                         Column(modifier = Modifier.align(Alignment.Center), horizontalAlignment = Alignment.CenterHorizontally) {
-                            if (viewModel.notes.isEmpty()) {
+                            if (notesFiltered.value.isEmpty()) {
                                 when(viewModel.filter.type) {
                                     NoteFilter.Type.Reminders -> {
                                         Icon(
                                             modifier = Modifier.size(64.dp),
-                                            imageVector = Icons.Outlined.Alarm,
+                                            imageVector = Icons.Outlined.Notifications,
                                             contentDescription = null,
                                             tint = MaterialTheme.colorScheme.onSurface.copy(0.2f)
                                         )

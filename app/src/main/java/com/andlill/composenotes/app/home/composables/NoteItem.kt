@@ -68,7 +68,7 @@ fun NoteItem(noteWrapper: NoteWrapper, maxLines: Int, onClick: () -> Unit) {
                         modifier = Modifier.fillMaxWidth(),
                         text = stringResource(R.string.home_screen_note_empty),
                         color = MaterialTheme.colorScheme.onSurface.copy(0.6f),
-                        fontSize = 16.sp,
+                        fontSize = 15.sp,
                         fontWeight = FontWeight.Normal,
                         fontStyle = FontStyle.Italic,
                         letterSpacing = 0.sp,
@@ -79,7 +79,7 @@ fun NoteItem(noteWrapper: NoteWrapper, maxLines: Int, onClick: () -> Unit) {
                         Text(
                             modifier = Modifier.padding(end = 24.dp),
                             text = noteWrapper.note.title,
-                            fontSize = 16.sp,
+                            fontSize = 15.sp,
                             fontWeight = FontWeight.SemiBold,
                             letterSpacing = 0.sp,
                             maxLines = 1,
@@ -101,7 +101,7 @@ fun NoteItem(noteWrapper: NoteWrapper, maxLines: Int, onClick: () -> Unit) {
                     Text(
                         modifier = Modifier.fillMaxWidth(),
                         text = noteWrapper.note.body,
-                        fontSize = 15.sp,
+                        fontSize = 14.sp,
                         fontWeight = FontWeight.Normal,
                         lineHeight = 16.sp,
                         letterSpacing = 0.sp,
@@ -135,9 +135,7 @@ fun NoteItem(noteWrapper: NoteWrapper, maxLines: Int, onClick: () -> Unit) {
                                     )
                                 return@forEachIndexed
                             }
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically) {
+                            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                                 CheckBoxButton(
                                     enabled = false,
                                     checkedBackgroundColor = Color.Transparent,
@@ -152,7 +150,7 @@ fun NoteItem(noteWrapper: NoteWrapper, maxLines: Int, onClick: () -> Unit) {
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
                                     text = item.text,
-                                    fontSize = 15.sp,
+                                    fontSize = 14.sp,
                                     fontWeight = FontWeight.Normal,
                                     lineHeight = 16.sp,
                                     letterSpacing = 0.sp,

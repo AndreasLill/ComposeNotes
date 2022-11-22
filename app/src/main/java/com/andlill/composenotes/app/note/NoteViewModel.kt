@@ -23,6 +23,7 @@ class NoteViewModel(private val application: Application, private val noteId: In
         override fun <T : ViewModel> create(modelClass: Class<T>): T = NoteViewModel(application, noteId) as T
     }
 
+    private var loaded = false
     private var deleteOnClose = false
 
     var id by mutableStateOf(noteId)
@@ -60,12 +61,16 @@ class NoteViewModel(private val application: Application, private val noteId: In
 
                 checkBoxes.clear()
                 checkBoxes.addAll(it.checkBoxes)
+                loaded = true
             }
 
         }
     }
 
     fun onClose() = viewModelScope.launch {
+        if (!loaded)
+            return@launch
+
         if (deleteOnClose) {
             NoteBroadcaster.cancelReminder(application, id)
             NoteRepository.deleteNote(application, id)
