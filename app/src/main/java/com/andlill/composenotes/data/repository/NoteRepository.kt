@@ -21,10 +21,6 @@ object NoteRepository {
         AppDatabase.get(context).noteDao.updateNote(note)
     }
 
-    suspend fun deleteNote(context: Context, note: Note) = withContext(Dispatchers.IO) {
-        AppDatabase.get(context).noteDao.deleteNote(note)
-    }
-
     suspend fun deleteNote(context: Context, id: Int) = withContext(Dispatchers.IO) {
         AppDatabase.get(context).noteDao.deleteNote(id)
     }
@@ -45,11 +41,7 @@ object NoteRepository {
         AppDatabase.get(context).noteDao.deleteNoteLabel(item)
     }
 
-    suspend fun insertNoteCheckBoxes(context: Context, items: List<NoteCheckBox>) = withContext(Dispatchers.IO) {
-        AppDatabase.get(context).noteDao.insertNoteCheckBoxes(items)
-    }
-
-    suspend fun deleteNoteCheckBoxes(context: Context, noteId: Int) = withContext(Dispatchers.IO) {
-        AppDatabase.get(context).noteDao.deleteNoteCheckBoxes(noteId)
+    suspend fun updateNoteCheckBoxes(context: Context, noteId: Int, items: List<NoteCheckBox>) = withContext(Dispatchers.IO) {
+        AppDatabase.get(context).noteDao.updateNoteCheckBoxes(noteId, items)
     }
 }

@@ -16,18 +16,12 @@ interface NoteDao {
     @Update
     suspend fun updateNote(note: Note)
 
-    @Delete
-    suspend fun deleteNote(note: Note)
-
-    @Transaction
     @Query("DELETE FROM Note WHERE id = :id")
     suspend fun deleteNote(id: Int)
 
-    @Transaction
     @Query("SELECT * FROM Note WHERE id = :id")
     fun getNote(id: Int): Flow<NoteWrapper?>
 
-    @Transaction
     @Query("SELECT * FROM Note ORDER BY created DESC")
     fun getAllNotes(): Flow<List<NoteWrapper>>
 
@@ -40,7 +34,12 @@ interface NoteDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertNoteCheckBoxes(items: List<NoteCheckBox>)
 
-    @Transaction
     @Query("DELETE FROM NoteCheckBox WHERE noteId = :noteId")
     suspend fun deleteNoteCheckBoxes(noteId: Int)
+
+    @Transaction
+    suspend fun updateNoteCheckBoxes(noteId: Int, items: List<NoteCheckBox>) {
+        deleteNoteCheckBoxes(noteId)
+        insertNoteCheckBoxes(items)
+    }
 }

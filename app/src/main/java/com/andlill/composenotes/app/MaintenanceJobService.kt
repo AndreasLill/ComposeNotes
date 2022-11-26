@@ -36,7 +36,7 @@ class MaintenanceJobService : JobService() {
             note.note.deletion?.let {
                 val deletion = it.toLocalDateTime()
                 if (deletion.daysBetween(LocalDateTime.now()) <= 0) {
-                    NoteRepository.deleteNote(this@MaintenanceJobService, note.note)
+                    NoteRepository.deleteNote(this@MaintenanceJobService, note.note.id)
                     Log.d("MaintenanceJobService", "Scheduled deletion of note: ${note.note.id}")
                 }
             }
