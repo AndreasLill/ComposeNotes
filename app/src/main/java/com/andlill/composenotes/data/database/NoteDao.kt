@@ -19,10 +19,12 @@ interface NoteDao {
     @Query("DELETE FROM Note WHERE id = :id")
     suspend fun deleteNote(id: Int)
 
+    @Transaction
     @Query("SELECT * FROM Note WHERE id = :id")
     fun getNote(id: Int): Flow<NoteWrapper?>
 
-    @Query("SELECT * FROM Note ORDER BY created DESC")
+    @Transaction
+    @Query("SELECT * FROM Note")
     fun getAllNotes(): Flow<List<NoteWrapper>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
