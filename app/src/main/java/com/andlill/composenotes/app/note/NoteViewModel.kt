@@ -108,13 +108,15 @@ class NoteViewModel(private val application: Application, private val noteId: In
         deleteOnClose = true
     }
 
-    fun onSetReminder(calendar: Calendar) {
-        reminder = calendar.timeInMillis
-        NoteBroadcaster.setReminder(application, calendar.timeInMillis, id)
+    fun onSetReminder(dateTime: LocalDateTime) {
+        reminder = dateTime.toMilliSeconds()
+        // TODO: Handle reminder as flow.
+        NoteBroadcaster.setReminder(application, dateTime.toMilliSeconds(), id)
     }
 
     fun onCancelReminder() {
         reminder = null
+        // TODO: Handle reminder as flow.
         NoteBroadcaster.cancelReminder(application, id)
     }
 

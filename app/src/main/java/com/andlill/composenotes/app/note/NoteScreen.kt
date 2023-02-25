@@ -146,10 +146,10 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                             )
                             ReminderDialog(
                                 state = reminderDialogState,
-                                reminderTime = viewModel.reminder,
+                                initialDateTime = viewModel.reminder?.toLocalDateTime(),
                                 onClick = {
                                     if (it != null) {
-                                        val dateStr = it.timeInMillis.toLocalDateTime().toSimpleDateString(context)
+                                        val dateStr = it.toSimpleDateString(context)
                                         viewModel.onSetReminder(it)
                                         appState.showSnackbar(String.format(context.resources.getString(R.string.note_screen_message_reminder_set), dateStr), SnackbarDuration.Short)
                                     }

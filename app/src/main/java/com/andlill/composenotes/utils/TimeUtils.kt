@@ -2,13 +2,9 @@ package com.andlill.composenotes.utils
 
 import android.content.Context
 import com.andlill.composenotes.R
-import java.text.SimpleDateFormat
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
+import java.time.*
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
-import java.util.*
 
 object TimeUtils {
 
@@ -32,6 +28,16 @@ object TimeUtils {
     }
 
     fun LocalDateTime.toDateString(pattern: String): String {
+        val formatter = DateTimeFormatter.ofPattern(pattern)
+        return this.format(formatter)
+    }
+
+    fun LocalDate.toDateString(pattern: String): String {
+        val formatter = DateTimeFormatter.ofPattern(pattern)
+        return this.format(formatter)
+    }
+
+    fun LocalTime.toTimeString(pattern: String): String {
         val formatter = DateTimeFormatter.ofPattern(pattern)
         return this.format(formatter)
     }
@@ -60,13 +66,6 @@ object TimeUtils {
                 }
             }
         }
-    }
-
-    /*
-    Date string using date pattern.
-    */
-    fun Long.toDateString(pattern: String): String {
-        return SimpleDateFormat(pattern, Locale.getDefault()).format(this)
     }
 
     fun LocalDateTime.toMilliSeconds(): Long {
