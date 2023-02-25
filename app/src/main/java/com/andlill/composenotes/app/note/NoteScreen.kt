@@ -234,7 +234,7 @@ fun NoteScreen(appState: AppState, noteId: Int) {
         content = { innerPadding ->
             Box(modifier = Modifier
                 .padding(innerPadding)
-                .consumedWindowInsets(innerPadding)
+                .consumeWindowInsets(innerPadding)
                 .fillMaxSize()
                 .clickable(interactionSource = interactionSource, indication = null) {
                     if (viewModel.checkBoxes.isEmpty()) {
