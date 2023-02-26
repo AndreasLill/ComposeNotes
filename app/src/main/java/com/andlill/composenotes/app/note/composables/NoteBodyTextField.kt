@@ -43,7 +43,7 @@ fun NoteBodyTextField(state: TextFieldValue, readOnly: Boolean, focusRequester: 
                 Text(
                     text = stringResource(R.string.note_screen_placeholder_body),
                     style = TextStyle(
-                        fontSize = 16.sp,
+                        fontSize = 15.sp,
                         color = MaterialTheme.colorScheme.onSurface.copy(0.6f)
                     )
                 )

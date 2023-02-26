@@ -54,7 +54,7 @@ fun NoteTitleTextField(state: TextFieldValue, readOnly: Boolean, onValueChange: 
                 Text(
                     text = stringResource(R.string.note_screen_placeholder_title),
                     style = TextStyle(
-                        fontSize = 18.sp,
+                        fontSize = 16.sp,
                         color = MaterialTheme.colorScheme.onSurface.copy(0.6f)
                     )
                 )
