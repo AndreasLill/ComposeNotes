@@ -96,8 +96,10 @@ fun NoteItem(noteWrapper: NoteWrapper, maxLines: Int, onClick: () -> Unit) {
                         }
                     }
                 }
-                if (noteWrapper.note.body.isNotBlank()) {
+                if (noteWrapper.note.title.isNotBlank() && noteWrapper.note.body.isNotBlank())
                     Spacer(modifier = Modifier.height(12.dp))
+
+                if (noteWrapper.note.body.isNotBlank()) {
                     Text(
                         modifier = Modifier.fillMaxWidth(),
                         text = noteWrapper.note.body,
