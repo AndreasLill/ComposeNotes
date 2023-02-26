@@ -33,6 +33,14 @@ object NoteRepository {
         return AppDatabase.get(context).noteDao.getAllNotes().flowOn(Dispatchers.IO)
     }
 
+    fun getNoteReminder(context: Context, id: Int): Flow<Long?> {
+        return AppDatabase.get(context).noteDao.getNoteReminder(id).flowOn(Dispatchers.IO)
+    }
+
+    suspend fun setNoteReminder(context: Context, id: Int, reminder: Long?) = withContext(Dispatchers.IO) {
+        AppDatabase.get(context).noteDao.setNoteReminder(id, reminder)
+    }
+
     suspend fun insertNoteLabel(context: Context, item: NoteLabelJoin): Int = withContext(Dispatchers.IO) {
         return@withContext AppDatabase.get(context).noteDao.insertNoteLabel(item).toInt()
     }

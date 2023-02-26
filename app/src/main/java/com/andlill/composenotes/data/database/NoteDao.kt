@@ -27,6 +27,12 @@ interface NoteDao {
     @Query("SELECT * FROM Note")
     fun getAllNotes(): Flow<List<NoteWrapper>>
 
+    @Query("SELECT Reminder FROM Note WHERE id = :id")
+    fun getNoteReminder(id: Int): Flow<Long?>
+
+    @Query("UPDATE Note SET Reminder = :reminder WHERE id = :id")
+    fun setNoteReminder(id: Int, reminder: Long?)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertNoteLabel(item: NoteLabelJoin): Long
 

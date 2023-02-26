@@ -55,7 +55,6 @@ class NoteViewModel(private val application: Application, private val noteId: In
                 body = body.copy(text = it.note.body)
                 created = it.note.created
                 modified = it.note.modified
-                reminder = it.note.reminder
                 deletion = it.note.deletion
                 pinned = it.note.pinned
 
@@ -63,7 +62,11 @@ class NoteViewModel(private val application: Application, private val noteId: In
                 checkBoxes.addAll(it.checkBoxes)
                 loaded = true
             }
-
+        }
+        viewModelScope.launch {
+            NoteRepository.getNoteReminder(application, noteId).collectLatest {
+                reminder = it
+            }
         }
     }
 
@@ -84,7 +87,6 @@ class NoteViewModel(private val application: Application, private val noteId: In
                 body = body.text.trim(),
                 created = created,
                 modified = System.currentTimeMillis(),
-                reminder = reminder,
                 deletion = deletion,
                 pinned = pinned
             ))
@@ -108,15 +110,13 @@ class NoteViewModel(private val application: Application, private val noteId: In
         deleteOnClose = true
     }
 
-    fun onSetReminder(dateTime: LocalDateTime) {
-        reminder = dateTime.toMilliSeconds()
-        // TODO: Handle reminder as flow.
+    fun onSetReminder(dateTime: LocalDateTime) = viewModelScope.launch {
+        NoteRepository.setNoteReminder(application, noteId, dateTime.toMilliSeconds())
         NoteBroadcaster.setReminder(application, dateTime.toMilliSeconds(), id)
     }
 
-    fun onCancelReminder() {
-        reminder = null
-        // TODO: Handle reminder as flow.
+    fun onCancelReminder() = viewModelScope.launch {
+        NoteRepository.setNoteReminder(application, noteId, null)
         NoteBroadcaster.cancelReminder(application, id)
     }
 
