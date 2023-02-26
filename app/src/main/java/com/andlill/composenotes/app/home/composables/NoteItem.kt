@@ -96,6 +96,7 @@ fun NoteItem(noteWrapper: NoteWrapper, maxLines: Int, onClick: () -> Unit) {
                         }
                     }
                 }
+
                 if (noteWrapper.note.title.isNotBlank() && noteWrapper.note.body.isNotBlank())
                     Spacer(modifier = Modifier.height(12.dp))
 
@@ -120,8 +121,11 @@ fun NoteItem(noteWrapper: NoteWrapper, maxLines: Int, onClick: () -> Unit) {
                         )
                     }
                 }
-                if (checkBoxesSorted.isNotEmpty()) {
+
+                if (noteWrapper.note.title.isNotBlank() && checkBoxesSorted.isNotEmpty())
                     Spacer(modifier = Modifier.height(12.dp))
+
+                if (checkBoxesSorted.isNotEmpty()) {
                     Column(
                         modifier = Modifier.fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(6.dp)) {
