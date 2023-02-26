@@ -22,7 +22,9 @@ class HomeViewModel(private val application: Application) : ViewModel() {
         override fun <T : ViewModel> create(modelClass: Class<T>): T = HomeViewModel(application) as T
     }
 
-    private val Context.dataStore by preferencesDataStore("com.andlill.composenotes.preferences")
+    companion object {
+        private val Context.dataStore by preferencesDataStore("com.andlill.composenotes.preferences")
+    }
 
     var notes = mutableStateListOf<NoteWrapper>()
         private set
