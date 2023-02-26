@@ -87,6 +87,7 @@ class NoteViewModel(private val application: Application, private val noteId: In
                 body = body.text.trim(),
                 created = created,
                 modified = System.currentTimeMillis(),
+                reminder = reminder,
                 deletion = deletion,
                 pinned = pinned
             ))
