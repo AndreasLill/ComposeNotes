@@ -272,10 +272,9 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                                     checkBox = checkBox,
                                     onUpdate = viewModel::onEditCheckBox,
                                     onDelete = {
-                                        if (index > 0) {
+                                        if (index > 0)
                                             focusManager.moveFocus(FocusDirection.Up)
-                                            viewModel.onDeleteCheckBox(checkBox.id)
-                                        }
+                                        viewModel.onDeleteCheckBox(checkBox.id)
                                     },
                                     onKeyboardNext = {
                                         // Create a new checkbox if this is the last item.
