@@ -8,6 +8,8 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -189,12 +191,6 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                                         NoteOption.Checkboxes -> {
                                             viewModel.onConvertCheckBoxes()
                                         }
-                                        NoteOption.Labels -> {
-                                            appState.navigation.navigate(Screen.LabelScreen.route(noteId = viewModel.id)) {
-                                                // To avoid multiple copies of same destination in backstack.
-                                                launchSingleTop = true
-                                            }
-                                        }
                                         NoteOption.Delete -> {
                                             viewModel.onDeleteNote()
                                             appState.showSnackbar(context.resources.getString(R.string.note_screen_message_note_trash), SnackbarDuration.Short)
@@ -232,79 +228,119 @@ fun NoteScreen(appState: AppState, noteId: Int) {
             )
         },
         content = { innerPadding ->
-            Box(modifier = Modifier
+            Column(modifier = Modifier
                 .padding(innerPadding)
                 .consumeWindowInsets(innerPadding)
                 .fillMaxSize()
-                .clickable(interactionSource = interactionSource, indication = null) {
-                    if (viewModel.checkBoxes.isEmpty()) {
-                        // Request focus on text body.
-                        viewModel.setBodySelectionEnd()
-                        focusRequesterBody.requestFocus()
-                    } else {
-                        // Request focus on check box.
-                        focusRequesterCheckBox.requestFocus()
-                    }
-                }) {
-                Column(modifier = Modifier.imePadding()) {
-                    NoteTitleTextField(
-                        state = viewModel.title,
-                        readOnly = (viewModel.deletion != null),
-                        onValueChange = viewModel::onChangeTitle
-                    )
-                    if (viewModel.checkBoxes.isEmpty()) {
-                        NoteBodyTextField(
-                            state = viewModel.body,
-                            readOnly = (viewModel.deletion != null),
-                            focusRequester = focusRequesterBody,
-                            onValueChange = viewModel::onChangeBody
-                        )
+            ) {
+                LazyRow(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 20.dp, end = 20.dp, top = 8.dp, bottom = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    if (viewModel.labels.isEmpty()) {
+                        item {
+                            NoteLabelChip(
+                                color = MaterialTheme.colorScheme.surface.copy(0.5f),
+                                icon = Icons.Outlined.Add,
+                                text = "Labels",
+                                alpha = 0.6f,
+                                onClick = {
+                                    appState.navigation.navigate(Screen.LabelScreen.route(noteId = viewModel.id)) {
+                                        // To avoid multiple copies of same destination in backstack.
+                                        launchSingleTop = true
+                                    }
+                                }
+                            )
+                        }
                     }
                     else {
-                        // Bugged with no work around yet: https://issuetracker.google.com/issues/179203700
-                        LazyColumn(modifier = Modifier
-                            .fillMaxSize()
-                            .padding(8.dp)) {
-                            itemsIndexed(items = checkBoxesSortedList.value, key = { _, checkBox -> checkBox.id }) { index, checkBox ->
-                                NoteCheckBoxItem(
-                                    modifier = Modifier.animateItemPlacement(),
-                                    focusRequester = if (checkBoxesSortedList.value.size == index + 1) focusRequesterCheckBox else null,
-                                    checkBox = checkBox,
-                                    onUpdate = viewModel::onEditCheckBox,
-                                    onDelete = {
-                                        if (index > 0)
-                                            focusManager.moveFocus(FocusDirection.Up)
-                                        viewModel.onDeleteCheckBox(checkBox.id)
-                                    },
-                                    onKeyboardNext = {
-                                        // Create a new checkbox if this is the last item.
-                                        if (checkBoxesSortedList.value.size == index + 1) {
-                                            viewModel.onCreateCheckBox()
-                                            scope.launch {
-                                                delay(50)
-                                                focusManager.moveFocus(FocusDirection.Down)
-                                            }
-                                        }
-                                        else {
-                                            focusManager.moveFocus(FocusDirection.Down)
-                                        }
-                                    },
-                                )
-                            }
+                        items(items = viewModel.labels, key = { label -> label.id }) {
+                            NoteLabelChip(
+                                color = MaterialTheme.colorScheme.surface.copy(0.5f),
+                                icon = Icons.Outlined.Label,
+                                text = it.value,
+                                onClick = {
+                                    appState.navigation.navigate(Screen.LabelScreen.route(noteId = viewModel.id)) {
+                                        // To avoid multiple copies of same destination in backstack.
+                                        launchSingleTop = true
+                                    }
+                                }
+                            )
                         }
                     }
                 }
                 Box(modifier = Modifier
-                    .fillMaxWidth()
-                    .height(32.dp)
-                    .align(Alignment.BottomCenter)) {
-                    Text(
-                        modifier = Modifier.align(Alignment.Center),
-                        color = MaterialTheme.colorScheme.onSurface.copy(0.6f),
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        text = statusText.value,
-                    )
+                    .fillMaxSize()
+                    .clickable(interactionSource = interactionSource, indication = null) {
+                        if (viewModel.checkBoxes.isEmpty()) {
+                            // Request focus on text body.
+                            viewModel.setBodySelectionEnd()
+                            focusRequesterBody.requestFocus()
+                        } else {
+                            // Request focus on check box.
+                            focusRequesterCheckBox.requestFocus()
+                        }
+                    }) {
+                    Column(modifier = Modifier.imePadding()) {
+                        NoteTitleTextField(
+                            state = viewModel.title,
+                            readOnly = (viewModel.deletion != null),
+                            onValueChange = viewModel::onChangeTitle
+                        )
+                        if (viewModel.checkBoxes.isEmpty()) {
+                            NoteBodyTextField(
+                                state = viewModel.body,
+                                readOnly = (viewModel.deletion != null),
+                                focusRequester = focusRequesterBody,
+                                onValueChange = viewModel::onChangeBody
+                            )
+                        }
+                        else {
+                            // Bugged with no work around yet: https://issuetracker.google.com/issues/179203700
+                            LazyColumn(modifier = Modifier
+                                .fillMaxSize()
+                                .padding(8.dp)) {
+                                itemsIndexed(items = checkBoxesSortedList.value, key = { _, checkBox -> checkBox.id }) { index, checkBox ->
+                                    NoteCheckBoxItem(
+                                        modifier = Modifier.animateItemPlacement(),
+                                        focusRequester = if (checkBoxesSortedList.value.size == index + 1) focusRequesterCheckBox else null,
+                                        checkBox = checkBox,
+                                        onUpdate = viewModel::onEditCheckBox,
+                                        onDelete = {
+                                            if (index > 0)
+                                                focusManager.moveFocus(FocusDirection.Up)
+                                            viewModel.onDeleteCheckBox(checkBox.id)
+                                        },
+                                        onKeyboardNext = {
+                                            // Create a new checkbox if this is the last item.
+                                            if (checkBoxesSortedList.value.size == index + 1) {
+                                                viewModel.onCreateCheckBox()
+                                                scope.launch {
+                                                    delay(50)
+                                                    focusManager.moveFocus(FocusDirection.Down)
+                                                }
+                                            }
+                                            else {
+                                                focusManager.moveFocus(FocusDirection.Down)
+                                            }
+                                        },
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    Box(modifier = Modifier
+                        .fillMaxWidth()
+                        .height(32.dp)
+                        .align(Alignment.BottomCenter)) {
+                        Text(
+                            modifier = Modifier.align(Alignment.Center),
+                            color = MaterialTheme.colorScheme.onSurface.copy(0.6f),
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            text = statusText.value,
+                        )
+                    }
                 }
             }
         }

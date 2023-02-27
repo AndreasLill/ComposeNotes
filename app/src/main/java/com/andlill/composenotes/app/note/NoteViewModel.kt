@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.andlill.composenotes.data.repository.NoteRepository
+import com.andlill.composenotes.model.Label
 import com.andlill.composenotes.model.Note
 import com.andlill.composenotes.model.NoteCheckBox
 import com.andlill.composenotes.utils.TimeUtils.toMilliSeconds
@@ -46,9 +47,12 @@ class NoteViewModel(private val application: Application, private val noteId: In
         private set
     var checkBoxes = mutableStateListOf<NoteCheckBox>()
         private set
+    var labels = mutableStateListOf<Label>()
+        private set
 
     init {
         viewModelScope.launch {
+            // Get note once and use as cache.
             NoteRepository.getNote(application, noteId).firstOrNull()?.let {
                 color = it.note.color
                 title = title.copy(text = it.note.title)
@@ -64,6 +68,16 @@ class NoteViewModel(private val application: Application, private val noteId: In
             }
         }
         viewModelScope.launch {
+            // Get all note labels as flow.
+            NoteRepository.getNote(application, noteId).collectLatest {
+                it?.let {
+                    labels.clear()
+                    labels.addAll(it.labels)
+                }
+            }
+        }
+        viewModelScope.launch {
+            // Get note reminder as flow.
             NoteRepository.getNoteReminder(application, noteId).collectLatest {
                 reminder = it
             }

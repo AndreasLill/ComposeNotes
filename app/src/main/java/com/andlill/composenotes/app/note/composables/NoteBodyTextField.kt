@@ -4,7 +4,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -25,7 +26,7 @@ fun NoteBodyTextField(state: TextFieldValue, readOnly: Boolean, focusRequester: 
         modifier = Modifier
             .focusRequester(focusRequester)
             .clearFocusOnKeyboardDismiss()
-            .padding(start = 20.dp, end = 20.dp, top = 16.dp, bottom = 48.dp)
+            .padding(start = 20.dp, end = 20.dp, top = 8.dp, bottom = 48.dp)
             .fillMaxWidth(),
         readOnly = readOnly,
         value = state,
