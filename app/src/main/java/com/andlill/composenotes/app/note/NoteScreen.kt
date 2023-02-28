@@ -311,16 +311,10 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                                                 focusManager.moveFocus(FocusDirection.Up)
                                             viewModel.onDeleteCheckBox(checkBox.id)
                                         },
-                                        onKeyboardNext = {
-                                            // Create a new checkbox if this is the last item.
-                                            if (checkBoxesSortedList.value.size == index + 1) {
-                                                viewModel.onCreateCheckBox()
-                                                scope.launch {
-                                                    delay(50)
-                                                    focusManager.moveFocus(FocusDirection.Down)
-                                                }
-                                            }
-                                            else {
+                                        onDone = {
+                                            viewModel.onCreateCheckBox(checkBox.order + 1, checkBox.checked)
+                                            scope.launch {
+                                                delay(50)
                                                 focusManager.moveFocus(FocusDirection.Down)
                                             }
                                         },

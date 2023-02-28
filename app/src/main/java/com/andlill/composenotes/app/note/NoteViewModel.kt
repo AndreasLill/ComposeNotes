@@ -105,7 +105,13 @@ class NoteViewModel(private val application: Application, private val noteId: In
                 deletion = deletion,
                 pinned = pinned
             ))
-            NoteRepository.updateNoteCheckBoxes(application, id, checkBoxes.map { it.copy(id = 0, text = it.text.trim()) })
+            NoteRepository.updateNoteCheckBoxes(application, id, checkBoxes.map {
+                // Set id to 0 if using a temp id (under 0).
+                if (it.id < 0)
+                    it.copy(id = 0, text = it.text.trim())
+                else
+                    it.copy(text = it.text.trim())
+            })
         }
     }
 
@@ -184,21 +190,36 @@ class NoteViewModel(private val application: Application, private val noteId: In
         }
     }
 
-    fun onCreateCheckBox() {
+    fun onCreateCheckBox(position: Int, checked: Boolean) {
+        // Increment order on subsequent items in list.
+        val list = checkBoxes.map {
+            if (it.order >= position)
+                it.copy(order = it.order + 1)
+            else
+                it
+        }
+        checkBoxes.clear()
+        checkBoxes.addAll(list)
+
         // Assign random temporary id to use as stable key in lazy column.
-        checkBoxes.add(NoteCheckBox(id = Random.nextInt(), noteId = id, order = checkBoxes.size + 1))
+        checkBoxes.add(NoteCheckBox(id = -Random.nextInt(), noteId = id, order = position, checked = checked))
     }
 
     fun onDeleteCheckBox(id: Int) {
         val item = checkBoxes.firstOrNull { it.id == id }
-        item?.let {
-            checkBoxes.remove(it)
-        }
+        item?.let { checkBox ->
+            checkBoxes.remove(checkBox)
 
-        // Reset order after removing.
-        val list = checkBoxes.mapIndexed { index, checkBox -> checkBox.copy(order = index + 1) }
-        checkBoxes.clear()
-        checkBoxes.addAll(list)
+            // Reduce order on subsequent after removing.
+            val list = checkBoxes.map {
+                if (it.order >= checkBox.order)
+                    it.copy(order = it.order - 1)
+                else
+                    it
+            }
+            checkBoxes.clear()
+            checkBoxes.addAll(list)
+        }
     }
 
     fun onEditCheckBox(id: Int, checked: Boolean, text: String) {

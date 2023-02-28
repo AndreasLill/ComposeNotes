@@ -31,7 +31,14 @@ import com.andlill.composenotes.ui.shared.util.clearFocusOnKeyboardDismiss
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun NoteCheckBoxItem(modifier: Modifier, focusRequester: FocusRequester? = null, checkBox: NoteCheckBox, onUpdate: (Int, Boolean, String) -> Unit, onDelete: () -> Unit, onKeyboardNext: () -> Unit) {
+fun NoteCheckBoxItem(
+    modifier: Modifier,
+    focusRequester: FocusRequester? = null,
+    checkBox: NoteCheckBox,
+    onUpdate: (Int, Boolean, String) -> Unit,
+    onDelete: () -> Unit,
+    onDone: () -> Unit
+) {
     // Local checkbox and text field value state.
     var textFieldValue by remember { mutableStateOf(TextFieldValue(checkBox.text)) }
     var checkBoxValue by remember { mutableStateOf(checkBox.checked) }
@@ -78,8 +85,8 @@ fun NoteCheckBoxItem(modifier: Modifier, focusRequester: FocusRequester? = null,
                         }
                         return@onKeyEvent true
                     }
-                    if (event.type == KeyEventType.KeyUp && event.key == Key.Enter && textFieldValue.text.isNotBlank()) {
-                        onKeyboardNext()
+                    if (event.type == KeyEventType.KeyUp && event.key == Key.Enter) {
+                        onDone()
                         return@onKeyEvent true
                     }
                     false
@@ -96,10 +103,8 @@ fun NoteCheckBoxItem(modifier: Modifier, focusRequester: FocusRequester? = null,
             ),
             keyboardActions = KeyboardActions(
                 onNext = {
-                    if (textFieldValue.text.isNotBlank()) {
-                        onKeyboardNext()
-                    }
-                }
+                    onDone()
+                },
             ),
             value = textFieldValue,
             onValueChange = {
