@@ -27,6 +27,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -184,13 +185,9 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                             )
                             OptionsDropDownMenu(
                                 state = optionsDropDownState,
-                                isCheckBoxesEmpty = checkBoxesSortedList.value.isEmpty(),
                                 onClick = {
                                     optionsDropDownState.value = false
                                     when (it) {
-                                        NoteOption.Checkboxes -> {
-                                            viewModel.onConvertCheckBoxes()
-                                        }
                                         NoteOption.Delete -> {
                                             viewModel.onDeleteNote()
                                             appState.showSnackbar(context.resources.getString(R.string.note_screen_message_note_trash), SnackbarDuration.Short)
@@ -242,7 +239,7 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                             NoteLabelChip(
                                 color = MaterialTheme.colorScheme.surface.copy(0.5f),
                                 icon = Icons.Outlined.Add,
-                                text = "Labels",
+                                text = stringResource(R.string.note_screen_menu_labels),
                                 alpha = 0.6f,
                                 onClick = {
                                     appState.navigation.navigate(Screen.LabelScreen.route(noteId = viewModel.id)) {
@@ -325,8 +322,13 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                     }
                     Box(modifier = Modifier
                         .fillMaxWidth()
-                        .height(32.dp)
+                        .height(48.dp)
                         .align(Alignment.BottomCenter)) {
+                        MenuIconButton(
+                            modifier = Modifier.align(Alignment.CenterStart),
+                            icon = if (viewModel.checkBoxes.isEmpty()) Icons.Outlined.CheckBoxOutlineBlank else Icons.Outlined.CheckBox,
+                            onClick = viewModel::onConvertCheckBoxes
+                        )
                         Text(
                             modifier = Modifier.align(Alignment.Center),
                             color = MaterialTheme.colorScheme.onSurface.copy(0.6f),

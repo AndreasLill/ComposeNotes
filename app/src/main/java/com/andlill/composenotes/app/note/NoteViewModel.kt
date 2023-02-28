@@ -168,11 +168,11 @@ class NoteViewModel(private val application: Application, private val noteId: In
             body.text.lines().forEachIndexed { index, line ->
                 if (line.isBlank())
                     return@forEachIndexed
-                list.add(NoteCheckBox(id = Random.nextInt(), noteId = id, text = line, order = index + 1))
+                list.add(NoteCheckBox(id = -Random.nextInt(), noteId = id, text = line, order = index + 1))
             }
             // Add blank checkbox if list is empty.
             if (list.isEmpty())
-                list.add(NoteCheckBox(id = Random.nextInt(), noteId = id, order = 1))
+                list.add(NoteCheckBox(id = -Random.nextInt(), noteId = id, order = 1))
 
             body = body.copy(text = "")
             checkBoxes.addAll(list)
@@ -180,7 +180,7 @@ class NoteViewModel(private val application: Application, private val noteId: In
         else {
             // Convert check boxes to body string.
             var bodyStr = ""
-            checkBoxes.forEach { checkBox ->
+            checkBoxes.sortedBy { it.order }.forEach { checkBox ->
                 if (checkBox.text.isBlank())
                     return@forEach
                 bodyStr += checkBox.text.plus(System.lineSeparator())
