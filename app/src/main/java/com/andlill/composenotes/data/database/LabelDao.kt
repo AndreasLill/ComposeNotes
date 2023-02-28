@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 interface LabelDao {
 
     @Insert
-    suspend fun insertLabel(label: Label)
+    suspend fun insertLabel(label: Label): Long
 
     @Update
     suspend fun updateLabel(label: Label)

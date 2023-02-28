@@ -51,7 +51,11 @@ class LabelViewModel(private val application: Application, private val noteId: I
     }
 
     fun onCreateLabel(value: String) = viewModelScope.launch {
-        LabelRepository.insertLabel(application, Label(value = value))
+        val labelId = LabelRepository.insertLabel(application, Label(value = value))
+        noteId?.let {
+            // Add to note if id was provided.
+            NoteRepository.insertNoteLabel(application, NoteLabelJoin(noteId = noteId, labelId = labelId))
+        }
     }
 
     fun onToggleNoteLabel(label: Label) = viewModelScope.launch {

@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.key.*
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -37,6 +38,7 @@ import com.andlill.composenotes.ui.shared.util.clearFocusOnKeyboardDismiss
 fun CreateLabel(onCreate: (String) -> Unit) {
     var textFieldValue by remember { mutableStateOf(TextFieldValue("")) }
     val interactionSource = remember { MutableInteractionSource() }
+    val focusManager = LocalFocusManager.current
 
     Box(modifier = Modifier.fillMaxSize()) {
         BasicTextField(
@@ -46,12 +48,13 @@ fun CreateLabel(onCreate: (String) -> Unit) {
                 .onKeyEvent { event ->
                     if (event.type == KeyEventType.KeyUp && event.key == Key.Enter && textFieldValue.text.isNotBlank()) {
                         onCreate(textFieldValue.text)
-                        textFieldValue = textFieldValue.copy(text = "")
+                        focusManager.clearFocus()
                         return@onKeyEvent true
                     }
                     return@onKeyEvent false
                 }
                 .onFocusChanged {
+                    // Clear text on focus loss.
                     if (!it.isFocused) {
                         textFieldValue = textFieldValue.copy(text = "")
                     }
@@ -65,7 +68,7 @@ fun CreateLabel(onCreate: (String) -> Unit) {
             keyboardActions = KeyboardActions(
                 onDone = {
                     onCreate(textFieldValue.text)
-                    textFieldValue = textFieldValue.copy(text = "")
+                    focusManager.clearFocus()
                 }
             ),
             textStyle = TextStyle(
@@ -101,7 +104,7 @@ fun CreateLabel(onCreate: (String) -> Unit) {
                 modifier = Modifier.align(Alignment.CenterEnd),
                 onClick = {
                     onCreate(textFieldValue.text)
-                    textFieldValue = textFieldValue.copy(text = "")
+                    focusManager.clearFocus()
                 },
                 content = {
                     Icon(

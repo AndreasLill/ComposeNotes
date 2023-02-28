@@ -10,8 +10,8 @@ import kotlinx.coroutines.withContext
 
 object LabelRepository {
 
-    suspend fun insertLabel(context: Context, label: Label) = withContext(Dispatchers.IO) {
-        AppDatabase.get(context).labelDao.insertLabel(label)
+    suspend fun insertLabel(context: Context, label: Label): Int = withContext(Dispatchers.IO) {
+        AppDatabase.get(context).labelDao.insertLabel(label).toInt()
     }
 
     suspend fun updateLabel(context: Context, label: Label) = withContext(Dispatchers.IO) {

@@ -2,6 +2,7 @@ package com.andlill.composenotes.ui.shared.dialog
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -23,7 +24,10 @@ fun ConfirmDialog(state: Boolean, body: String, annotation: String, annotationSt
         Dialog(onDismissRequest = onDismiss) {
             Column(modifier = Modifier
                 .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.surface)
+                .background(
+                    shape = RoundedCornerShape(16.dp),
+                    color = MaterialTheme.colorScheme.surface
+                )
                 .padding(16.dp)) {
                 DialogTitle(text = stringResource(R.string.dialog_confirm_title))
                 Spacer(modifier = Modifier.height(16.dp))

@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -63,7 +64,10 @@ fun InputDialog(state: Boolean, title: String, placeholder: String, onDismiss: (
                     modifier = Modifier
                         // Important to align dialog above keyboard.
                         .align(Alignment.Center)
-                        .background(MaterialTheme.colorScheme.surface)
+                        .background(
+                            shape = RoundedCornerShape(16.dp),
+                            color = MaterialTheme.colorScheme.surface
+                        )
                         .padding(16.dp)
                 ) {
                     DialogTitle(text = title)
