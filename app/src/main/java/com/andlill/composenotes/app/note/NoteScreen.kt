@@ -242,9 +242,11 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                                 text = stringResource(R.string.note_screen_menu_labels),
                                 alpha = 0.6f,
                                 onClick = {
-                                    appState.navigation.navigate(Screen.LabelScreen.route(noteId = viewModel.id)) {
-                                        // To avoid multiple copies of same destination in backstack.
-                                        launchSingleTop = true
+                                    if (viewModel.deletion == null) {
+                                        appState.navigation.navigate(Screen.LabelScreen.route(noteId = viewModel.id)) {
+                                            // To avoid multiple copies of same destination in backstack.
+                                            launchSingleTop = true
+                                        }
                                     }
                                 }
                             )
@@ -256,10 +258,13 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                                 color = MaterialTheme.colorScheme.surface.copy(0.5f),
                                 icon = Icons.Outlined.Label,
                                 text = it.value,
+                                alpha = if (viewModel.deletion == null) 1f else 0.6f,
                                 onClick = {
-                                    appState.navigation.navigate(Screen.LabelScreen.route(noteId = viewModel.id)) {
-                                        // To avoid multiple copies of same destination in backstack.
-                                        launchSingleTop = true
+                                    if (viewModel.deletion == null) {
+                                        appState.navigation.navigate(Screen.LabelScreen.route(noteId = viewModel.id)) {
+                                            // To avoid multiple copies of same destination in backstack.
+                                            launchSingleTop = true
+                                        }
                                     }
                                 }
                             )
@@ -300,6 +305,7 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                                 itemsIndexed(items = checkBoxesSortedList.value, key = { _, checkBox -> checkBox.id }) { index, checkBox ->
                                     NoteCheckBoxItem(
                                         modifier = Modifier.animateItemPlacement(),
+                                        enabled = (viewModel.deletion == null),
                                         focusRequester = if (checkBoxesSortedList.value.size == index + 1) focusRequesterCheckBox else null,
                                         checkBox = checkBox,
                                         onUpdate = viewModel::onEditCheckBox,
@@ -324,11 +330,13 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                         .fillMaxWidth()
                         .height(48.dp)
                         .align(Alignment.BottomCenter)) {
-                        MenuIconButton(
-                            modifier = Modifier.align(Alignment.CenterStart),
-                            icon = if (viewModel.checkBoxes.isEmpty()) Icons.Outlined.CheckBoxOutlineBlank else Icons.Outlined.CheckBox,
-                            onClick = viewModel::onConvertCheckBoxes
-                        )
+                        if (viewModel.deletion == null) {
+                            MenuIconButton(
+                                modifier = Modifier.align(Alignment.CenterStart),
+                                icon = if (viewModel.checkBoxes.isEmpty()) Icons.Outlined.CheckBoxOutlineBlank else Icons.Outlined.CheckBox,
+                                onClick = viewModel::onConvertCheckBoxes
+                            )
+                        }
                         Text(
                             modifier = Modifier.align(Alignment.Center),
                             color = MaterialTheme.colorScheme.onSurface.copy(0.6f),

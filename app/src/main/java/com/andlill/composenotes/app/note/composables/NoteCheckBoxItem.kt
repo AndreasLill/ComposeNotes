@@ -33,6 +33,7 @@ import com.andlill.composenotes.ui.shared.util.clearFocusOnKeyboardDismiss
 @Composable
 fun NoteCheckBoxItem(
     modifier: Modifier,
+    enabled: Boolean,
     focusRequester: FocusRequester? = null,
     checkBox: NoteCheckBox,
     onUpdate: (Int, Boolean, String) -> Unit,
@@ -59,6 +60,7 @@ fun NoteCheckBoxItem(
                 checkedColor = Color.Transparent,
                 checkmarkColor = MaterialTheme.colorScheme.onSurface
             ),
+            enabled = enabled,
             checked = checkBoxValue,
             onCheckedChange = {
                 checkBoxValue = it
@@ -106,6 +108,7 @@ fun NoteCheckBoxItem(
                     onDone()
                 },
             ),
+            readOnly = !enabled,
             value = textFieldValue,
             onValueChange = {
                 // Ignore new line endings.
