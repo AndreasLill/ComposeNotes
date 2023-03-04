@@ -1,6 +1,10 @@
 package com.andlill.composenotes.app.note
 
+import android.Manifest
 import android.app.Application
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
@@ -55,6 +59,7 @@ import java.time.LocalDateTime
 fun NoteScreen(appState: AppState, noteId: Int) {
     val viewModel: NoteViewModel = viewModel(factory = NoteViewModel.Factory(LocalContext.current.applicationContext as Application, noteId))
 
+    val permissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {}
     val optionsDropDownState = remember { mutableStateOf(false) }
     val colorDialogState = remember { mutableStateOf(false) }
     val reminderDialogState = remember { mutableStateOf(false) }
@@ -170,6 +175,13 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                                         viewModel.onCancelReminder()
                                         appState.showSnackbar(context.resources.getString(R.string.note_screen_message_reminder_cancel), SnackbarDuration.Short)
                                     }
+                                },
+                                onRequestPermission = {
+                                    // Request permissions for API 33.
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                        permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                                    }
+                                    appState.showSnackbar(context.resources.getString(R.string.note_screen_message_reminder_permissions), SnackbarDuration.Short)
                                 }
                             )
                         }

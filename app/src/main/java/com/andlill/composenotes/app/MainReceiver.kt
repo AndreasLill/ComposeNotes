@@ -1,9 +1,12 @@
 package com.andlill.composenotes.app
 
+import android.Manifest
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.TaskStackBuilder
@@ -95,8 +98,9 @@ class MainReceiver : BroadcastReceiver() {
 
             // Send notification.
             with(NotificationManagerCompat.from(context)) {
-                // TODO: Handle permission events for notifications.
-                notify(id, notification)
+                if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+                    notify(id, notification)
+                }
             }
 
             // Remove non-repeating reminder or update repeating reminder.

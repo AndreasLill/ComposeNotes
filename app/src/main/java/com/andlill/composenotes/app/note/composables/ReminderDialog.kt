@@ -13,11 +13,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.core.app.NotificationManagerCompat
 import com.andlill.composenotes.R
 import com.andlill.composenotes.model.NoteReminderRepeat
 import com.andlill.composenotes.ui.shared.button.DialogButton
@@ -37,7 +39,8 @@ fun ReminderDialog(
     state: MutableState<Boolean>,
     initialDateTime: LocalDateTime?,
     initialRepeat: String?,
-    onClick: (LocalDateTime?, String?) -> Unit
+    onClick: (LocalDateTime?, String?) -> Unit,
+    onRequestPermission: () -> Unit
 ) {
     if (state.value) {
         val datePickerDialogState = remember { mutableStateOf(false) }
@@ -77,7 +80,7 @@ fun ReminderDialog(
             )
         }
 
-
+        val context = LocalContext.current
         var selectedDate by remember { mutableStateOf(initialDateTime?.toLocalDate() ?: LocalDate.now()) }
         var selectedTime by remember { mutableStateOf(initialDateTime?.toLocalTime() ?: LocalTime.now()) }
         val selectedDateText by remember(selectedDate) { mutableStateOf(selectedDate.toDateString("d MMM, YYYY")) }
@@ -211,17 +214,22 @@ fun ReminderDialog(
                             backgroundColor = MaterialTheme.colorScheme.primary,
                             textColor = MaterialTheme.colorScheme.onPrimary,
                             onClick = {
-                                onClick(
-                                    LocalDateTime.of(selectedDate, selectedTime),
-                                    when(reminderRepeat.value) {
-                                        reminderRepeatDaily -> NoteReminderRepeat.REPEAT_DAILY
-                                        reminderRepeatWeekly -> NoteReminderRepeat.REPEAT_WEEKLY
-                                        reminderRepeatMonthly -> NoteReminderRepeat.REPEAT_MONTHLY
-                                        reminderRepeatYearly -> NoteReminderRepeat.REPEAT_YEARLY
-                                        else -> null
-                                    }
-                                )
-                                state.value = false
+                                if (NotificationManagerCompat.from(context).areNotificationsEnabled()) {
+                                    onClick(
+                                        LocalDateTime.of(selectedDate, selectedTime),
+                                        when(reminderRepeat.value) {
+                                            reminderRepeatDaily -> NoteReminderRepeat.REPEAT_DAILY
+                                            reminderRepeatWeekly -> NoteReminderRepeat.REPEAT_WEEKLY
+                                            reminderRepeatMonthly -> NoteReminderRepeat.REPEAT_MONTHLY
+                                            reminderRepeatYearly -> NoteReminderRepeat.REPEAT_YEARLY
+                                            else -> null
+                                        }
+                                    )
+                                    state.value = false
+                                }
+                                else {
+                                    onRequestPermission()
+                                }
                             }
                         )
                     }
