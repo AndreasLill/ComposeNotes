@@ -16,15 +16,15 @@ import androidx.compose.ui.unit.sp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NoteLabelChip(
-    color: Color,
+    background: Color,
     icon: ImageVector,
     text: String,
-    alpha: Float = 1f,
+    contentAlpha: Float = 1f,
     onClick: () -> Unit,
 ) {
     Surface(
         modifier = Modifier.height(32.dp),
-        color = color,
+        color = background,
         shape = RoundedCornerShape(8.dp),
         border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.onSurface.copy(0.1f)),
         onClick = onClick
@@ -35,7 +35,7 @@ fun NoteLabelChip(
             Icon(
                 modifier = Modifier.size(16.dp),
                 imageVector = icon,
-                tint = MaterialTheme.colorScheme.onSurface.copy(alpha),
+                tint = MaterialTheme.colorScheme.onSurface.copy(contentAlpha),
                 contentDescription = null
             )
             Spacer(modifier = Modifier.width(4.dp))
@@ -44,7 +44,7 @@ fun NoteLabelChip(
                 fontSize = 12.sp,
                 fontWeight = FontWeight.SemiBold,
                 letterSpacing = 0.sp,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha)
+                color = MaterialTheme.colorScheme.onSurface.copy(contentAlpha)
             )
         }
     }

@@ -56,7 +56,7 @@
     <string name="note_screen_message_note_deleted">Note was permanently deleted.</string>
     <string name="note_screen_message_reminder_set">Reminder set: %s.</string>
     <string name="note_screen_message_reminder_cancel">Reminder was cancelled.</string>
-    <string name="note_screen_menu_labels">Labels</string>
+    <string name="note_screen_label_placeholder">Label</string>
     <string name="note_screen_menu_trash">Move to Trash</string>
 
     <!-- Label Screen -->

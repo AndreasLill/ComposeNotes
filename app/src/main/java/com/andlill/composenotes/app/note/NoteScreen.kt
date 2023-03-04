@@ -237,10 +237,10 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                     if (viewModel.labels.isEmpty()) {
                         item {
                             NoteLabelChip(
-                                color = MaterialTheme.colorScheme.surface.copy(0.5f),
+                                background = MaterialTheme.colorScheme.surface.copy(0.5f),
                                 icon = Icons.Outlined.Add,
-                                text = stringResource(R.string.note_screen_menu_labels),
-                                alpha = 0.6f,
+                                text = stringResource(R.string.note_screen_label_placeholder),
+                                contentAlpha = 0.5f,
                                 onClick = {
                                     if (viewModel.deletion == null) {
                                         appState.navigation.navigate(Screen.LabelScreen.route(noteId = viewModel.id)) {
@@ -255,10 +255,10 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                     else {
                         items(items = viewModel.labels, key = { label -> label.id }) {
                             NoteLabelChip(
-                                color = MaterialTheme.colorScheme.surface.copy(0.5f),
+                                background = MaterialTheme.colorScheme.surface.copy(0.5f),
                                 icon = Icons.Outlined.Label,
                                 text = it.value,
-                                alpha = if (viewModel.deletion == null) 1f else 0.6f,
+                                contentAlpha = if (viewModel.deletion == null) 1f else 0.5f,
                                 onClick = {
                                     if (viewModel.deletion == null) {
                                         appState.navigation.navigate(Screen.LabelScreen.route(noteId = viewModel.id)) {
