@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.andlill.composenotes.R
+import com.andlill.composenotes.model.NoteReminderRepeat
 import com.andlill.composenotes.ui.shared.button.DialogButton
 import com.andlill.composenotes.ui.shared.text.DialogTitle
 import com.andlill.composenotes.utils.TimeUtils.toDateString
@@ -32,7 +33,12 @@ import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ReminderDialog(state: MutableState<Boolean>, initialDateTime: LocalDateTime?, onClick: (LocalDateTime?) -> Unit) {
+fun ReminderDialog(
+    state: MutableState<Boolean>,
+    initialDateTime: LocalDateTime?,
+    initialRepeat: String?,
+    onClick: (LocalDateTime?, String?) -> Unit
+) {
     if (state.value) {
         val datePickerDialogState = remember { mutableStateOf(false) }
         val datePickerState = rememberDatePickerState(
@@ -43,6 +49,34 @@ fun ReminderDialog(state: MutableState<Boolean>, initialDateTime: LocalDateTime?
             initialHour = initialDateTime?.hour ?: LocalTime.now().hour,
             initialMinute = initialDateTime?.minute ?: LocalTime.now().minute,
         )
+
+        val reminderRepeatOff = stringResource(R.string.note_screen_dialog_reminder_repeat_off)
+        val reminderRepeatDaily = stringResource(R.string.note_screen_dialog_reminder_repeat_daily)
+        val reminderRepeatWeekly = stringResource(R.string.note_screen_dialog_reminder_repeat_weekly)
+        val reminderRepeatMonthly = stringResource(R.string.note_screen_dialog_reminder_repeat_monthly)
+        val reminderRepeatYearly = stringResource(R.string.note_screen_dialog_reminder_repeat_yearly)
+        val reminderRepeatOptions = remember {
+            arrayOf(
+                reminderRepeatOff,
+                reminderRepeatDaily,
+                reminderRepeatWeekly,
+                reminderRepeatMonthly,
+                reminderRepeatYearly
+            )
+        }
+        val reminderRepeatDropDownState = remember { mutableStateOf(false) }
+        val reminderRepeat = remember {
+            mutableStateOf(
+                when (initialRepeat) {
+                    NoteReminderRepeat.REPEAT_DAILY -> reminderRepeatDaily
+                    NoteReminderRepeat.REPEAT_WEEKLY -> reminderRepeatWeekly
+                    NoteReminderRepeat.REPEAT_MONTHLY -> reminderRepeatMonthly
+                    NoteReminderRepeat.REPEAT_YEARLY -> reminderRepeatYearly
+                    else -> reminderRepeatOff
+                }
+            )
+        }
+
 
         var selectedDate by remember { mutableStateOf(initialDateTime?.toLocalDate() ?: LocalDate.now()) }
         var selectedTime by remember { mutableStateOf(initialDateTime?.toLocalTime() ?: LocalTime.now()) }
@@ -106,6 +140,56 @@ fun ReminderDialog(state: MutableState<Boolean>, initialDateTime: LocalDateTime?
                     value = selectedTimeText,
                     onValueChange = { }
                 )
+                ExposedDropdownMenuBox(
+                    modifier = Modifier.fillMaxWidth(),
+                    expanded = reminderRepeatDropDownState.value,
+                    onExpandedChange = {
+                        reminderRepeatDropDownState.value = !reminderRepeatDropDownState.value
+                    }
+                ) {
+                    TextField(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .menuAnchor()
+                            .clickable {},
+                        enabled = false,
+                        readOnly = true,
+                        singleLine = true,
+                        shape = RectangleShape,
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            containerColor = MaterialTheme.colorScheme.surface,
+                            disabledTextColor = MaterialTheme.colorScheme.onSurface,
+                            disabledTrailingIconColor = MaterialTheme.colorScheme.onSurface,
+                        ),
+                        label = {
+                            Text(stringResource(R.string.note_screen_dialog_reminder_label_repeat))
+                        },
+                        textStyle = TextStyle(fontSize = 15.sp),
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(
+                                expanded = reminderRepeatDropDownState.value
+                            )
+                        },
+                        value = reminderRepeat.value,
+                        onValueChange = { }
+                    )
+                    ExposedDropdownMenu(
+                        expanded = reminderRepeatDropDownState.value,
+                        onDismissRequest = { reminderRepeatDropDownState.value = false }
+                    ) {
+                        reminderRepeatOptions.forEach { option ->
+                            DropdownMenuItem(
+                                text = {
+                                    Text(option)
+                                },
+                                onClick = {
+                                    reminderRepeat.value = option
+                                    reminderRepeatDropDownState.value = false
+                                }
+                            )
+                        }
+                    }
+                }
                 Spacer(modifier = Modifier.height(16.dp))
                 Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
                     Row {
@@ -116,7 +200,7 @@ fun ReminderDialog(state: MutableState<Boolean>, initialDateTime: LocalDateTime?
                                 backgroundColor = Color.Transparent,
                                 textColor = MaterialTheme.colorScheme.error,
                                 onClick = {
-                                    onClick(null)
+                                    onClick(null, null)
                                     state.value = false
                                 }
                             )
@@ -127,7 +211,16 @@ fun ReminderDialog(state: MutableState<Boolean>, initialDateTime: LocalDateTime?
                             backgroundColor = MaterialTheme.colorScheme.primary,
                             textColor = MaterialTheme.colorScheme.onPrimary,
                             onClick = {
-                                onClick(LocalDateTime.of(selectedDate, selectedTime))
+                                onClick(
+                                    LocalDateTime.of(selectedDate, selectedTime),
+                                    when(reminderRepeat.value) {
+                                        reminderRepeatDaily -> NoteReminderRepeat.REPEAT_DAILY
+                                        reminderRepeatWeekly -> NoteReminderRepeat.REPEAT_WEEKLY
+                                        reminderRepeatMonthly -> NoteReminderRepeat.REPEAT_MONTHLY
+                                        reminderRepeatYearly -> NoteReminderRepeat.REPEAT_YEARLY
+                                        else -> null
+                                    }
+                                )
                                 state.value = false
                             }
                         )

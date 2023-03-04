@@ -41,6 +41,8 @@ class NoteViewModel(private val application: Application, private val noteId: In
         private set
     var reminder by mutableStateOf<Long?>(null)
         private set
+    var reminderRepeat by mutableStateOf<String?>(null)
+        private set
     var deletion by mutableStateOf<Long?>(null)
         private set
     var pinned by mutableStateOf(false)

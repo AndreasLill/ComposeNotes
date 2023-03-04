@@ -46,6 +46,12 @@
     <string name="note_screen_dialog_reminder_title">Reminder</string>
     <string name="note_screen_dialog_reminder_label_date">Date</string>
     <string name="note_screen_dialog_reminder_label_time">Time</string>
+    <string name="note_screen_dialog_reminder_label_repeat">Repeat</string>
+    <string name="note_screen_dialog_reminder_repeat_off">Off</string>
+    <string name="note_screen_dialog_reminder_repeat_daily">Daily</string>
+    <string name="note_screen_dialog_reminder_repeat_weekly">Weekly</string>
+    <string name="note_screen_dialog_reminder_repeat_monthly">Monthly</string>
+    <string name="note_screen_dialog_reminder_repeat_yearly">Yearly</string>
     <string name="note_screen_dialog_timepicker_title">Select time</string>
     <string name="note_screen_dialog_confirm_note_delete">This note will be permanently deleted.</string>
     <string name="note_screen_status_text_deletion_today">Scheduled for deletion today.</string>
