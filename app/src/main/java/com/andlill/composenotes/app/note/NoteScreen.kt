@@ -38,6 +38,7 @@ import com.andlill.composenotes.app.AppState
 import com.andlill.composenotes.app.Screen
 import com.andlill.composenotes.app.note.composables.*
 import com.andlill.composenotes.model.NoteCheckBox
+import com.andlill.composenotes.model.NoteReminderRepeat
 import com.andlill.composenotes.ui.shared.button.MenuIconButton
 import com.andlill.composenotes.ui.shared.util.LifecycleEventHandler
 import com.andlill.composenotes.utils.ColorUtils.darken
@@ -154,8 +155,16 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                                 onClick = { dateTime, repeat ->
                                     if (dateTime != null) {
                                         val dateStr = dateTime.toSimpleDateString(context)
-                                        viewModel.onSetReminder(dateTime)
-                                        appState.showSnackbar(String.format(context.resources.getString(R.string.note_screen_message_reminder_set), dateStr), SnackbarDuration.Short)
+                                        viewModel.onSetReminder(dateTime, repeat)
+
+                                        val snackbarStr = when (repeat) {
+                                            NoteReminderRepeat.REPEAT_DAILY -> context.resources.getString(R.string.note_screen_message_reminder_set_repeat_daily)
+                                            NoteReminderRepeat.REPEAT_WEEKLY -> context.resources.getString(R.string.note_screen_message_reminder_set_repeat_weekly)
+                                            NoteReminderRepeat.REPEAT_MONTHLY -> context.resources.getString(R.string.note_screen_message_reminder_set_repeat_monthly)
+                                            NoteReminderRepeat.REPEAT_YEARLY -> context.resources.getString(R.string.note_screen_message_reminder_set_repeat_yearly)
+                                            else -> context.resources.getString(R.string.note_screen_message_reminder_set)
+                                        }
+                                        appState.showSnackbar(String.format(snackbarStr, dateStr), SnackbarDuration.Short)
                                     }
                                     else {
                                         viewModel.onCancelReminder()

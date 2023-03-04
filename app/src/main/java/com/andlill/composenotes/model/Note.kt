@@ -9,6 +9,7 @@ data class Note(
     val color: Int = 0,
     val title: String = "",
     val body: String = "",
+    val reminderRepeat: String? = null,
     val created: Long? = null,
     val modified: Long? = null,
     val reminder: Long? = null,

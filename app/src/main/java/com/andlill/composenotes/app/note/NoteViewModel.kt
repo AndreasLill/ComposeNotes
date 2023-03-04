@@ -24,7 +24,7 @@ class NoteViewModel(private val application: Application, private val noteId: In
         override fun <T : ViewModel> create(modelClass: Class<T>): T = NoteViewModel(application, noteId) as T
     }
 
-    private var loaded = false
+    private var cacheLoaded = false
     private var deleteOnClose = false
 
     var id by mutableStateOf(noteId)
@@ -35,13 +35,13 @@ class NoteViewModel(private val application: Application, private val noteId: In
         private set
     var body by mutableStateOf(TextFieldValue())
         private set
+    var reminderRepeat by mutableStateOf<String?>(null)
+        private set
     var created by mutableStateOf<Long?>(null)
         private set
     var modified by mutableStateOf<Long?>(null)
         private set
     var reminder by mutableStateOf<Long?>(null)
-        private set
-    var reminderRepeat by mutableStateOf<String?>(null)
         private set
     var deletion by mutableStateOf<Long?>(null)
         private set
@@ -66,28 +66,24 @@ class NoteViewModel(private val application: Application, private val noteId: In
 
                 checkBoxes.clear()
                 checkBoxes.addAll(it.checkBoxes)
-                loaded = true
+                cacheLoaded = true
             }
         }
         viewModelScope.launch {
-            // Get all note labels as flow.
+            // Get other note data as flow.
             NoteRepository.getNote(application, noteId).collectLatest {
                 it?.let {
                     labels.clear()
                     labels.addAll(it.labels)
+                    reminder = it.note.reminder
+                    reminderRepeat = it.note.reminderRepeat
                 }
-            }
-        }
-        viewModelScope.launch {
-            // Get note reminder as flow.
-            NoteRepository.getNoteReminder(application, noteId).collectLatest {
-                reminder = it
             }
         }
     }
 
     fun onClose() = viewModelScope.launch {
-        if (!loaded)
+        if (!cacheLoaded)
             return@launch
 
         if (deleteOnClose) {
@@ -133,13 +129,13 @@ class NoteViewModel(private val application: Application, private val noteId: In
         deleteOnClose = true
     }
 
-    fun onSetReminder(dateTime: LocalDateTime) = viewModelScope.launch {
-        NoteRepository.setNoteReminder(application, noteId, dateTime.toMilliSeconds())
+    fun onSetReminder(dateTime: LocalDateTime, repeat: String?) = viewModelScope.launch {
+        NoteRepository.setNoteReminder(application, noteId, dateTime.toMilliSeconds(), repeat)
         NoteBroadcaster.setReminder(application, dateTime.toMilliSeconds(), id)
     }
 
     fun onCancelReminder() = viewModelScope.launch {
-        NoteRepository.setNoteReminder(application, noteId, null)
+        NoteRepository.setNoteReminder(application, noteId, null, null)
         NoteBroadcaster.cancelReminder(application, id)
     }
 
