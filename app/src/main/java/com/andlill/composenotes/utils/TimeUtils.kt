@@ -59,7 +59,7 @@ object TimeUtils {
             }
             else -> {
                 if (this.year != current.year) {
-                    this.toDateString("d MMM YYYY, HH:mm")
+                    this.toDateString("d MMM yyyy, HH:mm")
                 }
                 else {
                     this.toDateString("d MMM, HH:mm")
@@ -70,5 +70,16 @@ object TimeUtils {
 
     fun LocalDateTime.toMilliSeconds(): Long {
         return this.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+    }
+
+    // Returns a LocalDateTime with the closest day of the month available.
+    fun LocalDateTime.withClosestDayOfMonth(dayOfMonth: Int): LocalDateTime {
+        val isLeapYear = this.toLocalDate().isLeapYear
+        val monthLength = this.month.length(isLeapYear)
+
+        return if (dayOfMonth > monthLength)
+            this.withDayOfMonth(monthLength)
+        else
+            this.withDayOfMonth(dayOfMonth)
     }
 }

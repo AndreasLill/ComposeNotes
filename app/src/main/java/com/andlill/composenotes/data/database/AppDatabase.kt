@@ -5,11 +5,12 @@ import androidx.room.*
 import com.andlill.composenotes.model.*
 
 @Database(
-    version = 3,
+    version = 4,
     entities = [Note::class, NoteCheckBox::class, Label::class, NoteLabelJoin::class],
     autoMigrations = [
         AutoMigration(from = 1, to = 2),
         AutoMigration(from = 2, to = 3),
+        AutoMigration(from = 3, to = 4),
     ],
     exportSchema = true
 )

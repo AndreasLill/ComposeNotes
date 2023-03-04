@@ -4,7 +4,6 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.TaskStackBuilder
@@ -12,6 +11,10 @@ import androidx.core.net.toUri
 import com.andlill.composenotes.R
 import com.andlill.composenotes.app.note.NoteBroadcaster
 import com.andlill.composenotes.data.repository.NoteRepository
+import com.andlill.composenotes.model.NoteReminderRepeat
+import com.andlill.composenotes.utils.TimeUtils.toLocalDateTime
+import com.andlill.composenotes.utils.TimeUtils.toMilliSeconds
+import com.andlill.composenotes.utils.TimeUtils.withClosestDayOfMonth
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
@@ -92,13 +95,32 @@ class MainReceiver : BroadcastReceiver() {
 
             // Send notification.
             with(NotificationManagerCompat.from(context)) {
+                // TODO: Handle permission events for notifications.
                 notify(id, notification)
             }
 
-            // Remove reminder from note after consuming alarm.
-            NoteRepository.updateNote(context, note.note.copy(reminder = null))
-        }
+            // Remove non-repeating reminder or update repeating reminder.
+            val reminderTime = when (note.note.reminderRepeat) {
+                NoteReminderRepeat.REPEAT_DAILY -> {
+                    note.note.reminder?.toLocalDateTime()?.plusDays(1)?.toMilliSeconds()
+                }
+                NoteReminderRepeat.REPEAT_WEEKLY -> {
+                    note.note.reminder?.toLocalDateTime()?.plusWeeks(1)?.toMilliSeconds()
+                }
+                NoteReminderRepeat.REPEAT_MONTHLY -> {
+                    // Get the day of the month in the reminder date selection made originally by the user.
+                    val dayOfMonth = note.note.reminderSelection?.toLocalDateTime()?.dayOfMonth!!
+                    // Get the next month with the closest day of the month available.
+                    // This is to handle repeating end of the months reminders with different month lengths.
+                    note.note.reminder?.toLocalDateTime()?.plusMonths(1)?.withClosestDayOfMonth(dayOfMonth)?.toMilliSeconds()
+                }
+                NoteReminderRepeat.REPEAT_YEARLY -> {
+                    note.note.reminder?.toLocalDateTime()?.plusYears(1)?.toMilliSeconds()
+                }
+                else -> null
+            }
 
-        Log.d("MainReceiver", "Reminder '$id' Notification Sent")
+            NoteRepository.setNoteReminder(context, note.note.id, reminderTime)
+        }
     }
 }

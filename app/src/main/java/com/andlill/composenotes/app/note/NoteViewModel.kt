@@ -130,12 +130,12 @@ class NoteViewModel(private val application: Application, private val noteId: In
     }
 
     fun onSetReminder(dateTime: LocalDateTime, repeat: String?) = viewModelScope.launch {
-        NoteRepository.setNoteReminder(application, noteId, dateTime.toMilliSeconds(), repeat)
+        NoteRepository.setNoteReminderWithRepeat(application, noteId, dateTime.toMilliSeconds(), repeat)
         NoteBroadcaster.setReminder(application, dateTime.toMilliSeconds(), id)
     }
 
     fun onCancelReminder() = viewModelScope.launch {
-        NoteRepository.setNoteReminder(application, noteId, null, null)
+        NoteRepository.setNoteReminderWithRepeat(application, noteId, null, null)
         NoteBroadcaster.cancelReminder(application, id)
     }
 
