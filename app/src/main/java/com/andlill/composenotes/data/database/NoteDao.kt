@@ -27,6 +27,18 @@ interface NoteDao {
     @Query("SELECT * FROM Note")
     fun getAllNotes(): Flow<List<NoteWrapper>>
 
+    @Query("UPDATE Note SET title = :title, body = :body, modified = :modified WHERE id = :id")
+    fun setNoteContent(id: Int, title: String, body: String, modified: Long)
+
+    @Query("UPDATE Note SET color = :color WHERE id = :id")
+    fun setNoteColor(id: Int, color: Int)
+
+    @Query("UPDATE Note SET pinned = :pinned WHERE id = :id")
+    fun setNotePinned(id: Int, pinned: Boolean)
+
+    @Query("UPDATE Note SET deletion = :deletion WHERE id = :id")
+    fun setNoteDeletion(id: Int, deletion: Long?)
+
     @Query("UPDATE Note SET reminder = :reminder WHERE id = :id")
     fun setNoteReminder(id: Int, reminder: Long?)
 

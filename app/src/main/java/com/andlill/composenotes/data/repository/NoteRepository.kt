@@ -33,6 +33,22 @@ object NoteRepository {
         return AppDatabase.get(context).noteDao.getAllNotes().flowOn(Dispatchers.IO)
     }
 
+    suspend fun setNoteContent(context: Context, id: Int, title: String, body: String, modified: Long) = withContext(Dispatchers.IO) {
+        AppDatabase.get(context).noteDao.setNoteContent(id, title, body, modified)
+    }
+
+    suspend fun setNoteColor(context: Context, id: Int, color: Int) = withContext(Dispatchers.IO) {
+        AppDatabase.get(context).noteDao.setNoteColor(id, color)
+    }
+
+    suspend fun setNotePinned(context: Context, id: Int, pinned: Boolean) = withContext(Dispatchers.IO) {
+        AppDatabase.get(context).noteDao.setNotePinned(id, pinned)
+    }
+
+    suspend fun setNoteDeletion(context: Context, id: Int, deletion: Long?) = withContext(Dispatchers.IO) {
+        AppDatabase.get(context).noteDao.setNoteDeletion(id, deletion)
+    }
+
     suspend fun setNoteReminder(context: Context, id: Int, reminder: Long?) = withContext(Dispatchers.IO) {
         AppDatabase.get(context).noteDao.setNoteReminder(id, reminder)
     }

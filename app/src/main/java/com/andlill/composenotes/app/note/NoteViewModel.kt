@@ -9,7 +9,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.andlill.composenotes.data.repository.NoteRepository
 import com.andlill.composenotes.model.Label
-import com.andlill.composenotes.model.Note
 import com.andlill.composenotes.model.NoteCheckBox
 import com.andlill.composenotes.utils.TimeUtils.toMilliSeconds
 import kotlinx.coroutines.flow.*
@@ -37,8 +36,6 @@ class NoteViewModel(private val application: Application, private val noteId: In
         private set
     var reminderRepeat by mutableStateOf<String?>(null)
         private set
-    var created by mutableStateOf<Long?>(null)
-        private set
     var modified by mutableStateOf<Long?>(null)
         private set
     var reminder by mutableStateOf<Long?>(null)
@@ -56,14 +53,8 @@ class NoteViewModel(private val application: Application, private val noteId: In
         viewModelScope.launch {
             // Get note once and use as cache.
             NoteRepository.getNote(application, noteId).firstOrNull()?.let {
-                color = it.note.color
                 title = title.copy(text = it.note.title)
                 body = body.copy(text = it.note.body)
-                created = it.note.created
-                modified = it.note.modified
-                deletion = it.note.deletion
-                pinned = it.note.pinned
-
                 checkBoxes.clear()
                 checkBoxes.addAll(it.checkBoxes)
                 cacheLoaded = true
@@ -73,6 +64,10 @@ class NoteViewModel(private val application: Application, private val noteId: In
             // Get other note data as flow.
             NoteRepository.getNote(application, noteId).collectLatest {
                 it?.let {
+                    color = it.note.color
+                    modified = it.note.modified
+                    deletion = it.note.deletion
+                    pinned = it.note.pinned
                     labels.clear()
                     labels.addAll(it.labels)
                     reminder = it.note.reminder
@@ -92,17 +87,7 @@ class NoteViewModel(private val application: Application, private val noteId: In
             return@launch
         }
         else {
-            NoteRepository.updateNote(application, Note(
-                id = id,
-                color = color,
-                title = title.text.trim(),
-                body = body.text.trim(),
-                created = created,
-                modified = System.currentTimeMillis(),
-                reminder = reminder,
-                deletion = deletion,
-                pinned = pinned
-            ))
+            NoteRepository.setNoteContent(application, id, title.text.trim(), body.text.trim(), System.currentTimeMillis())
             NoteRepository.updateNoteCheckBoxes(application, id, checkBoxes.map {
                 // Set id to 0 if using a temp id (under 0).
                 if (it.id < 0)
@@ -130,33 +115,33 @@ class NoteViewModel(private val application: Application, private val noteId: In
     }
 
     fun onSetReminder(dateTime: LocalDateTime, repeat: String?) = viewModelScope.launch {
-        NoteRepository.setNoteReminderWithRepeat(application, noteId, dateTime.toMilliSeconds(), repeat)
+        NoteRepository.setNoteReminderWithRepeat(application, id, dateTime.toMilliSeconds(), repeat)
         NoteBroadcaster.setReminder(application, dateTime.toMilliSeconds(), id)
     }
 
     fun onCancelReminder() = viewModelScope.launch {
-        NoteRepository.setNoteReminderWithRepeat(application, noteId, null, null)
+        NoteRepository.setNoteReminderWithRepeat(application, id, null, null)
         NoteBroadcaster.cancelReminder(application, id)
     }
 
-    fun onTogglePin() {
-        pinned = !pinned
+    fun onTogglePin() = viewModelScope.launch {
+        NoteRepository.setNotePinned(application, id, !pinned)
     }
 
-    fun onChangeColor(value: Int) {
-        color = value
+    fun onChangeColor(value: Int) = viewModelScope.launch {
+        NoteRepository.setNoteColor(application, id, value)
     }
 
-    fun onDeleteNote() {
+    fun onDeleteNote() = viewModelScope.launch {
         // Set deletion date to 7 days from now and move to "trash".
         val deletionTime = LocalDateTime.now().plusDays(7).toMilliSeconds()
-        reminder = null
-        deletion = deletionTime
+        NoteRepository.setNoteReminderWithRepeat(application, id, null, null)
+        NoteRepository.setNoteDeletion(application, id, deletionTime)
         NoteBroadcaster.cancelReminder(application, id)
     }
 
-    fun onRestore() {
-        deletion = null
+    fun onRestore() = viewModelScope.launch {
+        NoteRepository.setNoteDeletion(application, id, null)
     }
 
     fun onConvertCheckBoxes() = viewModelScope.launch {
@@ -166,11 +151,11 @@ class NoteViewModel(private val application: Application, private val noteId: In
             body.text.lines().forEachIndexed { index, line ->
                 if (line.isBlank())
                     return@forEachIndexed
-                list.add(NoteCheckBox(id = -Random.nextInt(), noteId = id, text = line, order = index + 1))
+                list.add(NoteCheckBox(id = Random.nextInt(Int.MIN_VALUE, -1), noteId = id, text = line, order = index + 1))
             }
             // Add blank checkbox if list is empty.
             if (list.isEmpty())
-                list.add(NoteCheckBox(id = -Random.nextInt(), noteId = id, order = 1))
+                list.add(NoteCheckBox(id = Random.nextInt(Int.MIN_VALUE, -1), noteId = id, order = 1))
 
             body = body.copy(text = "")
             checkBoxes.addAll(list)
@@ -188,7 +173,7 @@ class NoteViewModel(private val application: Application, private val noteId: In
         }
     }
 
-    fun onCreateCheckBox(position: Int, checked: Boolean) {
+    fun onCreateCheckBox(position: Int, checked: Boolean) = viewModelScope.launch {
         // Increment order on subsequent items in list.
         val list = checkBoxes.map {
             if (it.order >= position)
@@ -200,10 +185,10 @@ class NoteViewModel(private val application: Application, private val noteId: In
         checkBoxes.addAll(list)
 
         // Assign random temporary id to use as stable key in lazy column.
-        checkBoxes.add(NoteCheckBox(id = -Random.nextInt(), noteId = id, order = position, checked = checked))
+        checkBoxes.add(NoteCheckBox(id = Random.nextInt(Int.MIN_VALUE, -1), noteId = id, order = position, checked = checked))
     }
 
-    fun onDeleteCheckBox(id: Int) {
+    fun onDeleteCheckBox(id: Int) = viewModelScope.launch {
         val item = checkBoxes.firstOrNull { it.id == id }
         item?.let { checkBox ->
             checkBoxes.remove(checkBox)
@@ -220,7 +205,7 @@ class NoteViewModel(private val application: Application, private val noteId: In
         }
     }
 
-    fun onEditCheckBox(id: Int, checked: Boolean, text: String) {
+    fun onEditCheckBox(id: Int, checked: Boolean, text: String) = viewModelScope.launch {
         val item = checkBoxes.firstOrNull { it.id == id }
         item?.let {
             val index = checkBoxes.indexOf(it)
