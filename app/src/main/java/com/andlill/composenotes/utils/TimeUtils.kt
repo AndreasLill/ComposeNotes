@@ -1,10 +1,12 @@
 package com.andlill.composenotes.utils
 
 import android.content.Context
+import android.text.format.DateFormat
 import com.andlill.composenotes.R
 import java.time.*
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
+import java.util.*
 
 object TimeUtils {
 
@@ -28,17 +30,26 @@ object TimeUtils {
     }
 
     fun LocalDateTime.toDateString(pattern: String): String {
-        val formatter = DateTimeFormatter.ofPattern(pattern)
+        val formatter = DateTimeFormatter.ofPattern(pattern, Locale.getDefault())
         return this.format(formatter)
     }
 
     fun LocalDate.toDateString(pattern: String): String {
-        val formatter = DateTimeFormatter.ofPattern(pattern)
+        val formatter = DateTimeFormatter.ofPattern(pattern, Locale.getDefault())
         return this.format(formatter)
     }
 
-    fun LocalTime.toTimeString(pattern: String): String {
-        val formatter = DateTimeFormatter.ofPattern(pattern)
+    fun LocalTime.toSimpleTimeString(context: Context): String {
+        val is24h = DateFormat.is24HourFormat(context)
+        val pattern = if (is24h) "HH:mm" else "h:mm a"
+        val formatter = DateTimeFormatter.ofPattern(pattern, Locale.getDefault())
+        return this.format(formatter)
+    }
+
+    fun LocalDateTime.toSimpleTimeString(context: Context): String {
+        val is24h = DateFormat.is24HourFormat(context)
+        val pattern = if (is24h) "HH:mm" else "h:mm a"
+        val formatter = DateTimeFormatter.ofPattern(pattern, Locale.getDefault())
         return this.format(formatter)
     }
 
@@ -49,20 +60,20 @@ object TimeUtils {
         val current = LocalDateTime.now()
         return when (this.daysBetween(current)) {
             0 -> {
-                String.format("%s, %s", context.getString(R.string.date_today), this.toDateString("HH:mm"))
+                String.format("%s, %s", context.getString(R.string.date_today), this.toSimpleTimeString(context))
             }
             1 -> {
-                String.format("%s, %s", context.getString(R.string.date_tomorrow), this.toDateString("HH:mm"))
+                String.format("%s, %s", context.getString(R.string.date_tomorrow), this.toSimpleTimeString(context))
             }
             -1 -> {
-                String.format("%s, %s", context.getString(R.string.date_yesterday), this.toDateString("HH:mm"))
+                String.format("%s, %s", context.getString(R.string.date_yesterday), this.toSimpleTimeString(context))
             }
             else -> {
                 if (this.year != current.year) {
-                    this.toDateString("d MMM yyyy, HH:mm")
+                    String.format("%s, %s", this.toDateString("d MMM yyyy"), this.toSimpleTimeString(context))
                 }
                 else {
-                    this.toDateString("d MMM, HH:mm")
+                    String.format("%s, %s", this.toDateString("d MMM"), this.toSimpleTimeString(context))
                 }
             }
         }

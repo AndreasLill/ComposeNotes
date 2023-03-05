@@ -27,7 +27,7 @@ import com.andlill.composenotes.ui.shared.text.DialogTitle
 import com.andlill.composenotes.utils.TimeUtils.toDateString
 import com.andlill.composenotes.utils.TimeUtils.toLocalDateTime
 import com.andlill.composenotes.utils.TimeUtils.toMilliSeconds
-import com.andlill.composenotes.utils.TimeUtils.toTimeString
+import com.andlill.composenotes.utils.TimeUtils.toSimpleTimeString
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -84,7 +84,7 @@ fun ReminderDialog(
         var selectedDate by remember { mutableStateOf(initialDateTime?.toLocalDate() ?: LocalDate.now()) }
         var selectedTime by remember { mutableStateOf(initialDateTime?.toLocalTime() ?: LocalTime.now()) }
         val selectedDateText by remember(selectedDate) { mutableStateOf(selectedDate.toDateString("d MMM, YYYY")) }
-        val selectedTimeText by remember(selectedTime) { mutableStateOf(selectedTime.toTimeString("HH:mm")) }
+        val selectedTimeText by remember(selectedTime) { mutableStateOf(selectedTime.toSimpleTimeString(context)) }
 
         // Reminder Dialog
         Dialog(
