@@ -44,7 +44,6 @@ fun NoteCheckBoxItem(
     // Local checkbox and text field value state.
     var textFieldValue by remember { mutableStateOf(TextFieldValue(checkBox.text)) }
     var checkBoxValue by remember { mutableStateOf(checkBox.checked) }
-    var deleteOnNextBackspace by remember { mutableStateOf(false) }
 
     /* Disabled
     // Send update with a delay of 1500ms when user stops typing.
@@ -111,7 +110,6 @@ fun NoteCheckBoxItem(
                 if (it.text.endsWith("\n"))
                     return@BasicTextField
                 textFieldValue = it
-                deleteOnNextBackspace = false
                 onUpdate(checkBox.id, checkBoxValue, textFieldValue.text)
             },
             textStyle = TextStyle(
