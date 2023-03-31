@@ -145,9 +145,7 @@ fun HomeScreen(appState: AppState) {
                         actions = {
                             MenuIconButton(
                                 icon = if (viewModel.userPreferences.isGridView) Icons.Outlined.GridView else Icons.Outlined.ViewAgenda,
-                                onClick = {
-                                    viewModel.onChangeView()
-                                }
+                                onClick = viewModel::onChangeView
                             )
                         }
                     )
