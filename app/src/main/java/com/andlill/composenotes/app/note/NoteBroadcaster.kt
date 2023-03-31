@@ -19,7 +19,6 @@ object NoteBroadcaster {
             PendingIntent.getBroadcast(context, noteId, intent, PendingIntent.FLAG_IMMUTABLE)
         }
 
-        // TODO: Add permission request.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             if (alarm.canScheduleExactAlarms()) {
                 // Some devices using API 31 requires permission "SCHEDULE_EXACT_ALARM".
