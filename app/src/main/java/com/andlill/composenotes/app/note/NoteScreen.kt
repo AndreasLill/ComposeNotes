@@ -330,11 +330,13 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                                         enabled = (viewModel.deletion == null),
                                         focusRequester = if (checkBoxesSortedList.value.size == index + 1) focusRequesterCheckBox else null,
                                         checkBox = checkBox,
+                                        contentColor = MaterialTheme.colorScheme.onSurface.copy(if (checkBox.checked) 0.5f else 1f),
                                         onUpdate = viewModel::onEditCheckBox,
                                         onDelete = {
-                                            if (index > 0)
+                                            if (index > 0) {
                                                 focusManager.moveFocus(FocusDirection.Up)
-                                            viewModel.onDeleteCheckBox(checkBox.id)
+                                                viewModel.onDeleteCheckBox(checkBox.id)
+                                            }
                                         },
                                         onDone = {
                                             viewModel.onCreateCheckBox(checkBox.order + 1, checkBox.checked)

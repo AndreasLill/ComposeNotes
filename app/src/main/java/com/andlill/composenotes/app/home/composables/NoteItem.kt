@@ -21,7 +21,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.andlill.composenotes.R
-import com.andlill.composenotes.model.NoteCheckBox
 import com.andlill.composenotes.model.NoteWrapper
 import com.andlill.composenotes.ui.shared.button.CheckBoxButton
 import com.andlill.composenotes.ui.shared.label.NoteLabel
@@ -46,8 +45,11 @@ fun NoteItem(noteWrapper: NoteWrapper, maxLines: Int, onClick: () -> Unit) {
             else -> Color(noteWrapper.note.color)
         }
     }
-    val checkBoxesSorted = remember(noteWrapper.checkBoxes) {
-        noteWrapper.checkBoxes.sortedWith(compareBy<NoteCheckBox> { it.checked }.thenBy { it.order })
+    val uncheckedBoxes = remember(noteWrapper.checkBoxes) {
+        noteWrapper.checkBoxes.filter { !it.checked }.sortedBy { it.order }
+    }
+    val checkedBoxesCount = remember(noteWrapper.checkBoxes) {
+        noteWrapper.checkBoxes.filter { it.checked }.size
     }
     val labelsSorted = remember(noteWrapper.labels) {
         noteWrapper.labels.sortedBy { it.value.lowercase() }
@@ -122,16 +124,16 @@ fun NoteItem(noteWrapper: NoteWrapper, maxLines: Int, onClick: () -> Unit) {
                     }
                 }
 
-                if (noteWrapper.note.title.isNotBlank() && checkBoxesSorted.isNotEmpty())
+                if (noteWrapper.note.title.isNotBlank() && uncheckedBoxes.isNotEmpty())
                     Spacer(modifier = Modifier.height(12.dp))
 
-                if (checkBoxesSorted.isNotEmpty()) {
+                if (uncheckedBoxes.isNotEmpty() || checkedBoxesCount > 0) {
                     Column(
                         modifier = Modifier.fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                        checkBoxesSorted.forEachIndexed { index, item ->
+                        uncheckedBoxes.forEachIndexed { index, item ->
                             if (index >= maxLines) {
-                                if (index == checkBoxesSorted.size - 1)
+                                if (index == uncheckedBoxes.size - 1)
                                     Text(
                                         text = ellipsis.toString(),
                                         fontSize = 15.sp,
@@ -157,6 +159,7 @@ fun NoteItem(noteWrapper: NoteWrapper, maxLines: Int, onClick: () -> Unit) {
                                 Text(
                                     text = item.text,
                                     fontSize = 14.sp,
+                                    color = MaterialTheme.colorScheme.onSurface,
                                     fontWeight = FontWeight.Normal,
                                     lineHeight = 16.sp,
                                     letterSpacing = 0.sp,
@@ -164,6 +167,21 @@ fun NoteItem(noteWrapper: NoteWrapper, maxLines: Int, onClick: () -> Unit) {
                                     overflow = TextOverflow.Ellipsis
                                 )
                             }
+                        }
+                        if (checkedBoxesCount > 0) {
+                            if (uncheckedBoxes.isEmpty()) {
+                                Spacer(modifier = Modifier.height(6.dp))
+                            }
+                            Text(
+                                text = stringResource(R.string.home_screen_note_checked_items, checkedBoxesCount),
+                                fontSize = 13.sp,
+                                color = MaterialTheme.colorScheme.onSurface.copy(0.5f),
+                                fontWeight = FontWeight.Normal,
+                                lineHeight = 16.sp,
+                                letterSpacing = 0.sp,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
                         }
                     }
                 }
@@ -199,7 +217,7 @@ fun NoteItem(noteWrapper: NoteWrapper, maxLines: Int, onClick: () -> Unit) {
                     val deletionText = when (deletion.daysBetween(current)) {
                         0 -> stringResource(R.string.home_screen_note_text_deletion_today)
                         1 -> stringResource(R.string.home_screen_note_text_deletion_tomorrow)
-                        else -> String.format(stringResource(R.string.home_screen_note_text_deletion_days), deletion.daysBetween(current))
+                        else -> stringResource(R.string.home_screen_note_text_deletion_days, deletion.daysBetween(current))
                     }
                     Spacer(modifier = Modifier.height(height))
                     NoteLabel(

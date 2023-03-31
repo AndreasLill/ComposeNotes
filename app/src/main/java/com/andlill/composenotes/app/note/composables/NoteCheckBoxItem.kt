@@ -36,6 +36,7 @@ fun NoteCheckBoxItem(
     enabled: Boolean,
     focusRequester: FocusRequester? = null,
     checkBox: NoteCheckBox,
+    contentColor: Color,
     onUpdate: (Int, Boolean, String) -> Unit,
     onDelete: () -> Unit,
     onDone: () -> Unit
@@ -58,7 +59,7 @@ fun NoteCheckBoxItem(
         Checkbox(
             colors = CheckboxDefaults.colors(
                 checkedColor = Color.Transparent,
-                checkmarkColor = MaterialTheme.colorScheme.onSurface
+                checkmarkColor = contentColor
             ),
             enabled = enabled,
             checked = checkBoxValue,
@@ -119,7 +120,7 @@ fun NoteCheckBoxItem(
                 onUpdate(checkBox.id, checkBoxValue, textFieldValue.text)
             },
             textStyle = TextStyle(
-                color = MaterialTheme.colorScheme.onSurface,
+                color = contentColor,
                 fontSize = 15.sp
             ),
             cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
