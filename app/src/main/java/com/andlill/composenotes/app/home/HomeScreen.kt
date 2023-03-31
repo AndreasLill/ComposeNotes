@@ -69,8 +69,11 @@ fun HomeScreen(appState: AppState) {
             }
             // Then filter using query if any.
             notes.filter {
-                if (viewModel.query.isNotBlank())
-                    it.note.title.contains(viewModel.query, ignoreCase = true) || it.note.body.contains(viewModel.query, ignoreCase = true)
+                if (viewModel.query.isNotBlank()) {
+                    it.note.title.contains(viewModel.query, ignoreCase = true) ||
+                    it.note.body.contains(viewModel.query, ignoreCase = true) ||
+                    it.checkBoxes.any { checkBox -> checkBox.text.contains(viewModel.query, ignoreCase = true) }
+                }
                 else
                     true
             }
