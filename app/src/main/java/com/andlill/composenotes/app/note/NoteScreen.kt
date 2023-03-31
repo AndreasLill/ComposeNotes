@@ -355,11 +355,21 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                         .height(48.dp)
                         .align(Alignment.BottomCenter)) {
                         if (viewModel.deletion == null) {
-                            MenuIconButton(
-                                modifier = Modifier.align(Alignment.CenterStart),
-                                icon = if (viewModel.checkBoxes.isEmpty()) Icons.Outlined.CheckBoxOutlineBlank else Icons.Outlined.CheckBox,
+                            TextButton(
+                                colors = ButtonDefaults.textButtonColors(
+                                    contentColor = MaterialTheme.colorScheme.onSurface
+                                ),
                                 onClick = viewModel::onConvertCheckBoxes
-                            )
+                            ) {
+                                Icon(
+                                    imageVector = if (viewModel.checkBoxes.isEmpty()) Icons.Outlined.CheckBoxOutlineBlank else Icons.Outlined.CheckBox,
+                                    contentDescription = null
+                                )
+                                Text(
+                                    modifier = Modifier.padding(start = 8.dp),
+                                    text = if (viewModel.checkBoxes.isEmpty()) stringResource(R.string.note_screen_button_checkbox_show) else stringResource(R.string.note_screen_button_checkbox_hide)
+                                )
+                            }
                         }
                         Text(
                             modifier = Modifier.align(Alignment.Center),

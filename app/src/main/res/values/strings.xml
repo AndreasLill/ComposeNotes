@@ -43,6 +43,8 @@
     <!-- Note Screen -->
     <string name="note_screen_placeholder_title">No Title</string>
     <string name="note_screen_placeholder_body">Empty</string>
+    <string name="note_screen_button_checkbox_show">Show</string>
+    <string name="note_screen_button_checkbox_hide">Hide</string>
     <string name="note_screen_dialog_color_title">Note Color</string>
     <string name="note_screen_dialog_reminder_title">Reminder</string>
     <string name="note_screen_dialog_reminder_label_date">Date</string>
