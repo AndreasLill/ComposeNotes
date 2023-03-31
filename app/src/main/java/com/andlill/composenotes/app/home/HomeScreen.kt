@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -41,6 +42,7 @@ fun HomeScreen(appState: AppState) {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
+    val layoutDirection = LocalLayoutDirection.current
 
     val notesFiltered = remember {
         derivedStateOf {
@@ -152,7 +154,11 @@ fun HomeScreen(appState: AppState) {
                 },
                 content = { innerPadding ->
                     Box(modifier = Modifier
-                        .padding(innerPadding)
+                        .padding(
+                            top = innerPadding.calculateTopPadding(),
+                            start = innerPadding.calculateStartPadding(layoutDirection),
+                            end = innerPadding.calculateEndPadding(layoutDirection)
+                        )
                         .fillMaxSize())  {
                         if (viewModel.userPreferences.isGridView) {
                             LazyVerticalStaggeredGrid(
@@ -160,7 +166,12 @@ fun HomeScreen(appState: AppState) {
                                 verticalItemSpacing = 8.dp,
                                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                                 columns = StaggeredGridCells.Fixed(2),
-                                contentPadding = PaddingValues(8.dp)) {
+                                contentPadding = PaddingValues(
+                                    start = 8.dp,
+                                    end = 8.dp,
+                                    top = 8.dp,
+                                    bottom = innerPadding.calculateBottomPadding() + 8.dp
+                                )) {
                                 items(items = notesFiltered.value, key = { it.note.id }) { note ->
                                     NoteItem(note, viewModel.userPreferences.notePreviewMaxLines) {
                                         appState.navigation.navigate(Screen.NoteScreen.route(noteId = note.note.id)) {
