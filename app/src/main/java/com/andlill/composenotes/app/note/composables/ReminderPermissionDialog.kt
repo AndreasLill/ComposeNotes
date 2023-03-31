@@ -66,8 +66,6 @@ fun ReminderPermissionDialog(
                     colors = ButtonDefaults.filledTonalButtonColors(
                         containerColor = MaterialTheme.colorScheme.errorContainer,
                         contentColor = MaterialTheme.colorScheme.error,
-                        disabledContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                        disabledContentColor = MaterialTheme.colorScheme.onPrimaryContainer
                     ),
                     onClick = {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -91,8 +89,6 @@ fun ReminderPermissionDialog(
                     colors = ButtonDefaults.filledTonalButtonColors(
                         containerColor = MaterialTheme.colorScheme.errorContainer,
                         contentColor = MaterialTheme.colorScheme.error,
-                        disabledContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                        disabledContentColor = MaterialTheme.colorScheme.onPrimaryContainer
                     ),
                     onClick = {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
