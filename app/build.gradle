@@ -11,8 +11,8 @@ android {
         applicationId "com.andlill.composenotes"
         minSdk 26
         targetSdk 33
-        versionCode 7
-        versionName "1.1.5"
+        versionCode 8
+        versionName "1.1.6"
 
         javaCompileOptions {
             annotationProcessorOptions {
