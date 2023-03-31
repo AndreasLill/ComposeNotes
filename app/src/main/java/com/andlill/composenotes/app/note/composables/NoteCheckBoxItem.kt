@@ -80,12 +80,7 @@ fun NoteCheckBoxItem(
                 )
                 .onKeyEvent { event ->
                     if (event.type == KeyEventType.KeyUp && event.key == Key.Backspace && textFieldValue.text.isEmpty()) {
-                        if (!deleteOnNextBackspace) {
-                            deleteOnNextBackspace = true
-                        }
-                        else {
-                            onDelete()
-                        }
+                        onDelete()
                         return@onKeyEvent true
                     }
                     if (event.type == KeyEventType.KeyUp && event.key == Key.Enter) {
@@ -102,10 +97,10 @@ fun NoteCheckBoxItem(
                 },
             keyboardOptions = KeyboardOptions(
                 capitalization = KeyboardCapitalization.Sentences,
-                imeAction = ImeAction.Next
+                imeAction = ImeAction.Done
             ),
             keyboardActions = KeyboardActions(
-                onNext = {
+                onDone = {
                     onDone()
                 },
             ),
