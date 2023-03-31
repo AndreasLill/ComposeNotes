@@ -159,7 +159,7 @@ fun HomeScreen(appState: AppState) {
                         if (viewModel.userPreferences.isGridView) {
                             LazyVerticalStaggeredGrid(
                                 modifier = Modifier.fillMaxSize(),
-                                verticalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalItemSpacing = 8.dp,
                                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                                 columns = StaggeredGridCells.Fixed(2),
                                 contentPadding = PaddingValues(8.dp)) {
