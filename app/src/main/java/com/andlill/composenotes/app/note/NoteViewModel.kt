@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.andlill.composenotes.data.repository.NoteRepository
 import com.andlill.composenotes.model.Label
 import com.andlill.composenotes.model.NoteCheckBox
+import com.andlill.composenotes.model.NoteWrapper
 import com.andlill.composenotes.utils.TimeUtils.toMilliSeconds
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -23,7 +24,8 @@ class NoteViewModel(private val application: Application, private val noteId: In
         override fun <T : ViewModel> create(modelClass: Class<T>): T = NoteViewModel(application, noteId) as T
     }
 
-    private var cacheLoaded = false
+    // Original note before edits.
+    private var noteOriginal: NoteWrapper? = null
     private var deleteOnClose = false
 
     var id by mutableStateOf(noteId)
@@ -57,7 +59,7 @@ class NoteViewModel(private val application: Application, private val noteId: In
                 body = body.copy(text = it.note.body)
                 checkBoxes.clear()
                 checkBoxes.addAll(it.checkBoxes)
-                cacheLoaded = true
+                noteOriginal = it
             }
         }
         viewModelScope.launch {
@@ -78,7 +80,7 @@ class NoteViewModel(private val application: Application, private val noteId: In
     }
 
     fun onClose() = viewModelScope.launch {
-        if (!cacheLoaded)
+        if (noteOriginal == null)
             return@launch
 
         if (deleteOnClose) {
@@ -87,15 +89,36 @@ class NoteViewModel(private val application: Application, private val noteId: In
             return@launch
         }
         else {
-            NoteRepository.setNoteContent(application, id, title.text.trim(), body.text.trim(), System.currentTimeMillis())
-            NoteRepository.updateNoteCheckBoxes(application, id, checkBoxes.map {
-                // Set id to 0 if using a temp id (under 0).
-                if (it.id < 0)
-                    it.copy(id = 0, text = it.text.trim())
-                else
-                    it.copy(text = it.text.trim())
-            })
+            if (isModified()) {
+                NoteRepository.setNoteContent(
+                    application,
+                    id,
+                    title.text.trim(),
+                    body.text.trim(),
+                    System.currentTimeMillis()
+                )
+                NoteRepository.updateNoteCheckBoxes(application, id, checkBoxes.map {
+                    // Set id to 0 if using a temp id (under 0).
+                    if (it.id < 0)
+                        it.copy(id = 0, text = it.text.trim())
+                    else
+                        it.copy(text = it.text.trim())
+                })
+            }
         }
+    }
+
+    private fun isModified(): Boolean {
+        noteOriginal?.let {
+            if (title.text.trim() != it.note.title.trim())
+                return true
+            if (body.text.trim() != it.note.body.trim())
+                return true
+            if (it.checkBoxes != checkBoxes)
+                return true
+        }
+
+        return false
     }
 
     fun onChangeTitle(value: TextFieldValue) {
