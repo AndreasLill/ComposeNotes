@@ -334,9 +334,9 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                             )
                         }
                         else {
-                            // Bugged with no work around yet: https://issuetracker.google.com/issues/179203700
                             LazyColumn(modifier = Modifier
                                 .fillMaxSize()
+                                .padding(bottom = 32.dp)
                                 .padding(8.dp)) {
                                 itemsIndexed(items = checkBoxesSortedList.value, key = { _, checkBox -> checkBox.id }) { index, checkBox ->
                                     NoteCheckBoxItem(
@@ -366,7 +366,7 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                     }
                     Box(modifier = Modifier
                         .fillMaxWidth()
-                        .height(48.dp)
+                        .height(32.dp)
                         .align(Alignment.BottomCenter)) {
                         Text(
                             modifier = Modifier.align(Alignment.Center),
