@@ -10,6 +10,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -20,12 +21,14 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.key.*
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.sp
+import com.andlill.composenotes.R
 import com.andlill.composenotes.model.NoteCheckBox
 import com.andlill.composenotes.ui.shared.util.clearFocusOnKeyboardDismiss
 
@@ -120,6 +123,13 @@ fun NoteCheckBoxItem(
             decorationBox = { innerTextField ->
                 Box(modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.CenterStart) {
+                    if (textFieldValue.text.isEmpty()) {
+                        Text(
+                            fontSize = 15.sp,
+                            color = MaterialTheme.colorScheme.onSurface.copy(0.6f),
+                            text = stringResource(R.string.note_screen_placeholder_checkbox),
+                        )
+                    }
                     innerTextField()
                 }
             }

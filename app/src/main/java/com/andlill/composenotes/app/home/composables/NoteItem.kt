@@ -157,9 +157,9 @@ fun NoteItem(noteWrapper: NoteWrapper, maxLines: Int, onClick: () -> Unit) {
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
-                                    text = item.text,
+                                    text = item.text.ifEmpty { stringResource(R.string.note_screen_note_placeholder_checkbox) },
                                     fontSize = 14.sp,
-                                    color = MaterialTheme.colorScheme.onSurface,
+                                    color = if (item.text.isEmpty()) MaterialTheme.colorScheme.onSurface.copy(0.6f) else MaterialTheme.colorScheme.onSurface,
                                     fontWeight = FontWeight.Normal,
                                     lineHeight = 16.sp,
                                     letterSpacing = 0.sp,
