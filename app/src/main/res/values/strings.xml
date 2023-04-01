@@ -43,8 +43,6 @@
     <!-- Note Screen -->
     <string name="note_screen_placeholder_title">No Title</string>
     <string name="note_screen_placeholder_body">Empty</string>
-    <string name="note_screen_button_checkbox_show">Show</string>
-    <string name="note_screen_button_checkbox_hide">Hide</string>
     <string name="note_screen_dialog_color_title">Note Color</string>
     <string name="note_screen_dialog_reminder_permission_title">Reminder Permissions</string>
     <string name="note_screen_dialog_reminder_permission_description">Permissions are required to set reminders and let them send notifications at a selected date and time.</string>
@@ -74,7 +72,9 @@
     <string name="note_screen_message_reminder_set_repeat_yearly">Reminder: %s, repeating yearly.</string>
     <string name="note_screen_message_reminder_cancel">Reminder was cancelled.</string>
     <string name="note_screen_label_placeholder">Label</string>
-    <string name="note_screen_menu_trash">Move to Trash</string>
+    <string name="note_screen_menu_checkboxes_show">Show boxes</string>
+    <string name="note_screen_menu_checkboxes_hide">Hide boxes</string>
+    <string name="note_screen_menu_trash">Move to trash</string>
 
     <!-- Label Screen -->
     <string name="label_screen_create_label_placeholder">Create new label</string>

@@ -217,9 +217,13 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                             )
                             OptionsDropDownMenu(
                                 state = optionsDropDownState,
+                                checkBoxes = viewModel.checkBoxes.isNotEmpty(),
                                 onClick = {
                                     optionsDropDownState.value = false
                                     when (it) {
+                                        NoteOption.Checkboxes -> {
+                                            viewModel.onConvertCheckBoxes()
+                                        }
                                         NoteOption.Delete -> {
                                             viewModel.onDeleteNote()
                                             appState.showSnackbar(context.resources.getString(R.string.note_screen_message_note_trash), SnackbarDuration.Short)
@@ -364,23 +368,6 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                         .fillMaxWidth()
                         .height(48.dp)
                         .align(Alignment.BottomCenter)) {
-                        if (viewModel.deletion == null) {
-                            TextButton(
-                                colors = ButtonDefaults.textButtonColors(
-                                    contentColor = MaterialTheme.colorScheme.onSurface
-                                ),
-                                onClick = viewModel::onConvertCheckBoxes
-                            ) {
-                                Icon(
-                                    imageVector = if (viewModel.checkBoxes.isEmpty()) Icons.Outlined.CheckBoxOutlineBlank else Icons.Outlined.CheckBox,
-                                    contentDescription = null
-                                )
-                                Text(
-                                    modifier = Modifier.padding(start = 8.dp),
-                                    text = if (viewModel.checkBoxes.isEmpty()) stringResource(R.string.note_screen_button_checkbox_show) else stringResource(R.string.note_screen_button_checkbox_hide)
-                                )
-                            }
-                        }
                         Text(
                             modifier = Modifier.align(Alignment.Center),
                             color = MaterialTheme.colorScheme.onSurface.copy(0.6f),
