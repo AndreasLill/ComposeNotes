@@ -15,7 +15,7 @@ object NoteBroadcaster {
             intent.action = MainReceiver.ACTION_REMINDER
             intent.putExtra(MainReceiver.EXTRA_NOTE_ID, noteId)
             intent.setPackage("com.andlill.composenotes")
-            PendingIntent.getBroadcast(context, noteId, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+            PendingIntent.getBroadcast(context, noteId, intent, PendingIntent.FLAG_IMMUTABLE)
         }
 
         alarm.setExactAndAllowWhileIdle(RTC_WAKEUP, time, intent)
@@ -26,7 +26,7 @@ object NoteBroadcaster {
         val intent = Intent(context, MainReceiver::class.java).let { intent ->
             intent.action = MainReceiver.ACTION_REMINDER
             intent.setPackage("com.andlill.composenotes")
-            PendingIntent.getBroadcast(context, noteId, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+            PendingIntent.getBroadcast(context, noteId, intent, PendingIntent.FLAG_IMMUTABLE)
         }
 
         alarm.cancel(intent)
