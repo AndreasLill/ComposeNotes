@@ -51,7 +51,7 @@ class MainReceiver : BroadcastReceiver() {
             if (note.note.reminder == null)
                 return@forEach
 
-            NoteBroadcaster.setReminder(context, note.note.reminder, note.note.id)
+            NoteBroadcaster.setReminder(context, note.note.id, note.note.reminder)
         }
     }
 
@@ -125,6 +125,9 @@ class MainReceiver : BroadcastReceiver() {
             }
 
             NoteRepository.setNoteReminder(context, note.note.id, reminderTime)
+            reminderTime?.let {
+                NoteBroadcaster.setReminder(context, note.note.id, it)
+            }
         }
     }
 }
