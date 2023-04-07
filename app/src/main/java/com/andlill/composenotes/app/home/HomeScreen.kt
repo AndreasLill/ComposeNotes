@@ -32,7 +32,7 @@ import com.andlill.composenotes.app.home.composables.SearchBar
 import com.andlill.composenotes.model.NoteFilter
 import com.andlill.composenotes.model.NoteWrapper
 import com.andlill.composenotes.ui.shared.button.MenuIconButton
-import com.andlill.composenotes.ui.shared.label.NoteLabel
+import com.andlill.composenotes.app.home.composables.NoteLabel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -231,7 +231,7 @@ fun HomeScreen(appState: AppState) {
                                     }
                                     NoteFilter.Type.Label -> {
                                         viewModel.filter.label?.let { label ->
-                                            NoteLabel(modifier = Modifier.scale(1.4f) ,icon = Icons.Outlined.Label, text = label.value, color = MaterialTheme.colorScheme.onSurface.copy(0.08f))
+                                            NoteLabel(modifier = Modifier.scale(1.4f) ,icon = Icons.Outlined.Label, text = label.value)
                                             Spacer(modifier = Modifier.height(16.dp))
                                             Text(
                                                 text = stringResource(R.string.home_screen_status_text_empty_label),

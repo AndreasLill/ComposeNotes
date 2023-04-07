@@ -1,33 +1,38 @@
-package com.andlill.composenotes.ui.shared.label
+package com.andlill.composenotes.app.home.composables
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun NoteLabel(modifier: Modifier = Modifier, icon: ImageVector, text: String, color: Color) {
+fun NoteLabel(
+    modifier: Modifier = Modifier,
+    icon: ImageVector,
+    text: String,
+    noteColor: Int = 0
+) {
     Surface(
-        modifier = modifier.height(24.dp),
-        color = color,
+        modifier = modifier,
+        color = if (noteColor == 0) MaterialTheme.colorScheme.onSurface.copy(0.08f) else MaterialTheme.colorScheme.surface.copy(0.4f),
         shape = RoundedCornerShape(8.dp),
-        border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.onSurface.copy(0.1f))
     ) {
         Row(
-            modifier = Modifier.padding(start = 8.dp, end = 8.dp),
+            modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 4.dp, bottom = 4.dp),
             verticalAlignment = Alignment.CenterVertically) {
             Icon(
                 modifier = Modifier.size(16.dp),
                 imageVector = icon,
-                tint = MaterialTheme.colorScheme.onSurface,
+                tint = MaterialTheme.colorScheme.onSurface.copy(0.8f),
                 contentDescription = null
             )
             Spacer(modifier = Modifier.width(4.dp))
@@ -36,7 +41,7 @@ fun NoteLabel(modifier: Modifier = Modifier, icon: ImageVector, text: String, co
                 fontSize = 11.sp,
                 fontWeight = FontWeight.SemiBold,
                 letterSpacing = 0.sp,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface.copy(0.8f)
             )
         }
     }

@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,9 +22,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.andlill.composenotes.R
+import com.andlill.composenotes.model.NoteReminderRepeat
 import com.andlill.composenotes.model.NoteWrapper
 import com.andlill.composenotes.ui.shared.button.CheckBoxButton
-import com.andlill.composenotes.ui.shared.label.NoteLabel
 import com.andlill.composenotes.utils.ColorUtils.darken
 import com.andlill.composenotes.utils.TimeUtils.daysBetween
 import com.andlill.composenotes.utils.TimeUtils.toLocalDateTime
@@ -32,7 +33,6 @@ import com.google.accompanist.flowlayout.FlowRow
 import java.time.LocalDateTime
 import kotlin.text.Typography.ellipsis
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NoteItem(noteWrapper: NoteWrapper, maxLines: Int, onClick: () -> Unit) {
     val context = LocalContext.current
@@ -44,6 +44,17 @@ fun NoteItem(noteWrapper: NoteWrapper, maxLines: Int, onClick: () -> Unit) {
             isDarkTheme -> Color(noteWrapper.note.color).darken()
             else -> Color(noteWrapper.note.color)
         }
+    }
+    val reminderRepeatText = remember(noteWrapper.note.reminderRepeat) {
+        mutableStateOf(
+            when (noteWrapper.note.reminderRepeat) {
+                NoteReminderRepeat.REPEAT_DAILY -> context.resources.getString(R.string.home_screen_note_reminder_repeat_daily)
+                NoteReminderRepeat.REPEAT_WEEKLY -> context.resources.getString(R.string.home_screen_note_reminder_repeat_weekly)
+                NoteReminderRepeat.REPEAT_MONTHLY -> context.resources.getString(R.string.home_screen_note_reminder_repeat_monthly)
+                NoteReminderRepeat.REPEAT_YEARLY -> context.resources.getString(R.string.home_screen_note_reminder_repeat_yearly)
+                else -> null
+            }
+        )
     }
     val uncheckedBoxes = remember(noteWrapper.checkBoxes) {
         noteWrapper.checkBoxes.filter { !it.checked }.sortedBy { it.order }
@@ -195,7 +206,7 @@ fun NoteItem(noteWrapper: NoteWrapper, maxLines: Int, onClick: () -> Unit) {
                             NoteLabel(
                                 icon = Icons.Outlined.Label,
                                 text = it.value,
-                                color = if (noteWrapper.note.color == 0) MaterialTheme.colorScheme.onSurface.copy(0.08f) else MaterialTheme.colorScheme.surface.copy(0.5f)
+                                noteColor = noteWrapper.note.color
                             )
                         }
                     }
@@ -204,10 +215,11 @@ fun NoteItem(noteWrapper: NoteWrapper, maxLines: Int, onClick: () -> Unit) {
                     val height = if (noteWrapper.labels.isEmpty()) 16.dp else 4.dp
                     val reminderText = it.toLocalDateTime().toSimpleDateString(context)
                     Spacer(modifier = Modifier.height(height))
-                    NoteLabel(
+                    TimeLabel(
                         icon = Icons.Outlined.NotificationsActive,
                         text = reminderText,
-                        color = if (noteWrapper.note.color == 0) MaterialTheme.colorScheme.onSurface.copy(0.08f) else MaterialTheme.colorScheme.surface.copy(0.5f)
+                        repeat = reminderRepeatText.value,
+                        noteColor = noteWrapper.note.color
                     )
                 }
                 noteWrapper.note.deletion?.let {
@@ -220,10 +232,12 @@ fun NoteItem(noteWrapper: NoteWrapper, maxLines: Int, onClick: () -> Unit) {
                         else -> stringResource(R.string.home_screen_note_text_deletion_days, deletion.daysBetween(current))
                     }
                     Spacer(modifier = Modifier.height(height))
-                    NoteLabel(
+                    TimeLabel(
                         icon = Icons.Outlined.AutoDelete,
                         text = deletionText,
-                        color = if (noteWrapper.note.color == 0) MaterialTheme.colorScheme.onSurface.copy(0.08f) else MaterialTheme.colorScheme.surface.copy(0.5f))
+                        repeat = null,
+                        noteColor = noteWrapper.note.color
+                    )
                 }
             }
         }

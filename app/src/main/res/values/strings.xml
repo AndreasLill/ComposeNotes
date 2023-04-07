@@ -37,6 +37,10 @@
     <string name="home_screen_note_text_deletion_today">Deletion today</string>
     <string name="home_screen_note_text_deletion_tomorrow">Deletion tomorrow</string>
     <string name="home_screen_note_text_deletion_days">Deletion in %s days</string>
+    <string name="home_screen_note_reminder_repeat_daily">Daily</string>
+    <string name="home_screen_note_reminder_repeat_weekly">Weekly</string>
+    <string name="home_screen_note_reminder_repeat_monthly">Monthly</string>
+    <string name="home_screen_note_reminder_repeat_yearly">Yearly</string>
     <string name="home_screen_status_text_empty_reminders">There are no active reminders</string>
     <string name="home_screen_status_text_empty_trash">There are no notes in trash</string>
     <string name="home_screen_status_text_empty_label">There are no notes with this label</string>
