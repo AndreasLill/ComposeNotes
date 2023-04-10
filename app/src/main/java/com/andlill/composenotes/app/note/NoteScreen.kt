@@ -263,6 +263,8 @@ fun NoteScreen(appState: AppState, noteId: Int) {
         content = { innerPadding ->
             Column(modifier = Modifier
                 .padding(innerPadding)
+                // Why are 2 consumeWindowInsets needed to remove the extra padding on IME, maybe a bug?
+                .consumeWindowInsets(innerPadding)
                 .consumeWindowInsets(innerPadding)
                 .fillMaxSize()
             ) {
