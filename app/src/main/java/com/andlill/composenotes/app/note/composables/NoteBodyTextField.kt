@@ -26,7 +26,7 @@ fun NoteBodyTextField(state: TextFieldValue, readOnly: Boolean, focusRequester: 
         modifier = Modifier
             .focusRequester(focusRequester)
             .clearFocusOnKeyboardDismiss()
-            .padding(start = 20.dp, end = 20.dp, top = 8.dp, bottom = 40.dp)
+            .padding(start = 20.dp, end = 20.dp, bottom = 32.dp)
             .fillMaxWidth(),
         readOnly = readOnly,
         value = state,

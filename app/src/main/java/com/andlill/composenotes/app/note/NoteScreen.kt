@@ -266,14 +266,15 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                 .consumeWindowInsets(innerPadding)
                 .fillMaxSize()
             ) {
+                Spacer(modifier = Modifier.height(4.dp))
                 LazyRow(modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 20.dp, end = 20.dp, top = 8.dp, bottom = 8.dp),
+                    .padding(start = 20.dp, end = 20.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     if (viewModel.labels.isEmpty()) {
                         item {
                             NoteLabelChip(
-                                background = MaterialTheme.colorScheme.surface.copy(0.5f),
+                                background = if (viewModel.color == 0) MaterialTheme.colorScheme.onSurface.copy(0.08f) else MaterialTheme.colorScheme.surface.copy(0.4f),
                                 icon = Icons.Outlined.Add,
                                 text = stringResource(R.string.note_screen_label_placeholder),
                                 contentAlpha = 0.5f,
@@ -291,10 +292,26 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                     else {
                         items(items = viewModel.labels, key = { label -> label.id }) {
                             NoteLabelChip(
-                                background = MaterialTheme.colorScheme.surface.copy(0.5f),
+                                background = if (viewModel.color == 0) MaterialTheme.colorScheme.onSurface.copy(0.08f) else MaterialTheme.colorScheme.surface.copy(0.4f),
                                 icon = Icons.Outlined.Label,
                                 text = it.value,
                                 contentAlpha = if (viewModel.deletion == null) 1f else 0.5f,
+                                onClick = {
+                                    if (viewModel.deletion == null) {
+                                        appState.navigation.navigate(Screen.LabelScreen.route(noteId = viewModel.id)) {
+                                            // To avoid multiple copies of same destination in backstack.
+                                            launchSingleTop = true
+                                        }
+                                    }
+                                }
+                            )
+                        }
+                        item {
+                            NoteLabelChip(
+                                background = if (viewModel.color == 0) MaterialTheme.colorScheme.onSurface.copy(0.08f) else MaterialTheme.colorScheme.surface.copy(0.4f),
+                                icon = Icons.Outlined.Add,
+                                text = null,
+                                contentAlpha = 0.5f,
                                 onClick = {
                                     if (viewModel.deletion == null) {
                                         appState.navigation.navigate(Screen.LabelScreen.route(noteId = viewModel.id)) {
@@ -320,12 +337,14 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                         }
                     }) {
                     Column(modifier = Modifier.imePadding()) {
+                        Spacer(modifier = Modifier.height(20.dp))
                         NoteTitleTextField(
                             state = viewModel.title,
                             readOnly = (viewModel.deletion != null),
                             onValueChange = viewModel::onChangeTitle
                         )
                         if (viewModel.checkBoxes.isEmpty()) {
+                            Spacer(modifier = Modifier.height(20.dp))
                             NoteBodyTextField(
                                 state = viewModel.body,
                                 readOnly = (viewModel.deletion != null),
@@ -334,6 +353,7 @@ fun NoteScreen(appState: AppState, noteId: Int) {
                             )
                         }
                         else {
+                            Spacer(modifier = Modifier.height(4.dp))
                             LazyColumn(modifier = Modifier
                                 .fillMaxSize()
                                 .padding(bottom = 32.dp)

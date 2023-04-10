@@ -28,7 +28,7 @@ fun NoteTitleTextField(state: TextFieldValue, readOnly: Boolean, onValueChange: 
     BasicTextField(
         modifier = Modifier
             .clearFocusOnKeyboardDismiss()
-            .padding(start = 20.dp, end = 20.dp, top = 8.dp, bottom = 8.dp)
+            .padding(start = 20.dp, end = 20.dp)
             .fillMaxWidth(),
         readOnly = readOnly,
         value = state,
