@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.sp
 fun TimeLabel(
     icon: ImageVector,
     text: String,
-    repeat: String?,
+    repeat: String? = null,
     noteColor: Int = 0
 ) {
     Surface(
@@ -36,6 +36,14 @@ fun TimeLabel(
                     tint = MaterialTheme.colorScheme.onSurface.copy(0.8f),
                     contentDescription = null
                 )
+                repeat?.let {
+                    Icon(
+                        modifier = Modifier.size(16.dp),
+                        imageVector = Icons.Outlined.Repeat,
+                        tint = MaterialTheme.colorScheme.onSurface.copy(0.8f),
+                        contentDescription = null
+                    )
+                }
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
                     text = text,
@@ -44,25 +52,6 @@ fun TimeLabel(
                     letterSpacing = 0.sp,
                     color = MaterialTheme.colorScheme.onSurface.copy(0.8f)
                 )
-            }
-            repeat?.let {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        modifier = Modifier.size(16.dp),
-                        imageVector = Icons.Outlined.Repeat,
-                        tint = MaterialTheme.colorScheme.onSurface.copy(0.8f),
-                        contentDescription = null
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = it,
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        letterSpacing = 0.sp,
-                        color = MaterialTheme.colorScheme.onSurface.copy(0.8f)
-                    )
-                }
             }
         }
     }
